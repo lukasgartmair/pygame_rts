@@ -18,13 +18,16 @@ class GameEngine():
 
         self.state = None
         self.currentPlayer = None
-        self.tokens = 3
+        self.tokens = 5
         self.tokens_available = self.tokens
 
         self.state = GameState.PLAYING
         
     def get_tokens_availabe(self):
         return self.tokens_available
+    
+    def remove_token(self):
+        self.tokens_available += 1
     
     def place_token(self):
         if self.tokens_available > 0:
