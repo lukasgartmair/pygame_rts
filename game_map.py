@@ -13,6 +13,21 @@ from enum import Enum
 from colors import terrain_colors
 import scipy.ndimage
 
+class Path():
+    
+    def __init__(self):
+        self.length = 0
+        self.subpaths = {}
+        
+    def add_subpath(self, a, b, length, chain):
+        self.subpaths[a,b] = {"length":length, "chain":chain}
+        
+    def get_total_length(self):
+        self.length = 0
+        for k,v in self.subpaths.items():
+            self.length += int(v["length"])
+        return self.length
+
 class Terrains(Enum):
 
     EARTH = 1
