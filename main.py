@@ -18,7 +18,6 @@ from scene_base import SceneBase
 import game_font    
 import numpy as np
 import unittest
-import test_suite
 
 gm = game_map.GameMap()
 
@@ -27,17 +26,6 @@ ge = engine.GameEngine()
 global_path = game_map.Path(gm)
 
 font_game = game_font.GameFont(game_font.font_style, game_font.font_size)
-
-def render_path_length(screen):
-
-    text = font_game.render("path length: " +
-                       str(global_path.get_total_length()), True, font_game.text_color)
-    screen.blit(text, (SCREEN_WIDTH*0.1, SCREEN_HEIGHT*0.15))
-
-def render_token_count(screen, ge):
-    text = font_game.render("cities left to place: " +
-                       str(ge.get_tokens_availabe()), True, font_game.text_color)
-    screen.blit(text, (SCREEN_WIDTH*0.1, SCREEN_HEIGHT*0.1))
 
 def update_selected_settlements(selected_settlements, gm):
 
@@ -54,14 +42,16 @@ def update_selected_settlements(selected_settlements, gm):
 
 
 def connect_tokens(selected_settlements, gm):
-    print("connecting cities")
+
     already_connected = False
     condition_1 = (list(selected_settlements)[0].name, list(selected_settlements)[1].name) in global_path.subpaths.keys()
     condition_2 = (list(selected_settlements)[1].name, list(selected_settlements)[0].name) in global_path.subpaths.keys()
     if condition_1 or condition_2:
         already_connected = True
+        print("already connected")
     
     if not already_connected:
+        print("connecting cities")
     
         local_path = None
 
@@ -72,9 +62,6 @@ def connect_tokens(selected_settlements, gm):
             global_path.add_subpath(list(selected_settlements)[
                 0].name, list(selected_settlements)[
                 1].name, len(local_path), local_path)
-            
-            # for p in local_path:
-            #     gm.mapped_grid[p[0], p[1]] = (0, 0, 255)
         else:
             print("no_path_found")
 
@@ -146,12 +133,12 @@ def run_game():
             selected_settlements = update_selected_settlements(selected_settlements, gm)
     
             ge.check_win_condition()
-    
-        render_token_count(screen, ge)
-        
+
         settlements.update(event_list)
         global_path.render(gm, screen)
+        global_path.render_path_length(screen, font_game)
         settlements.draw(screen)
+        ge.render_token_count(screen, font_game)
         pygame.display.update()
         clock.tick(60)
 

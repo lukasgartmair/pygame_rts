@@ -9,13 +9,15 @@ Created on Sun Dec 17 14:15:39 2023
 import pygame
 from colors import settlement_colors
 from faker import Faker
+import pygame.gfxdraw
 
 faker = Faker()
 
-
-def circleSurface(color, radius):
+def circleSurface(radius, color):
     shape_surf = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
     pygame.draw.circle(shape_surf, color, (radius, radius), radius)
+    # pygame.gfxdraw.aacircle(shape_surf, radius, radius, radius, color)
+    # pygame.gfxdraw.filled_circle(shape_surf, radius, radius, radius, color)
     return shape_surf
 
 
@@ -26,7 +28,7 @@ class Settlement(pygame.sprite.Sprite):
         self.center = center
         self.color = settlement_colors[1]
         self.radius = 10
-        self.surf = circleSurface(self.color, self.radius)
+        self.surf = circleSurface(self.radius,self.color)
         self.rect = self.surf.get_rect(center=center)
         self.selected = False
         self.callback = self.on_click

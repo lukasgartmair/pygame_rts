@@ -47,6 +47,12 @@ class Path():
                 self.mapped_grid[p[0], p[1]] = self.color
         surfarray.blit_array(screen,self.mapped_grid)
         
+    def render_path_length(self, screen, font_game):
+
+        text = font_game.render("path length: " +
+                           str(self.get_total_length()), True, font_game.text_color)
+        screen.blit(text, (SCREEN_WIDTH*0.1, SCREEN_HEIGHT*0.15))
+            
     def remove_subpath(self, settlement_name):
         for k in list(self.subpaths.keys()):
             if dict_key_contains_string(settlement_name, k):

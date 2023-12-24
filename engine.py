@@ -7,6 +7,7 @@ Created on Sun Dec 17 17:29:36 2023
 """
 
 from enum import Enum
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
 class GameState(Enum):
     PLAYING = 0
@@ -36,6 +37,10 @@ class GameEngine():
         else:
             return False
         
-        
     def check_win_condition(self):
         pass
+    
+    def render_token_count(self, screen, font_game):
+        text = font_game.render("cities left to place: " +
+                           str(self.get_tokens_availabe()), True, font_game.text_color)
+        screen.blit(text, (SCREEN_WIDTH*0.1, SCREEN_HEIGHT*0.1))
