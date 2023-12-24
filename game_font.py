@@ -8,14 +8,13 @@ Created on Sat Dec 23 20:22:34 2023
 
 import pygame
 
-pygame.init()
+pygame.font.init()
 
-def get_default_font():
+font_style = pygame.font.match_font("z003")
+font_size = 30
 
-    font_size = 30
-    font_style = pygame.font.match_font("z003")
-    font = pygame.font.Font(font_style, font_size)
-    font.set_bold(True)
-    text_color = (28, 0, 46)
-    
-    return font
+class GameFont(pygame.font.Font):
+    def __init__(self, font_style, font_size):
+        super().__init__(font_style, font_size)
+        self.text_color = (0,0,0)
+        self.set_bold(True)

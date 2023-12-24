@@ -15,22 +15,28 @@ import pygame.surfarray as surfarray
 import engine
 from pathing import find_path
 from scene_base import SceneBase
-from game_font import get_default_font        
+import game_font    
+import numpy as np
+import unittest
+import test_suite
 
-global_path = game_map.Path()
-font = get_default_font()
+gm = game_map.GameMap()
+
+ge = engine.GameEngine()
+
+global_path = game_map.Path(gm)
+
+font_game = game_font.GameFont(game_font.font_style, game_font.font_size)
 
 def render_path_length(screen):
 
-    text_color = (0, 0, 0)
-    text = font.render("path length: " +
-                       str(global_path.get_total_length()), True, text_color)
+    text = font_game.render("path length: " +
+                       str(global_path.get_total_length()), True, font_game.text_color)
     screen.blit(text, (SCREEN_WIDTH*0.1, SCREEN_HEIGHT*0.15))
 
 def render_token_count(screen, ge):
-    text_color = (0, 0, 0)
-    text = font.render("cities left to place: " +
-                       str(ge.get_tokens_availabe()), True, text_color)
+    text = font_game.render("cities left to place: " +
+                       str(ge.get_tokens_availabe()), True, font_game.text_color)
     screen.blit(text, (SCREEN_WIDTH*0.1, SCREEN_HEIGHT*0.1))
 
 def update_selected_settlements(selected_settlements, gm):
@@ -61,15 +67,14 @@ def connect_tokens(selected_settlements, gm):
 
         local_path = find_path(gm.grid, list(selected_settlements)[
                      0].center, list(selected_settlements)[1].center)
-    
+
         if local_path:
-            
             global_path.add_subpath(list(selected_settlements)[
                 0].name, list(selected_settlements)[
                 1].name, len(local_path), local_path)
             
-            for p in local_path:
-                gm.mapped_grid[p[0], p[1]] = (0, 0, 255)
+            # for p in local_path:
+            #     gm.mapped_grid[p[0], p[1]] = (0, 0, 255)
         else:
             print("no_path_found")
 
@@ -78,12 +83,8 @@ def run_game():
     pygame.init()
     
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    
+    pygame.display.set_caption('City Connector')
     clock = pygame.time.Clock()
-    
-    gm = game_map.GameMap()
-    
-    ge = engine.GameEngine()
     
     settlements = pygame.sprite.Group()
     
@@ -92,7 +93,7 @@ def run_game():
     selected_settlements = pygame.sprite.Group()
 
     while True:
-    
+        
         surfarray.blit_array(screen, gm.mapped_grid)
     
         try:
@@ -139,6 +140,7 @@ def run_game():
             for s in selected_settlements:
                 removed = s.check_removal(event_list)
                 if removed:
+                    global_path.remove_subpath(s.name)
                     ge.remove_token()
                     
             selected_settlements = update_selected_settlements(selected_settlements, gm)
@@ -146,10 +148,13 @@ def run_game():
             ge.check_win_condition()
     
         render_token_count(screen, ge)
-        render_path_length(screen)
+        
         settlements.update(event_list)
+        global_path.render(gm, screen)
         settlements.draw(screen)
         pygame.display.update()
         clock.tick(60)
 
-run_game()
+if __name__ == '__main__':
+    unittest.main()
+    run_game()

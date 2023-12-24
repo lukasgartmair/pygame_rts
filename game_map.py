@@ -12,12 +12,24 @@ import numpy as np
 from enum import Enum
 from colors import terrain_colors
 import scipy.ndimage
+import pygame.surfarray as surfarray
 
+def get_adjacent_cells_too(x,y):
+    return [(x,y),(x+1,y),(x+1,y-1),(x,y-1),(x-1,y-1),(x-1,y),(x-1,y+1),(x,y+1)]
+
+def dict_key_contains_string(string, tup):
+    if string in str(tup):
+        return True
+    else:
+        return False
+    
 class Path():
     
-    def __init__(self):
+    def __init__(self, game_map):
         self.length = 0
         self.subpaths = {}
+        self.mapped_grid = game_map.mapped_grid.copy()
+        self.color = (0, 0, 255)
         
     def add_subpath(self, a, b, length, chain):
         self.subpaths[a,b] = {"length":length, "chain":chain}
@@ -27,7 +39,19 @@ class Path():
         for k,v in self.subpaths.items():
             self.length += int(v["length"])
         return self.length
-
+    
+    def render(self, game_map, screen):
+        self.mapped_grid = game_map.mapped_grid.copy()
+        for k,v in self.subpaths.items():
+            for p in v['chain']:
+                self.mapped_grid[p[0], p[1]] = self.color
+        surfarray.blit_array(screen,self.mapped_grid)
+        
+    def remove_subpath(self, settlement_name):
+        for k in list(self.subpaths.keys()):
+            if dict_key_contains_string(settlement_name, k):
+                del self.subpaths[k]
+            
 class Terrains(Enum):
 
     EARTH = 1
