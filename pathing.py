@@ -1,10 +1,9 @@
 import  numpy as np
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
-from pathfinding.finder.ida_star import IDAStarFinder
 from pathfinding.core.diagonal_movement import DiagonalMovement
 
-TIME_LIMIT = 10
+TIME_LIMIT = 20
 
 def fix_matrix_rotatrion(matrix):
     matrix = np.rot90(matrix,k=3)
@@ -13,7 +12,7 @@ def fix_matrix_rotatrion(matrix):
 
 def find_path(matrix, start, end):
     
-    find = IDAStarFinder
+    find = AStarFinder
     finder = find()
     
     matrix = fix_matrix_rotatrion(matrix)

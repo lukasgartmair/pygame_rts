@@ -8,140 +8,70 @@ Created on Sun Dec 17 12:34:47 2023
 
 import pygame
 import sys
-import settlement
+
 import game_map
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
-import pygame.surfarray as surfarray
 import engine
-from pathing import find_path
-from scene_base import SceneBase
 import game_font    
-import numpy as np
 import unittest
+import game_scenes
+import path
 
 gm = game_map.GameMap()
 
 ge = engine.GameEngine()
 
-global_path = game_map.Path(gm)
+global_path = path.Path(gm)
 
 font_game = game_font.GameFont(game_font.font_style, game_font.font_size)
 
-def update_selected_settlements(selected_settlements, gm):
-
-    if len(selected_settlements) == 2:
-        connect_tokens(selected_settlements, gm)
-        for s in selected_settlements:
-            s.deselect()
-        selected_settlements.empty()
-    elif len(selected_settlements) > 2:
-        selected_settlements.pop()
-    else:
-        pass
-    return selected_settlements
-
-
-def connect_tokens(selected_settlements, gm):
-
-    already_connected = False
-    condition_1 = (list(selected_settlements)[0].name, list(selected_settlements)[1].name) in global_path.subpaths.keys()
-    condition_2 = (list(selected_settlements)[1].name, list(selected_settlements)[0].name) in global_path.subpaths.keys()
-    if condition_1 or condition_2:
-        already_connected = True
-        print("already connected")
-    
-    if not already_connected:
-        print("connecting cities")
-    
-        local_path = None
-
-        local_path = find_path(gm.grid, list(selected_settlements)[
-                     0].center, list(selected_settlements)[1].center)
-
-        if local_path:
-            global_path.add_subpath(list(selected_settlements)[
-                0].name, list(selected_settlements)[
-                1].name, len(local_path), local_path)
-        else:
-            print("no_path_found")
-
-def run_game():
+def run_game(starting_scene):
 
     pygame.init()
     
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption('City Connector')
     clock = pygame.time.Clock()
-    
-    settlements = pygame.sprite.Group()
-    
-    all_sprites = pygame.sprite.Group()
-    
-    selected_settlements = pygame.sprite.Group()
 
-    while True:
-        
-        surfarray.blit_array(screen, gm.mapped_grid)
-    
+    active_scene = starting_scene
+
+    while active_scene != None:
+        pressed_keys = pygame.key.get_pressed()
+
+        filtered_events = []
         try:
             event_list = pygame.event.get()
         except:
             pass
-    
         for event in event_list:
+            quit_attempt = False
             if event.type == pygame.QUIT:
+                quit_attempt = True
+            elif event.type == pygame.KEYDOWN:
+                alt_pressed = pressed_keys[pygame.K_LALT] or \
+                              pressed_keys[pygame.K_RALT]
+                if event.key == pygame.K_ESCAPE:
+                    quit_attempt = True
+                elif event.key == pygame.K_F4 and alt_pressed:
+                    quit_attempt = True
+            
+            if quit_attempt:
+                active_scene.Terminate()
                 pygame.display.quit()
                 pygame.quit()
                 sys.exit()
+            else:
+                filtered_events.append(event)
+            
+        active_scene.ProcessInput(filtered_events, pressed_keys)
+        active_scene.Update()
+        active_scene.Render(screen, font_game)
+        
+        active_scene = active_scene.next
     
-            if event.type == pygame.MOUSEBUTTONDOWN:                        
-    
-                mouse_position = pygame.mouse.get_pos()
-                
-                settlement_clicked = False
-                for s in settlements:
-                    if s.rect.collidepoint(mouse_position[0],mouse_position[1]):
-                        settlement_clicked = True
-                        
-                if not settlement_clicked and ge.tokens_available > 0:
-    
-                    valid_placement = gm.check_valid_village_placement(mouse_position)
-                    if valid_placement:
-                        new_settlement = settlement.Settlement(
-                            mouse_position, screen)
-                        overlap =  pygame.sprite.spritecollideany(new_settlement, settlements)
-                        if not overlap:
-                            token_placed = ge.place_token()
-                            if token_placed:
-                                settlements.add(new_settlement)
-                                all_sprites.add(new_settlement)
-                        else:
-                            new_settlement.kill()
-    
-                else:
-                    pass
-    
-            for s in settlements:
-                if s.selected == True:
-                    selected_settlements.add(s)
-            for s in selected_settlements:
-                removed = s.check_removal(event_list)
-                if removed:
-                    global_path.remove_subpath(s.name)
-                    ge.remove_token()
-                    
-            selected_settlements = update_selected_settlements(selected_settlements, gm)
-    
-            ge.check_win_condition()
-
-        settlements.update(event_list)
-        global_path.render(gm, screen)
-        global_path.render_path_length(screen, font_game)
-        settlements.draw(screen)
-        ge.render_token_count(screen, font_game)
-        pygame.display.update()
+        pygame.display.flip()
         clock.tick(60)
 
 if __name__ == '__main__':
     unittest.main()
-    run_game()
+    run_game(game_scenes.TitleScene(ge, gm, global_path))

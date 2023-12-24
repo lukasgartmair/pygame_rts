@@ -20,10 +20,22 @@ def circleSurface(radius, color):
     # pygame.gfxdraw.filled_circle(shape_surf, radius, radius, radius, color)
     return shape_surf
 
+def update_selected_settlements(selected_settlements, global_path, gm):
+
+    if len(selected_settlements) == 2:
+        global_path.connect_settlements(selected_settlements, gm)
+        for s in selected_settlements:
+            s.deselect()
+        selected_settlements.empty()
+    elif len(selected_settlements) > 2:
+        selected_settlements.pop()
+    else:
+        pass
+    return selected_settlements
 
 class Settlement(pygame.sprite.Sprite):
 
-    def __init__(self, center, screen):
+    def __init__(self, center):
         super().__init__()
         self.center = center
         self.color = settlement_colors[1]

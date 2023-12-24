@@ -7,8 +7,11 @@ Created on Sat Dec 23 20:10:50 2023
 """
 
 class SceneBase:
-    def __init__(self):
+    def __init__(self, game_engine, game_map, global_path):
         self.next = self
+        self.game_engine = game_engine
+        self.game_map = game_map
+        self.global_path = global_path
     
     def ProcessInput(self, events, pressed_keys):
         print("uh-oh, you didn't override this in the child class")
@@ -16,7 +19,7 @@ class SceneBase:
     def Update(self):
         print("uh-oh, you didn't override this in the child class")
 
-    def Render(self, screen):
+    def Render(self, screen, font_game):
         print("uh-oh, you didn't override this in the child class")
 
     def SwitchToScene(self, next_scene):

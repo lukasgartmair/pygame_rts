@@ -38,7 +38,8 @@ class GameEngine():
             return False
         
     def check_win_condition(self):
-        pass
+        if self.tokens_available == 0:
+            self.state = GameState.ENDED
     
     def render_token_count(self, screen, font_game):
         text = font_game.render("cities left to place: " +
