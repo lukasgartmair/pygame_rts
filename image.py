@@ -9,25 +9,31 @@ Created on Sun Dec 24 23:48:08 2023
 import pygame
 import os
 
+
 def invert_color(color):
-    return (255-color[0],255-color[1],255-color[2])
+    return (255 - color[0], 255 - color[1], 255 - color[2])
+
 
 def invert_grid(grid):
     inverted_grid = grid.copy()
-    return 255-inverted_grid
+    return 255 - inverted_grid
+
 
 _image_library = {}
+
+
 def get_image(path):
-        global _image_library
-        image = _image_library.get(path)
-        if image == None:
-                canonicalized_path = path.replace('/', os.sep).replace('\\', os.sep)
-                image = pygame.image.load(canonicalized_path).convert()
-                _image_library[path] = image
-        return image
+    global _image_library
+    image = _image_library.get(path)
+    if image == None:
+        canonicalized_path = path.replace("/", os.sep).replace("\\", os.sep)
+        image = pygame.image.load(canonicalized_path).convert()
+        _image_library[path] = image
+    return image
+
 
 def load_settlement_images(name):
-    path = 'images/'
+    path = "images/"
     filenames = next(os.walk("images"), (None, None, []))[2]
     filenames_filtered = [f for f in filenames if f.startswith(name)]
     pictures = []
@@ -35,14 +41,15 @@ def load_settlement_images(name):
     for f in filenames_filtered:
         if f.endswith("night.png"):
             print(True)
-            select_picture = get_image(path+f)
+            select_picture = get_image(path + f)
         if not f.endswith("night.png"):
-            pictures.append(get_image(path+f))
-            
+            pictures.append(get_image(path + f))
+
     return pictures, select_picture
-    
+
+
 def load_title_screen_background(screen):
-    path = 'images/start_background.png'
+    path = "images/start_background.png"
     picture = get_image(path)
     picture = pygame.transform.smoothscale(picture, screen.get_size())
     return picture

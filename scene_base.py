@@ -8,6 +8,7 @@ Created on Sat Dec 23 20:10:50 2023
 
 x = None
 
+
 class SceneBase:
     def __init__(self, game_engine, game_map, global_path, game_sound, sprite_groups):
         self.next = self
@@ -17,9 +18,9 @@ class SceneBase:
         self.game_sound = game_sound
         self.sprite_groups = sprite_groups
 
-        for k,v in self.sprite_groups.items():
-            setattr(self, k, v)  
-    
+        for k, v in self.sprite_groups.items():
+            setattr(self, k, v)
+
     def ProcessInput(self, events, pressed_keys):
         print("uh-oh, you didn't override this in the child class")
 
@@ -31,6 +32,6 @@ class SceneBase:
 
     def SwitchToScene(self, next_scene):
         self.next = next_scene
-    
+
     def Terminate(self):
         self.SwitchToScene(None)

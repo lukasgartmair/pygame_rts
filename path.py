@@ -14,9 +14,9 @@ from colors import path_colors
 
 def get_adjacent_cells(x, y, k=0):
     adjacent_cells = []
-    for xi in range(-k, k+1):
-        for yi in range(-k, k+1):
-            adjacent_cells.append((x+xi, y+yi))
+    for xi in range(-k, k + 1):
+        for yi in range(-k, k + 1):
+            adjacent_cells.append((x + xi, y + yi))
     adjacent_cells.remove((x, y))
     return adjacent_cells
 
@@ -28,8 +28,7 @@ def dict_key_contains_string(string, tup):
         return False
 
 
-class Path():
-
+class Path:
     def __init__(self, game_map, game_sound):
         self.length = 0
         self.subpaths = {}
@@ -48,7 +47,7 @@ class Path():
     def render(self, game_map, screen):
         self.mapped_grid = game_map.mapped_grid.copy()
         for k, v in self.subpaths.items():
-            for p in v['chain']:
+            for p in v["chain"]:
                 self.mapped_grid[p[0], p[1]] = self.color
 
                 adjacent_cells = get_adjacent_cells(p[0], p[1], k=3)
@@ -59,10 +58,10 @@ class Path():
         surfarray.blit_array(screen, self.mapped_grid)
 
     def render_path_length(self, screen, font_game):
-
-        text = font_game.render("path length: " +
-                                str(self.get_total_length()), True, font_game.text_color)
-        screen.blit(text, (SCREEN_WIDTH*0.1, SCREEN_HEIGHT*0.15))
+        text = font_game.render(
+            "path length: " + str(self.get_total_length()), True, font_game.text_color
+        )
+        screen.blit(text, (SCREEN_WIDTH * 0.1, SCREEN_HEIGHT * 0.15))
 
     def remove_subpath(self, settlement_name):
         for k in list(self.subpaths.keys()):
@@ -70,15 +69,12 @@ class Path():
                 del self.subpaths[k]
 
     def connect_settlements(self, selected_settlements, game_map, game_sound):
-
         already_connected = False
         s = list(selected_settlements)
         settlement_0 = s[0]
         settlement_1 = s[1]
-        condition_1 = (settlement_0.name,
-                       settlement_1.name) in self.subpaths.keys()
-        condition_2 = (settlement_1.name,
-                       settlement_0.name) in self.subpaths.keys()
+        condition_1 = (settlement_0.name, settlement_1.name) in self.subpaths.keys()
+        condition_2 = (settlement_1.name, settlement_0.name) in self.subpaths.keys()
         if condition_1 or condition_2:
             already_connected = True
             print("already connected")
@@ -89,11 +85,13 @@ class Path():
             local_path = None
 
             local_path = find_path(
-                game_map.grid, settlement_0.center, settlement_1.center)
+                game_map.grid, settlement_0.center, settlement_1.center
+            )
 
             if local_path:
-                self.add_subpath(settlement_0.name, settlement_1.name, len(
-                    local_path), local_path)
+                self.add_subpath(
+                    settlement_0.name, settlement_1.name, len(local_path), local_path
+                )
                 settlement_0.connected()
                 settlement_1.connected()
 

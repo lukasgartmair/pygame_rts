@@ -23,11 +23,11 @@ def circleSurface(radius, color):
     return shape_surf
 
 
-def update_selected_settlements(selected_settlements, global_path, game_map, game_sound):
-
+def update_selected_settlements(
+    selected_settlements, global_path, game_map, game_sound
+):
     if len(selected_settlements) == 2:
-        global_path.connect_settlements(
-            selected_settlements, game_map, game_sound)
+        global_path.connect_settlements(selected_settlements, game_map, game_sound)
         for s in selected_settlements:
             s.deselect()
         selected_settlements.empty()
@@ -39,19 +39,27 @@ def update_selected_settlements(selected_settlements, global_path, game_map, gam
 
 
 class Settlement(pygame.sprite.Sprite):
-
     def __init__(self, center, game_sound):
         super().__init__()
         self.center = center
         self.color = settlement_colors[0]
         self.radius = 10
-        self.images, self.selected_image = image.load_settlement_images(
-            "settlement_1")
+        self.images, self.selected_image = image.load_settlement_images("settlement_1")
         self.scale_factor = 0.1
-        self.images = [pygame.transform.scale(i, (i.get_width(
-        )*self.scale_factor, i.get_height()*self.scale_factor)) for i in self.images]
-        self.selected_image = pygame.transform.scale(self.selected_image, (self.selected_image.get_width(
-        )*self.scale_factor, self.selected_image.get_height()*self.scale_factor))
+        self.images = [
+            pygame.transform.scale(
+                i,
+                (i.get_width() * self.scale_factor, i.get_height() * self.scale_factor),
+            )
+            for i in self.images
+        ]
+        self.selected_image = pygame.transform.scale(
+            self.selected_image,
+            (
+                self.selected_image.get_width() * self.scale_factor,
+                self.selected_image.get_height() * self.scale_factor,
+            ),
+        )
         self.image = self.images[0]
         self.surf = self.image
         self.rect = self.surf.get_rect(center=center)
@@ -62,7 +70,7 @@ class Settlement(pygame.sprite.Sprite):
         self.image_index = 0
 
     def next_image(self):
-        if self.image_index < len(self.images)-1:
+        if self.image_index < len(self.images) - 1:
             self.image_index += 1
         else:
             self.image_index = 0

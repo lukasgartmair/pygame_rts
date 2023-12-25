@@ -13,7 +13,6 @@ def fix_matrix_rotatrion(matrix):
 
 
 def find_path(matrix, start, end):
-
     find = AStarFinder
     finder = find()
 
@@ -25,8 +24,9 @@ def find_path(matrix, start, end):
 
     end_node = grid.node(end[0], end[1])
 
-    finder = AStarFinder(time_limit=TIME_LIMIT,
-                         diagonal_movement=DiagonalMovement.always)
+    finder = AStarFinder(
+        time_limit=TIME_LIMIT, diagonal_movement=DiagonalMovement.always
+    )
     local_path = []
 
     try:

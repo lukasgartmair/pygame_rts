@@ -9,42 +9,45 @@ Created on Sun Dec 17 17:29:36 2023
 from enum import Enum
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
+
 class GameState(Enum):
     PLAYING = 0
     ENDED = 1
 
-class GameEngine():
-    
-    def __init__(self):
 
+class GameEngine:
+    def __init__(self):
         self.state = None
         self.currentPlayer = None
         self.settlements = 5
         self.settlements_available = self.settlements
 
         self.state = GameState.PLAYING
-        
+
     def get_settlements_availabe(self):
         return self.settlements_available
-    
+
     def remove_settlement(self):
         self.settlements_available += 1
-    
+
     def place_settlement(self):
         if self.settlements_available > 0:
             self.settlements_available -= 1
             return True
         else:
             return False
-        
+
     def check_win_condition(self):
         if self.settlements_available == 0:
             self.state = GameState.ENDED
-            
+
     def game_ended_by_player(self):
         self.state = GameState.ENDED
-    
+
     def render_settlement_count(self, screen, font_game):
-        text = font_game.render("cities left to place: " +
-                           str(self.get_settlements_availabe()), True, font_game.text_color)
-        screen.blit(text, (SCREEN_WIDTH*0.1, SCREEN_HEIGHT*0.1))
+        text = font_game.render(
+            "cities left to place: " + str(self.get_settlements_availabe()),
+            True,
+            font_game.text_color,
+        )
+        screen.blit(text, (SCREEN_WIDTH * 0.1, SCREEN_HEIGHT * 0.1))
