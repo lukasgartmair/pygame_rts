@@ -16,14 +16,20 @@ import game_font
 import unittest
 import game_scenes
 import path
+import sound
+from sprite_group import SpriteGroup
 
 gm = game_map.GameMap()
 
 ge = engine.GameEngine()
 
-global_path = path.Path(gm)
+game_sound = sound.Sound()
+
+global_path = path.Path(gm, game_sound)
 
 font_game = game_font.GameFont(game_font.font_style, game_font.font_size)
+
+sprite_groups = SpriteGroup().get_sprite_groups()
 
 def run_game(starting_scene):
 
@@ -73,5 +79,5 @@ def run_game(starting_scene):
         clock.tick(60)
 
 if __name__ == '__main__':
-    unittest.main()
-    run_game(game_scenes.TitleScene(ge, gm, global_path))
+    #unittest.main()
+    run_game(game_scenes.TitleScene(ge, gm, global_path, game_sound, sprite_groups))

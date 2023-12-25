@@ -9,9 +9,15 @@ Created on Sun Dec 24 23:56:22 2023
 from pathing import find_path
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 import pygame.surfarray as surfarray
+from colors import path_colors
 
-def get_adjacent_cells_too(x,y):
-    return [(x,y),(x+1,y),(x+1,y-1),(x,y-1),(x-1,y-1),(x-1,y),(x-1,y+1),(x,y+1)]
+def get_adjacent_cells(x,y,k=0):
+    adjacent_cells = []
+    for xi in range(-k,k+1):
+        for yi in range(-k,k+1):
+            adjacent_cells.append((x+xi,y+yi))
+    adjacent_cells.remove((x,y))
+    return adjacent_cells
 
 def dict_key_contains_string(string, tup):
     if string in str(tup):
@@ -21,11 +27,11 @@ def dict_key_contains_string(string, tup):
             
 class Path():
     
-    def __init__(self, game_map):
+    def __init__(self, game_map, game_sound):
         self.length = 0
         self.subpaths = {}
         self.mapped_grid = game_map.mapped_grid.copy()
-        self.color = (0, 0, 255)
+        self.color = path_colors[0]
         
     def add_subpath(self, a, b, length, chain):
         self.subpaths[a,b] = {"length":length, "chain":chain}
@@ -41,6 +47,12 @@ class Path():
         for k,v in self.subpaths.items():
             for p in v['chain']:
                 self.mapped_grid[p[0], p[1]] = self.color
+                
+                adjacent_cells = get_adjacent_cells(p[0], p[1],k=3)
+                
+                for a in adjacent_cells:
+                    self.mapped_grid[a[0], a[1]] = self.color
+                
         surfarray.blit_array(screen,self.mapped_grid)
         
     def render_path_length(self, screen, font_game):
@@ -54,7 +66,7 @@ class Path():
             if dict_key_contains_string(settlement_name, k):
                 del self.subpaths[k]
                 
-    def connect_settlements(self, selected_settlements, gm):
+    def connect_settlements(self, selected_settlements, game_map, game_sound):
     
         already_connected = False
         condition_1 = (list(selected_settlements)[0].name, list(selected_settlements)[1].name) in self.subpaths.keys()
@@ -68,12 +80,14 @@ class Path():
         
             local_path = None
     
-            local_path = find_path(gm.grid, list(selected_settlements)[
+            local_path = find_path(game_map.grid, list(selected_settlements)[
                          0].center, list(selected_settlements)[1].center)
     
             if local_path:
                 self.add_subpath(list(selected_settlements)[
                     0].name, list(selected_settlements)[
                     1].name, len(local_path), local_path)
+                    
+                game_sound.play_connect_settlement()
             else:
                 print("no_path_found")

@@ -20,10 +20,10 @@ def circleSurface(radius, color):
     # pygame.gfxdraw.filled_circle(shape_surf, radius, radius, radius, color)
     return shape_surf
 
-def update_selected_settlements(selected_settlements, global_path, gm):
+def update_selected_settlements(selected_settlements, global_path, game_map, game_sound):
 
     if len(selected_settlements) == 2:
-        global_path.connect_settlements(selected_settlements, gm)
+        global_path.connect_settlements(selected_settlements, game_map, game_sound)
         for s in selected_settlements:
             s.deselect()
         selected_settlements.empty()
@@ -35,7 +35,7 @@ def update_selected_settlements(selected_settlements, global_path, gm):
 
 class Settlement(pygame.sprite.Sprite):
 
-    def __init__(self, center):
+    def __init__(self, center, game_sound):
         super().__init__()
         self.center = center
         self.color = settlement_colors[1]
@@ -47,8 +47,10 @@ class Settlement(pygame.sprite.Sprite):
         self.image = self.surf
         self.clicks = 0
         self.name = faker.city()
-        
+                
+    def placed(self, game_sound):
         print(self.name)
+        game_sound.play_place_settlement()
 
     def update(self, events):
         for event in events:

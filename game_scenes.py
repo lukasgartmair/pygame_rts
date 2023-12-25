@@ -14,17 +14,15 @@ import image
 from engine import GameState
 
 class TitleScene(SceneBase):
-    def __init__(self, game_engine, game_map, global_path):
-        super().__init__(game_engine, game_map, global_path)
+    def __init__(self, game_engine, game_map, global_path, game_sound, sprite_groups):
+        super().__init__(game_engine, game_map, global_path, game_sound, sprite_groups)
         print("Title Scene")
     
     def ProcessInput(self, events, pressed_keys):
         for event in events:
-            if event.type == pygame.KEYDOWN:
-                print("here")
-                if event.key == pygame.K_RETURN:
-                    self.SwitchToScene(GameScene(self.game_engine, self.game_map, self.global_path))
-    
+            if (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN) or(event.type == pygame.MOUSEBUTTONDOWN and event.button == 1):
+                self.SwitchToScene(GameScene(self.game_engine, self.game_map, self.global_path, self.game_sound, self.sprite_groups))
+                
     def Update(self):
         pass
     
@@ -38,16 +36,10 @@ class TitleScene(SceneBase):
         screen.blit(text, (20, 50))
 
 class GameScene(SceneBase):
-    def __init__(self, game_engine, game_map, global_path):
-        super().__init__(game_engine, game_map, global_path)
+    def __init__(self, game_engine, game_map, global_path, game_sound, sprite_groups):
+        super().__init__(game_engine, game_map, global_path, game_sound, sprite_groups)
         print("Game Scene")
-
-        self.global_path = global_path
-        self.game_engine = game_engine    
-        self.game_map = game_map
-        self.settlements = pygame.sprite.Group()
-        self.all_sprites = pygame.sprite.Group()
-        self.selected_settlements = pygame.sprite.Group()
+        game_sound.play_background_music_1()
         
     def ProcessInput(self, events, pressed_keys):
         
@@ -61,18 +53,19 @@ class GameScene(SceneBase):
                     if s.rect.collidepoint(mouse_position[0],mouse_position[1]):
                         settlement_clicked = True
                         
-                if not settlement_clicked and self.game_engine.tokens_available > 0:
+                if not settlement_clicked and self.game_engine.settlements_available > 0:
     
                     valid_placement = self.game_map.check_valid_village_placement(mouse_position)
                     if valid_placement:
                         new_settlement = settlement.Settlement(
-                            mouse_position)
+                            mouse_position, self.game_sound)
                         overlap =  pygame.sprite.spritecollideany(new_settlement, self.settlements)
                         if not overlap:
-                            token_placed = self.game_engine.place_token()
-                            if token_placed:
+                            settlement_placed = self.game_engine.place_settlement()
+                            if settlement_placed:
                                 self.settlements.add(new_settlement)
                                 self.all_sprites.add(new_settlement)
+                                new_settlement.placed(self.game_sound)
                         else:
                             new_settlement.kill()
     
@@ -86,36 +79,40 @@ class GameScene(SceneBase):
                 removed = s.check_removal(events)
                 if removed:
                     self.global_path.remove_subpath(s.name)
-                    self.game_engine.remove_token()
+                    self.game_engine.remove_settlement()
                     
-            self.selected_settlements = settlement.update_selected_settlements(self.selected_settlements, self.global_path, self.game_map)
+            self.selected_settlements = settlement.update_selected_settlements(self.selected_settlements, self.global_path, self.game_map, self.game_sound)
     
-            self.game_engine.check_win_condition()
+            for event in events:
+                if (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN):
+                    self.game_engine.game_ended_by_player()
     
         self.settlements.update(events)
         
     def Update(self):
         if self.game_engine.state == GameState.ENDED:
-            self.SwitchToScene(EndScene(self.game_engine, self.game_map, self.global_path))
+            self.SwitchToScene(EndScene(self.game_engine, self.game_map, self.global_path, self.game_sound, self.sprite_groups))
     
     def Render(self, screen, game_font):
         surfarray.blit_array(screen, self.game_map.mapped_grid)
         self.global_path.render(self.game_map, screen)
         self.global_path.render_path_length(screen, game_font)
         self.settlements.draw(screen)
-        self.game_engine.render_token_count(screen, game_font)
+        self.game_engine.render_settlement_count(screen, game_font)
 
         
 class EndScene(SceneBase):
-    def __init__(self, game_engine, game_map, global_path):
-        super().__init__(game_engine, game_map, global_path)
+    def __init__(self, game_engine, game_map, global_path, game_sound, sprite_groups):
+        super().__init__(game_engine, game_map, global_path, game_sound, sprite_groups)
+        
+        self.game_map.mapped_grid = image.invert_grid(self.game_map.mapped_grid)
         print("End Scene")
 
     def ProcessInput(self, events, pressed_keys):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    self.SwitchToScene(TitleScene())
+                    self.SwitchToScene(TitleScene(self.game_engine, self.game_map, self.global_path, self.game_sound, self.sprite_groups))
                     
     def Update(self):
         pass
@@ -125,4 +122,4 @@ class EndScene(SceneBase):
         self.global_path.render(self.game_map, screen)
         self.global_path.render_path_length(screen, game_font)
         self.settlements.draw(screen)
-        self.game_engine.render_token_count(screen, game_font)
+        self.game_engine.render_settlement_count(screen, game_font)

@@ -3,7 +3,7 @@ from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 from pathfinding.core.diagonal_movement import DiagonalMovement
 
-TIME_LIMIT = 20
+TIME_LIMIT = 30
 
 def fix_matrix_rotatrion(matrix):
     matrix = np.rot90(matrix,k=3)

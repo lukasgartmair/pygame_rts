@@ -19,29 +19,32 @@ class GameEngine():
 
         self.state = None
         self.currentPlayer = None
-        self.tokens = 5
-        self.tokens_available = self.tokens
+        self.settlements = 5
+        self.settlements_available = self.settlements
 
         self.state = GameState.PLAYING
         
-    def get_tokens_availabe(self):
-        return self.tokens_available
+    def get_settlements_availabe(self):
+        return self.settlements_available
     
-    def remove_token(self):
-        self.tokens_available += 1
+    def remove_settlement(self):
+        self.settlements_available += 1
     
-    def place_token(self):
-        if self.tokens_available > 0:
-            self.tokens_available -= 1
+    def place_settlement(self):
+        if self.settlements_available > 0:
+            self.settlements_available -= 1
             return True
         else:
             return False
         
     def check_win_condition(self):
-        if self.tokens_available == 0:
+        if self.settlements_available == 0:
             self.state = GameState.ENDED
+            
+    def game_ended_by_player(self):
+        self.state = GameState.ENDED
     
-    def render_token_count(self, screen, font_game):
+    def render_settlement_count(self, screen, font_game):
         text = font_game.render("cities left to place: " +
-                           str(self.get_tokens_availabe()), True, font_game.text_color)
+                           str(self.get_settlements_availabe()), True, font_game.text_color)
         screen.blit(text, (SCREEN_WIDTH*0.1, SCREEN_HEIGHT*0.1))
