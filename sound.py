@@ -36,4 +36,4 @@ class Sound():
     def play_background_music_1(self):
        
         background_music_1_path = "sounds/background_music_1.wav"
-        play_sound(background_music_1_path, loop=-1)
+        #play_sound(background_music_1_path, loop=-1)

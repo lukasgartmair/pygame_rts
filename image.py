@@ -7,20 +7,14 @@ Created on Sun Dec 24 23:48:08 2023
 """
 
 import pygame
-import numpy as np
 import os
 
 def invert_color(color):
-    red=color[0]
-    green=color[1]
-    blue=color[2]
-    inverted_color= (255-red,255-green,255-blue)
-    return inverted_color
+    return (255-color[0],255-color[1],255-color[2])
 
 def invert_grid(grid):
     inverted_grid = grid.copy()
-    inverted_grid = 255-inverted_grid
-    return inverted_grid
+    return 255-inverted_grid
 
 _image_library = {}
 def get_image(path):
@@ -32,9 +26,23 @@ def get_image(path):
                 _image_library[path] = image
         return image
 
-
+def load_settlement_images(name):
+    path = 'images/'
+    filenames = next(os.walk("images"), (None, None, []))[2]
+    filenames_filtered = [f for f in filenames if f.startswith(name)]
+    pictures = []
+    select_picture = None
+    for f in filenames_filtered:
+        if f.endswith("night.png"):
+            print(True)
+            select_picture = get_image(path+f)
+        if not f.endswith("night.png"):
+            pictures.append(get_image(path+f))
+            
+    return pictures, select_picture
+    
 def load_title_screen_background(screen):
-    title_screen_bg_path = 'images/start_background.png'
-    background = get_image(title_screen_bg_path)
-    background = pygame.transform.smoothscale(background, screen.get_size())
-    return background
+    path = 'images/start_background.png'
+    picture = get_image(path)
+    picture = pygame.transform.smoothscale(picture, screen.get_size())
+    return picture

@@ -8,7 +8,6 @@ Created on Sun Dec 17 12:34:47 2023
 
 import pygame
 import sys
-
 import game_map
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 import engine
