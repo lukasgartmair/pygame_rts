@@ -6,7 +6,7 @@ Created on Sun Dec 24 23:56:22 2023
 @author: lukasgartmair
 """
 
-from pathing import find_path
+from pathing import PathFinder
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 import pygame.surfarray as surfarray
 from colors import path_colors
@@ -34,6 +34,7 @@ class Path:
         self.subpaths = {}
         self.mapped_grid = game_map.mapped_grid.copy()
         self.color = path_colors[0]
+        self.pathfinder = PathFinder()
 
     def add_subpath(self, a, b, length, chain):
         self.subpaths[a, b] = {"length": length, "chain": chain}
@@ -49,7 +50,6 @@ class Path:
     def remove_perturbation_keys(self):
 
         for k,v in list(self.subpaths.items()):
-            print(k)
             if (k[1],k[0]) in self.subpaths.keys():
                 del self.subpaths[k[1],k[0]]
 
@@ -94,7 +94,7 @@ class Path:
 
             local_path = None
 
-            local_path = find_path(
+            local_path = self.pathfinder.find_path(
                 game_map.grid, settlement_0.center, settlement_1.center
             )
 
@@ -106,6 +106,8 @@ class Path:
                 settlement_1.connected()
 
                 game_sound.play_connect_settlement()
+                
+                print("cities connected")
             else:
                 print("no_path_found")
                 settlement_0.deselect()

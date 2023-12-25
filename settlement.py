@@ -41,7 +41,7 @@ def update_selected_settlements(
 
 
 class Settlement(pygame.sprite.Sprite):
-    def __init__(self, center, game_sound):
+    def __init__(self, center, game_sound, game_trade):
         super().__init__()
         self.center = center
         self.radius = 10
@@ -71,7 +71,21 @@ class Settlement(pygame.sprite.Sprite):
         self.image_index = 0
         self.hover = False
         
-        self.trade_stats = {"gold":random.randint(1,11), "silver" : random.randint(1,11)}
+        self.game_trade = game_trade
+        self.trading_goods = {}
+        self.trading_stats = {"total":0}
+        self.initialize_trading_goods()
+        
+    def update_trading_stats(self):
+        self.trading_stats["total"] = sum(self.trading_goods.values())
+        
+    def initialize_trading_goods(self):
+        trading_goods = {}
+        n = random.randint(1,len(self.game_trade.possible_trading_goods))
+        trading_goods = sorted(random.sample(self.game_trade.possible_trading_goods,n))
+            
+        for tg in trading_goods:
+            self.trading_goods[tg] = random.randint(1, 5)
 
     def next_image(self):
         if self.image_index < len(self.images) - 1:
@@ -83,7 +97,6 @@ class Settlement(pygame.sprite.Sprite):
         self.surf = self.image
 
     def placed(self, game_sound):
-        print(self.name)
         game_sound.play_place_settlement()
 
     def connected(self):
@@ -91,6 +104,9 @@ class Settlement(pygame.sprite.Sprite):
         self.deselect()
 
     def update(self, events):
+        
+        self.update_trading_stats()
+        
         for event in events:
             if event.type == pygame.MOUSEBUTTONUP:
                 if self.rect.collidepoint(event.pos):
@@ -103,6 +119,7 @@ class Settlement(pygame.sprite.Sprite):
                     self.clicks += 1
                     
         self.check_hover()
+
 
     def check_removal(self, events):
         for event in events:
@@ -133,13 +150,22 @@ class Settlement(pygame.sprite.Sprite):
         offset = 25
         pygame.draw.rect(screen, ((settlement_stats_colors[0])), pygame.Rect(SCREEN_WIDTH-width, SCREEN_HEIGHT-height, width, height))        
         formatted_stats = []
-        for k,v in self.trade_stats.items():
+        for k,v in self.trading_goods.items():
             formatted_stats.append(k + " : " + str(v))
         off = 0
         for f in formatted_stats:
             text = game_font.render(f, True, (30, 0, 0))
             screen.blit(text, (SCREEN_WIDTH-width, SCREEN_HEIGHT-height+off))
             off += offset
+            
+        f = "-----------------"
+        text = game_font.render(f, True, (30, 0, 0))
+        screen.blit(text, (SCREEN_WIDTH-width, SCREEN_HEIGHT-height+off))
+        off += offset
+        f = "TOTAL : " + str(self.trading_stats["total"])
+        text = game_font.render(f, True, (30, 0, 0))
+        screen.blit(text, (SCREEN_WIDTH-width, SCREEN_HEIGHT-height+off))
+        off += offset
 
     def check_hover(self):
         self.hover = False

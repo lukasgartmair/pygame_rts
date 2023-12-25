@@ -18,6 +18,8 @@ import path
 import sound
 from sprite_group import SpriteGroup
 
+name = "City Trade"
+
 gm = game_map.GameMap()
 
 ge = engine.GameEngine()
@@ -30,12 +32,11 @@ font_game = game_font.GameFont(game_font.font_style, game_font.font_size)
 
 sprite_groups = SpriteGroup().get_sprite_groups()
 
-
 def run_game(starting_scene):
     pygame.init()
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("City Connector")
+    pygame.display.set_caption(name)
     clock = pygame.time.Clock()
 
     active_scene = starting_scene

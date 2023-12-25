@@ -52,14 +52,15 @@ class GameScene(SceneBase):
         super().__init__(game_engine, game_map, global_path, game_sound, sprite_groups)
         print("Game Scene")
         game_sound.play_background_music_1()
-        custom_events.register_trade()
-        self.game_trade = trade.Trade(self.global_path)
+        custom_events.TRADE = custom_events.register_trade()
+        self.game_trade = trade.Trade(self.settlements, self.global_path)
         
     def ProcessInput(self, events, pressed_keys):
         for event in events:
             
-            if event.type == custom_events.TRADE:
-                self.game_trade.perform_trade()
+            if len(self.global_path.subpaths) >= 1: 
+                if event.type == custom_events.TRADE:
+                    self.game_trade.perform_trade()
                 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_position = pygame.mouse.get_pos()
@@ -84,7 +85,7 @@ class GameScene(SceneBase):
                     )
                     if valid_placement:
                         new_settlement = settlement.Settlement(
-                            mouse_position, self.game_sound
+                            mouse_position, self.game_sound, self.game_trade
                         )
                         overlap = pygame.sprite.spritecollideany(
                             new_settlement, self.settlements
@@ -122,6 +123,8 @@ class GameScene(SceneBase):
                     self.game_engine.game_ended_by_player()
 
         self.settlements.update(events)
+        
+        self.game_engine.check_win_condition(self.settlements)
 
     def Update(self):
         if self.game_engine.state == GameState.ENDED:
@@ -151,6 +154,14 @@ class EndScene(SceneBase):
 
         self.game_map.mapped_grid = image.invert_grid(self.game_map.mapped_grid)
         print("End Scene")
+        trading_good_sums = []
+        for s in self.settlements:
+            sum_goods = sum(s.trading_goods.values())
+            trading_good_sums.append(sum_goods)
+            print(s.trading_goods)
+
+        print(max(trading_good_sums, default=0))
+        
 
     def ProcessInput(self, events, pressed_keys):
         for event in events:

@@ -9,7 +9,7 @@ Created on Mon Dec 25 14:05:38 2023
 import pygame
 import random
 
-TRADE_EVENT = None
+TRADE = None
 SECOND = None
 
 def register_trade():

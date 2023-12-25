@@ -9,18 +9,17 @@ Created on Sun Dec 17 17:29:36 2023
 from enum import Enum
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
-
 class GameState(Enum):
     PLAYING = 0
     ENDED = 1
-
 
 class GameEngine:
     def __init__(self):
         self.state = None
         self.currentPlayer = None
-        self.settlements = 5
+        self.settlements = 10
         self.settlements_available = self.settlements
+        self.win_condition = 15
 
         self.state = GameState.PLAYING
 
@@ -37,10 +36,16 @@ class GameEngine:
         else:
             return False
 
-    def check_win_condition(self):
-        if self.settlements_available == 0:
-            self.state = GameState.ENDED
+    def check_win_condition(self, settlements):
+        trading_good_sums = []
+        for s in settlements:
+            sum_goods = sum(s.trading_goods.values())
+            trading_good_sums.append(sum_goods)
+            if sum_goods >= self.win_condition:
+                self.state = GameState.ENDED
 
+        # print(max(trading_good_sums, default=0))
+        
     def game_ended_by_player(self):
         self.state = GameState.ENDED
 

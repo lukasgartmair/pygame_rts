@@ -7,4 +7,4 @@ Created on Sun Dec 17 12:39:07 2023
 """
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 600
-FPS = 10
+FPS = 30
