@@ -40,7 +40,6 @@ def load_settlement_images(name):
     select_picture = None
     for f in filenames_filtered:
         if f.endswith("night.png"):
-            print(True)
             select_picture = get_image(path + f)
         if not f.endswith("night.png"):
             pictures.append(get_image(path + f))

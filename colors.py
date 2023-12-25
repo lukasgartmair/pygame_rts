@@ -12,4 +12,4 @@ path_colors = {0: (21, 21, 21)}
 
 terrain_colors = {0: (0, 21, 36), 1: (120, 41, 15)}
 
-settlement_colors = {0: (255, 236, 209)}
+settlement_stats_colors = {0: (255, 236, 209)}

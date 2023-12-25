@@ -37,14 +37,24 @@ class Path:
 
     def add_subpath(self, a, b, length, chain):
         self.subpaths[a, b] = {"length": length, "chain": chain}
+        
+        self.remove_perturbation_keys()
 
     def get_total_length(self):
         self.length = 0
         for k, v in self.subpaths.items():
             self.length += int(v["length"])
         return self.length
+    
+    def remove_perturbation_keys(self):
+
+        for k,v in list(self.subpaths.items()):
+            print(k)
+            if (k[1],k[0]) in self.subpaths.keys():
+                del self.subpaths[k[1],k[0]]
 
     def render(self, game_map, screen):
+        self.remove_perturbation_keys()
         self.mapped_grid = game_map.mapped_grid.copy()
         for k, v in self.subpaths.items():
             for p in v["chain"]:

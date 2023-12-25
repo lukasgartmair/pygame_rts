@@ -7,10 +7,12 @@ Created on Sun Dec 17 14:15:39 2023
 """
 
 import pygame
-from colors import settlement_colors
+from colors import settlement_stats_colors
 from faker import Faker
 import pygame.gfxdraw
 import image
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT
+import random
 
 faker = Faker()
 
@@ -42,10 +44,9 @@ class Settlement(pygame.sprite.Sprite):
     def __init__(self, center, game_sound):
         super().__init__()
         self.center = center
-        self.color = settlement_colors[0]
         self.radius = 10
         self.images, self.selected_image = image.load_settlement_images("settlement_1")
-        self.scale_factor = 0.1
+        self.scale_factor = 0.15
         self.images = [
             pygame.transform.scale(
                 i,
@@ -68,6 +69,9 @@ class Settlement(pygame.sprite.Sprite):
         self.clicks = 0
         self.name = faker.city()
         self.image_index = 0
+        self.hover = False
+        
+        self.trade_stats = {"gold":random.randint(1,11), "silver" : random.randint(1,11)}
 
     def next_image(self):
         if self.image_index < len(self.images) - 1:
@@ -97,6 +101,8 @@ class Settlement(pygame.sprite.Sprite):
                             self.next_image()
 
                     self.clicks += 1
+                    
+        self.check_hover()
 
     def check_removal(self, events):
         for event in events:
@@ -120,3 +126,24 @@ class Settlement(pygame.sprite.Sprite):
             self.select()
         else:
             self.deselect()
+            
+    def render_settlement_stats(self, screen, game_font):
+        width = int(SCREEN_WIDTH//4)
+        height = int(SCREEN_HEIGHT//4)
+        offset = 25
+        pygame.draw.rect(screen, ((settlement_stats_colors[0])), pygame.Rect(SCREEN_WIDTH-width, SCREEN_HEIGHT-height, width, height))        
+        formatted_stats = []
+        for k,v in self.trade_stats.items():
+            formatted_stats.append(k + " : " + str(v))
+        off = 0
+        for f in formatted_stats:
+            text = game_font.render(f, True, (30, 0, 0))
+            screen.blit(text, (SCREEN_WIDTH-width, SCREEN_HEIGHT-height+off))
+            off += offset
+
+    def check_hover(self):
+        self.hover = False
+        if self.rect.collidepoint(pygame.mouse.get_pos()):
+            self.hover = True
+        else:
+            self.hover = False

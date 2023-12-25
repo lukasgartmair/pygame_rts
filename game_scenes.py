@@ -12,7 +12,8 @@ import pygame.surfarray as surfarray
 import settlement
 import image
 from engine import GameState
-
+import custom_events
+import trade
 
 class TitleScene(SceneBase):
     def __init__(self, game_engine, game_map, global_path, game_sound, sprite_groups):
@@ -51,9 +52,15 @@ class GameScene(SceneBase):
         super().__init__(game_engine, game_map, global_path, game_sound, sprite_groups)
         print("Game Scene")
         game_sound.play_background_music_1()
-
+        custom_events.register_trade()
+        self.game_trade = trade.Trade(self.global_path)
+        
     def ProcessInput(self, events, pressed_keys):
         for event in events:
+            
+            if event.type == custom_events.TRADE:
+                self.game_trade.perform_trade()
+                
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_position = pygame.mouse.get_pos()
 
@@ -132,9 +139,11 @@ class GameScene(SceneBase):
         surfarray.blit_array(screen, self.game_map.mapped_grid)
         self.global_path.render(self.game_map, screen)
         self.global_path.render_path_length(screen, game_font)
+        for s in self.settlements:
+            if s.hover:
+                s.render_settlement_stats(screen, game_font)
         self.settlements.draw(screen)
         self.game_engine.render_settlement_count(screen, game_font)
-
 
 class EndScene(SceneBase):
     def __init__(self, game_engine, game_map, global_path, game_sound, sprite_groups):

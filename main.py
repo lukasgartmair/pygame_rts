@@ -9,7 +9,7 @@ Created on Sun Dec 17 12:34:47 2023
 import pygame
 import sys
 import game_map
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 import engine
 import game_font
 import unittest
@@ -74,7 +74,7 @@ def run_game(starting_scene):
         active_scene = active_scene.next
 
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(FPS)
 
 
 if __name__ == "__main__":
