@@ -36,19 +36,28 @@ def load_settlement_images(name):
     path = "images/"
     filenames = next(os.walk("images"), (None, None, []))[2]
     filenames_filtered = [f for f in filenames if f.startswith(name)]
-    pictures = []
-    select_picture = None
+    images = {}
+    
     for f in filenames_filtered:
+        if f.endswith("blue.png"):
+            images["main_image"] = get_image(path + f)
         if f.endswith("night.png"):
-            select_picture = get_image(path + f)
-        if not f.endswith("night.png"):
-            pictures.append(get_image(path + f))
+            images["select_image"] = get_image(path + f)
+        if f.endswith("gold.png"):
+            images["silver_image"] = get_image(path + f)
+        if f.endswith("wood.png"):
+            images["wood_image"] = get_image(path + f)
+        if f.endswith("red.png"):
+            images["rubin_image"] = get_image(path + f)
 
-    return pictures, select_picture
+        # if not f.endswith("night.png"):
+        #     images.append(get_image(path + f))
+
+    return images
 
 
 def load_title_screen_background(screen):
     path = "images/start_background.png"
-    picture = get_image(path)
-    picture = pygame.transform.smoothscale(picture, screen.get_size())
-    return picture
+    image = get_image(path)
+    image = pygame.transform.smoothscale(image, screen.get_size())
+    return image

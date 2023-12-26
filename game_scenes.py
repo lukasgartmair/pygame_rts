@@ -105,11 +105,6 @@ class GameScene(SceneBase):
             for s in self.settlements:
                 if s.selected == True:
                     self.selected_settlements.add(s)
-            for s in self.selected_settlements:
-                removed = s.check_removal(events)
-                if removed:
-                    self.global_path.remove_subpath(s.name)
-                    self.game_engine.remove_settlement()
 
             self.selected_settlements = settlement.update_selected_settlements(
                 self.selected_settlements,
@@ -122,7 +117,7 @@ class GameScene(SceneBase):
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     self.game_engine.game_ended_by_player()
 
-        self.settlements.update(events)
+        self.settlements.update(events, self.global_path, self.game_engine)
         
         self.game_engine.check_win_condition(self.settlements)
 

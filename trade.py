@@ -12,12 +12,8 @@ class Trade():
         self.settlements = settlements
         self.global_path = global_path
         
-        self.possible_trading_goods = ["gold","silver","wood","spices"]
+        self.possible_trading_goods = sorted(["gold","silver","wood","rubins"])
         #self.possible_trading_goods = ["gold","silver"]
-        
-    def remove_trading_good(self, settlement, out_of_stock):
-        del settlement.trading_goods[out_of_stock]
-        "deleted"
         
     def transaction(self, settlement_0, settlement_1, need, verbose=False):
         if verbose:
@@ -51,7 +47,6 @@ class Trade():
             return True
 
         if settlement_1.trading_goods[need] == 0:
-            self.remove_trading_good(settlement_1, need)
             
             if verbose:
                 print("after transaction")

@@ -19,7 +19,7 @@ class GameEngine:
         self.currentPlayer = None
         self.settlements = 10
         self.settlements_available = self.settlements
-        self.win_condition = 15
+        self.win_condition = 100
 
         self.state = GameState.PLAYING
 

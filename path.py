@@ -87,10 +87,8 @@ class Path:
         condition_2 = (settlement_1.name, settlement_0.name) in self.subpaths.keys()
         if condition_1 or condition_2:
             already_connected = True
-            print("already connected")
 
         if not already_connected:
-            print("connecting cities")
 
             local_path = None
 
@@ -102,8 +100,8 @@ class Path:
                 self.add_subpath(
                     settlement_0.name, settlement_1.name, len(local_path), local_path
                 )
-                settlement_0.connected()
-                settlement_1.connected()
+                settlement_0.got_connected()
+                settlement_1.got_connected()
 
                 game_sound.play_connect_settlement()
                 
