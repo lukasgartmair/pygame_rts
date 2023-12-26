@@ -43,12 +43,14 @@ def load_settlement_images(name):
             images["main_image"] = get_image(path + f)
         if f.endswith("night.png"):
             images["select_image"] = get_image(path + f)
-        if f.endswith("gold.png"):
+        if f.endswith("brass.png"):
+            images["brass_image"] = get_image(path + f)
+        if f.endswith("silver.png"):
             images["silver_image"] = get_image(path + f)
         if f.endswith("wood.png"):
             images["wood_image"] = get_image(path + f)
         if f.endswith("red.png"):
-            images["rubin_image"] = get_image(path + f)
+            images["rubins_image"] = get_image(path + f)
 
         # if not f.endswith("night.png"):
         #     images.append(get_image(path + f))

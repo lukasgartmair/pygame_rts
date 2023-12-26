@@ -64,20 +64,18 @@ class GameScene(SceneBase):
                 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_position = pygame.mouse.get_pos()
+                
+                any_settlement_clicked = False
+                any_settlement_clicked = any([s.check_if_clicked(events) for s in self.settlements])
 
-                settlement_clicked = False
-                for s in self.settlements:
-                    if s.rect.collidepoint(mouse_position[0], mouse_position[1]):
-                        settlement_clicked = True
-
-                if not settlement_clicked and len(self.selected_settlements) == 1:
+                if not any_settlement_clicked and len(self.selected_settlements) == 1:
                     for s in self.settlements:
                         s.deselect()
                     self.selected_settlements.empty()
                     continue
 
                 if (
-                    not settlement_clicked
+                    not any_settlement_clicked
                     and self.game_engine.settlements_available > 0
                 ):
                     valid_placement = self.game_map.check_valid_village_placement(
@@ -105,6 +103,8 @@ class GameScene(SceneBase):
             for s in self.settlements:
                 if s.selected == True:
                     self.selected_settlements.add(s)
+                    
+                s.update_number_of_other_selected_settlements(self.selected_settlements)
 
             self.selected_settlements = settlement.update_selected_settlements(
                 self.selected_settlements,
