@@ -16,30 +16,6 @@ import random
 
 faker = Faker()
 
-
-def circleSurface(radius, color):
-    shape_surf = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
-    pygame.draw.circle(shape_surf, color, (radius, radius), radius)
-    # pygame.gfxdraw.aacircle(shape_surf, radius, radius, radius, color)
-    # pygame.gfxdraw.filled_circle(shape_surf, radius, radius, radius, color)
-    return shape_surf
-
-
-def update_selected_settlements(
-    selected_settlements, global_path, game_map, game_sound
-):
-    if len(selected_settlements) == 2:
-        global_path.connect_settlements(
-            selected_settlements, game_map, game_sound)
-        for s in selected_settlements:
-            s.deselect()
-        selected_settlements.empty()
-    elif len(selected_settlements) > 2:
-        selected_settlements.pop()
-    else:
-        pass
-    return selected_settlements
-
 class Settlement(pygame.sprite.Sprite):
     def __init__(self, center, game_sound, game_trade):
         super().__init__()
@@ -107,18 +83,15 @@ class Settlement(pygame.sprite.Sprite):
         self.preferred_good_index += 1
         if self.preferred_good_index >= len(list(self.trading_goods.keys()))+1:
             self.preferred_good_index = 0
-            print("here2")
         
         if self.preferred_good_index == len(list(self.trading_goods.keys())):
             self.select()
-            print("here1")
             return
             
         self.preferred_good = self.game_trade.possible_trading_goods[self.preferred_good_index]
         self.image = self.images[self.preferred_good+"_image"]
         if self.selected:
             self.deselect()
-        print("here3")
             
         print(self.preferred_good_index)
 
@@ -181,8 +154,8 @@ class Settlement(pygame.sprite.Sprite):
         return False
                     
     def is_clicked(self):
-        if self.clicks > 0:
-            self.callback()
+        # if self.clicks > 0:
+        self.callback()
         self.clicks += 1
 
     def check_if_to_remove(self, events):
@@ -202,7 +175,7 @@ class Settlement(pygame.sprite.Sprite):
             game_engine.remove_settlement()
 
     def update(self, events, global_path, game_engine):
-
+        
         self.update_trading_stats()
 
         self.check_hover()
@@ -223,28 +196,33 @@ class Settlement(pygame.sprite.Sprite):
     def deselect(self):
         self.selected = False
         
-        if self.connected and self.preferred_good != "":
-            self.preferred_good_index -= 1
-            self.update_preferred_good()
-        else:
-            self.image = self.images["main_image"]
+        # if self.connected and self.preferred_good != "":
+        #     self.preferred_good_index -= 1
+        #     self.update_preferred_good()
+        # else:
+        self.image = self.images["main_image"]
             
     def on_click(self):
         
-        if not self.connected and not self.selected:
-            self.select()
-    
-        elif not self.connected and self.selected:
+        if self.selected:
             self.deselect()
-        
-        elif self.connected and self.number_of_other_selected_settlements == 0:
-            self.update_preferred_good()
-            self.deselect()
-            
-        elif self.connected and self.number_of_other_selected_settlements == 1:
-            pass
         else:
-            self.deselect()
+            self.select()
+        
+        # if not self.connected and not self.selected:
+        #     self.select()
+    
+        # elif not self.connected and self.selected:
+        #     self.deselect()
+        
+        # elif self.connected and self.number_of_other_selected_settlements == 0:
+        #     self.update_preferred_good()
+        #     self.deselect()
+            
+        # elif self.connected and self.number_of_other_selected_settlements == 1:
+        #     pass
+        # else:
+        #     self.deselect()
 
 
     def check_hover(self):

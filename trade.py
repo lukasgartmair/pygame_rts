@@ -34,7 +34,6 @@ class Trade():
             self.global_assets[p]["price"] = random.randint(1,10)
     
     def update_global_assets(self, trading_goods):
-        print("here")
         for k,v in trading_goods.items():
             self.global_assets[k]["magnitude"] = 0
             self.global_assets[k]["magnitude"] += v
