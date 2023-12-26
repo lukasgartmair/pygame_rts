@@ -154,25 +154,13 @@ class Settlement(pygame.sprite.Sprite):
         return False
                     
     def is_clicked(self):
-        # if self.clicks > 0:
         self.callback()
         self.clicks += 1
 
-    def check_if_to_remove(self, events):
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DELETE:
-                    if self.selected:
-                        self.kill()
-                        return True
-        return False
-
-    def check_if_removed(self, events, global_path, game_engine):
-
-        removed = self.check_if_to_remove(events)
-        if removed:
-            global_path.remove_subpath(self.name)
-            game_engine.remove_settlement()
+    def remove(self, global_path, game_engine):
+        self.kill()
+        global_path.remove_subpath(self.name)
+        game_engine.remove_settlement()
 
     def update(self, events, global_path, game_engine):
         
@@ -186,38 +174,41 @@ class Settlement(pygame.sprite.Sprite):
         if self.connected:
             self.check_if_still_connected(global_path)
 
-        if self.selected:
-            self.check_if_removed(events, global_path, game_engine)
-
     def select(self):
-        self.selected = True
-        self.image = self.images["select_image"]
+        if self.number_of_other_selected_settlements < 2:
+            self.selected = True
+            self.image = self.images["select_image"]
+        else:
+            print("not possible")
 
     def deselect(self):
         self.selected = False
-        
-        # if self.connected and self.preferred_good != "":
-        #     self.preferred_good_index -= 1
-        #     self.update_preferred_good()
-        # else:
         self.image = self.images["main_image"]
+
+    def deselect_connected(self):
+        self.selected = False
+        self.preferred_good_index -= 1
+        self.update_preferred_good()
             
     def on_click(self):
         
-        if self.selected:
-            self.deselect()
-        else:
-            self.select()
-        
-        # if not self.connected and not self.selected:
+        # if self.selected:
+        #     self.deselect()
+        # else:
         #     self.select()
-    
-        # elif not self.connected and self.selected:
-        #     self.deselect()
+            
+        if not self.connected and self.selected:
+            self.deselect()
+        elif not self.connected and not self.selected:
+            self.select()
+        elif self.connected and not self.selected:
+            self.update_preferred_good()
+        elif self.connected and self.selected:
+            self.update_preferred_good()
         
-        # elif self.connected and self.number_of_other_selected_settlements == 0:
-        #     self.update_preferred_good()
-        #     self.deselect()
+        elif self.connected and self.number_of_other_selected_settlements == 0:
+            self.update_preferred_good()
+            self.deselect()
             
         # elif self.connected and self.number_of_other_selected_settlements == 1:
         #     pass

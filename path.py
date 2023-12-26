@@ -104,9 +104,10 @@ class Path:
                 settlement_1.got_connected()
 
                 game_sound.play_connect_settlement()
-                
-                print("cities connected")
+
             else:
                 print("no_path_found")
                 settlement_0.deselect()
                 settlement_1.deselect()
+                
+        return already_connected

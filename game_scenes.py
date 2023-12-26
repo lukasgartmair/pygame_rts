@@ -14,6 +14,7 @@ import image
 from engine import GameState
 import custom_events
 import trade
+import random
 
 
 class TitleScene(SceneBase):
@@ -112,14 +113,17 @@ class GameScene(SceneBase):
                  
     def check_selected_settlements_for_connections(self):
        
+        already_connected = False
         if len(self.selected_settlements) == 2:
-            self.global_path.connect_settlements(
+            already_connected = self.global_path.connect_settlements(
                 self.selected_settlements, self.game_map, self.game_sound)
             for s in self.selected_settlements:
-                s.deselect()
+                if not already_connected:
+                    s.deselect()
+                else:
+                    print("here")
+                    s.deselect_connected()
             self.selected_settlements.empty()
-        elif len(self.selected_settlements) > 2:
-            self.selected_settlements.pop()
         else:
             pass
 
@@ -130,12 +134,20 @@ class GameScene(SceneBase):
                 if event.type == custom_events.TRADE:
                     self.game_trade.perform_trade()
                     
-            self.check_selected_settlements_for_connections()           
+            self.check_selected_settlements_for_connections()
+            self.settlements.update(events, self.global_path, self.game_engine)
+            
+            for event in events:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_DELETE:
+                        if len(self.selected_settlements):
+                            for s in self.selected_settlements:
+                                s.remove(self.global_path, self.game_engine)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                
-                self.settlements.update(events, self.global_path, self.game_engine)
-                
+
+                # print("clicked"+str(random.randint(0,1000000)))
+
                 mouse_position = pygame.mouse.get_pos()
                 any_settlement_clicked = self.check_any_settlement_clicked(events)
                 if not any_settlement_clicked and len(self.selected_settlements) in [1,2]:
