@@ -37,7 +37,7 @@ def load_settlement_images(name):
     filenames = next(os.walk("images"), (None, None, []))[2]
     filenames_filtered = [f for f in filenames if f.startswith(name)]
     images = {}
-    
+
     for f in filenames_filtered:
         if f.endswith("blue.png"):
             images["main_image"] = get_image(path + f)

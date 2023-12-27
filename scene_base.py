@@ -6,6 +6,7 @@ Created on Sat Dec 23 20:10:50 2023
 @author: lukasgartmair
 """
 
+
 class SceneBase:
     def __init__(self, game_engine=None, game_map=None, global_path=None, game_sound=None, sprite_groups=None):
         self.next = self

@@ -12,12 +12,12 @@ import image
 import scene_manager
 import pygame.surfarray as surfarray
 
+
 class EndScene(SceneBase):
     def __init__(self, *kargs):
         super().__init__(*kargs)
-        
-        self.game_map.mapped_grid = image.invert_grid(
-            self.game_map.mapped_grid)
+
+        self.game_map.mapped_grid = image.invert_grid(self.game_map.mapped_grid)
         print("End Scene")
         trading_good_sums = []
         for s in self.settlements:

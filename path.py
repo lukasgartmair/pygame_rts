@@ -38,7 +38,7 @@ class Path:
 
     def add_subpath(self, a, b, length, chain):
         self.subpaths[a, b] = {"length": length, "chain": chain}
-        
+
         self.remove_perturbation_keys()
 
     def get_total_length(self):
@@ -46,12 +46,11 @@ class Path:
         for k, v in self.subpaths.items():
             self.length += int(v["length"])
         return self.length
-    
-    def remove_perturbation_keys(self):
 
-        for k,v in list(self.subpaths.items()):
-            if (k[1],k[0]) in self.subpaths.keys():
-                del self.subpaths[k[1],k[0]]
+    def remove_perturbation_keys(self):
+        for k, v in list(self.subpaths.items()):
+            if (k[1], k[0]) in self.subpaths.keys():
+                del self.subpaths[k[1], k[0]]
 
     def render(self, screen, game_map):
         self.remove_perturbation_keys()
@@ -68,16 +67,14 @@ class Path:
         surfarray.blit_array(screen, self.mapped_grid)
 
     def render_path_length(self, screen, font_game):
-        text = font_game.render(
-            "path length: " + str(self.get_total_length()), True, font_game.text_color
-        )
+        text = font_game.render("path length: " + str(self.get_total_length()), True, font_game.text_color)
         screen.blit(text, (SCREEN_WIDTH * 0.1, SCREEN_HEIGHT * 0.15))
 
     def remove_subpath(self, settlement_name):
         for k in list(self.subpaths.keys()):
             if dict_key_contains_string(settlement_name, k):
                 del self.subpaths[k]
-                
+
     def already_connected(self, selected_settlements):
         already_connected = False
         settlement_0 = selected_settlements[0]
@@ -86,37 +83,32 @@ class Path:
         condition_2 = (settlement_1.name, settlement_0.name) in self.subpaths.keys()
         if condition_1 or condition_2:
             already_connected = True
-            
+
         return already_connected
 
     def connect_settlements(self, selected_settlements, game_map, game_sound):
-        
         successfully_connected = False
-            
+
         settlement_0 = selected_settlements[0]
         settlement_1 = selected_settlements[1]
 
         local_path = None
 
-        local_path = self.pathfinder.find_path(
-            game_map.grid, settlement_0.center, settlement_1.center
-        )
+        local_path = self.pathfinder.find_path(game_map.grid, settlement_0.center, settlement_1.center)
 
         if local_path:
-            self.add_subpath(
-                settlement_0.name, settlement_1.name, len(local_path), local_path
-            )
+            self.add_subpath(settlement_0.name, settlement_1.name, len(local_path), local_path)
             settlement_0.got_connected()
             settlement_1.got_connected()
 
             game_sound.play_connect_settlement()
-            
+
             successfully_connected = True
 
         else:
             print("no_path_found")
             settlement_0.deselect()
             settlement_1.deselect()
-            
+
             successfully_connected = False
         return successfully_connected

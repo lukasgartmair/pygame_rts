@@ -12,6 +12,7 @@ from enum import Enum
 from colors import terrain_colors
 import scipy.ndimage
 
+
 class Terrains(Enum):
     EARTH = 1
     WATER = 0
@@ -23,13 +24,14 @@ walkable_terrains = [Terrains.EARTH.value]
 class Structures(Enum):
     VILLAGE = 2
 
+
 class MapGenerator:
     def __init__(self, game_map):
         self.width = game_map.width
         self.height = game_map.height
         self.grid = np.zeros((game_map.width, game_map.height))
         self.earth_water_ratio = 0.5
-        
+
     def inside_screen_boundaries(self, x, y):
         if 0 <= x < self.width and 0 <= y < self.height:
             return True

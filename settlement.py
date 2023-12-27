@@ -17,17 +17,19 @@ import camera
 
 faker = Faker()
 
+
 class Settlement(pygame.sprite.Sprite):
     def __init__(self, center, game_sound, game_trade):
         super().__init__()
         self.center = center
         self.images = image.load_settlement_images("settlement_1")
-        self.population = random.randint(1000,200000)
+        self.population = random.randint(1000, 200000)
         self.scale_factor = 0.15
         self.apply_population_to_scale()
-        self.images.update((k, pygame.transform.scale(
-            v,
-            (v.get_width() * self.scale_factor, v.get_height() * self.scale_factor))) for k, v in self.images.items())
+        self.images.update(
+            (k, pygame.transform.scale(v, (v.get_width() * self.scale_factor, v.get_height() * self.scale_factor)))
+            for k, v in self.images.items()
+        )
         self.image = self.images["main_image"]
         self.surf = self.image
         self.rect = self.surf.get_rect(center=center)
@@ -37,11 +39,11 @@ class Settlement(pygame.sprite.Sprite):
         self.name = faker.city()
         self.hover = False
         self.connected = False
-        
+
         self.settlement_goods = SettlementGoods(self, game_trade)
-        
+
     def apply_population_to_scale(self):
-        self.scale_factor = self.scale_factor * self.population ** (1. / 3)/40
+        self.scale_factor = self.scale_factor * self.population ** (1.0 / 3) / 40
 
     def check_if_still_connected(self, global_path):
         still_connected = False
@@ -53,40 +55,42 @@ class Settlement(pygame.sprite.Sprite):
 
     def render_settlement_stats(self, screen, game_font):
         screen_dimensions = camera.get_camera_screen_dimensions(screen)
-        screen_width, screen_height = screen_dimensions[0],screen_dimensions[1]
-        offset = 25
-        width = screen_width//4
-        height = screen_height - offset
-        pygame.draw.rect(screen, ((settlement_stats_colors[0])), pygame.Rect(
-            screen_width-width, screen_height-height, width, height))
+        screen_width, screen_height = screen_dimensions[0], screen_dimensions[1]
+        vertical_offset = 25
+        horizontal_offset = screen_width // 2
+        width = horizontal_offset
+        height = screen_height - vertical_offset
+        pygame.draw.rect(
+            screen, ((settlement_stats_colors[0])), pygame.Rect(screen_width - width, screen_height - height, width, height)
+        )
         off = 0
         text = game_font.render(self.name.upper(), True, (30, 0, 0))
-        screen.blit(text, (screen_width-width, screen_height-height+off))
-        off += offset
+        screen.blit(text, (screen_width - width, screen_height - height + off))
+        off += vertical_offset
         # text = game_font.render("population: " + str(self.population), True, (30, 0, 0))
         # screen.blit(text, (screen_width-width, screen_height-height+off))
         # off += offset
         f = "-----------------"
         text = game_font.render(f, True, (30, 0, 0))
-        screen.blit(text, (screen_width-width, screen_height-height+off))
-        off += offset
+        screen.blit(text, (screen_width - width, screen_height - height + off))
+        off += vertical_offset
         formatted_stats = []
         for k, v in self.trading_goods.items():
             formatted_stats.append(k + " : " + str(v))
-        
+
         for f in formatted_stats:
             text = game_font.render(f, True, (30, 0, 0))
-            screen.blit(text, (screen_width-width, screen_height-height+off))
-            off += offset
+            screen.blit(text, (screen_width - width, screen_height - height + off))
+            off += vertical_offset
 
         f = "-----------------"
         text = game_font.render(f, True, (30, 0, 0))
-        screen.blit(text, (screen_width-width, screen_height-height+off))
-        off += offset
+        screen.blit(text, (screen_width - width, screen_height - height + off))
+        off += vertical_offset
         f = "TOTAL : " + str(self.trading_stats["total"])
         text = game_font.render(f, True, (30, 0, 0))
-        screen.blit(text, (screen_width-width, screen_height-height+off))
-        off += offset
+        screen.blit(text, (screen_width - width, screen_height - height + off))
+        off += vertical_offset
 
     def placed(self, game_sound):
         game_sound.play_place_settlement()
@@ -98,21 +102,20 @@ class Settlement(pygame.sprite.Sprite):
     def got_deconnected(self):
         self.connected = False
         self.deselect()
-        
+
     def is_clicked(self, events):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.rect.collidepoint(event.pos[0],event.pos[1]):
+                if self.rect.collidepoint(event.pos[0], event.pos[1]):
                     return True
         return False
-    
+
     def remove(self, global_path, game_engine):
         self.kill()
         global_path.remove_subpath(self.name)
         game_engine.remove_settlement()
 
     def update(self, events, global_path, game_engine):
-        
         self.settlement_goods.update_trading_stats()
 
         self.check_hover()
@@ -123,7 +126,7 @@ class Settlement(pygame.sprite.Sprite):
 
         if self.connected:
             self.check_if_still_connected(global_path)
-            
+
     def check_hover(self):
         self.hover = False
         if self.rect.collidepoint(pygame.mouse.get_pos()):
@@ -134,7 +137,7 @@ class Settlement(pygame.sprite.Sprite):
     def select(self):
         self.selected = True
         self.image = self.images["select_image"]
-                
+
     def deselect(self):
         self.selected = False
         self.image = self.images["main_image"]
@@ -144,7 +147,3 @@ class Settlement(pygame.sprite.Sprite):
 
     def on_click(self):
         pass
-            
-
-
-

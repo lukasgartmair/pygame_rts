@@ -11,6 +11,7 @@ from scene_base import SceneBase
 import scene_manager
 import image
 
+
 class TitleScene(SceneBase):
     def __init__(self, *kargs):
         super().__init__(*kargs)
@@ -28,7 +29,6 @@ class TitleScene(SceneBase):
                     self.sprite_groups,
                 )
             )
-        
 
         for event in events:
             if (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN) or (

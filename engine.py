@@ -9,15 +9,17 @@ Created on Sun Dec 17 17:29:36 2023
 from enum import Enum
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
+
 class GameState(Enum):
     PLAYING = 0
     ENDED = 1
+
 
 class GameEngine:
     def __init__(self):
         self.state = None
         self.currentPlayer = None
-        self.settlements_available = 10
+        self.settlements_available = 5
         self.win_condition = 100
         self.state = GameState.PLAYING
 
@@ -43,7 +45,7 @@ class GameEngine:
                 self.state = GameState.ENDED
 
         # print(max(trading_good_sums, default=0))
-        
+
     def game_ended_by_player(self):
         self.state = GameState.ENDED
 
