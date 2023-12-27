@@ -86,7 +86,6 @@ def run_game(starting_scene):
             active_scene.RenderSecondScreen(camera_2.camera_screen, font_game)
             
         else:
-            print("here")
             screen.blit(camera_0.camera_screen,camera_0.camera.topleft)
             active_scene.ProcessInput(filtered_events, pressed_keys, camera.get_camera_screen_dimensions(camera_0.camera_screen))
             active_scene.Update()

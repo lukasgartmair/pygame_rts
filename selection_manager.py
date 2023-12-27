@@ -65,11 +65,7 @@ class SelectionManager:
             s.select()
     
         if s.selected and not s.connected and len(self.selected_settlements) == 1:
-            print("here")
             self.deselect_settlement(s)
-            
-            print(len(self.selected_settlements))
-            print(s.selected)
     
         if not s.selected and s.connected and len(self.selected_settlements) == 0:
             if len(self.selected_settlements) == 0:
