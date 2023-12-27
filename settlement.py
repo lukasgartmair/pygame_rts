@@ -125,38 +125,11 @@ class Settlement(pygame.sprite.Sprite):
     def deselect(self):
         self.selected = False
         self.image = self.images["main_image"]
-    
-    def select_connected(self):
-        self.settlement_goods.update_preferred_good()
 
-    def deselect_connected(self):
-        # self.selected = False
-        # self.preferred_good_index -= 1
-        # self.settlement_goods.update_preferred_good()
-        pass
-            
+        if self.settlement_goods.preferred_good_set:
+            self.settlement_goods.restore_last_preferred_good()
+
     def on_click(self):
-        
-        # # if self.selected:
-        # #     self.deselect()
-        # # else:
-        # #     self.select()
-            
-        # if not self.connected and self.selected:
-        #     self.deselect()
-        # elif not self.connected and not self.selected:
-        #     self.select()
-        # elif self.connected and not self.selected:
-        #     self.settlement_goods.update_preferred_good()
-        # elif self.connected and self.selected:
-        #     self.settlement_goods.update_preferred_good()
-        
-        # elif self.connected and self.number_of_other_selected_settlements == 0:
-        #     self.settlement_goods.update_preferred_good()
-        #     self.deselect()
-            
-        # # elif not self.selected and self.connected and self.number_of_other_selected_settlements == 1:
-        # #     self.select()
         pass
             
 

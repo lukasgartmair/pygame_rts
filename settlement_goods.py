@@ -14,6 +14,7 @@ class SettlementGoods:
             self.settlement = settlement
             self.game_trade = game_trade
             self.initialze_trading_attributes()
+            self.preferred_good_set = False
             
             
         def initialze_trading_attributes(self):
@@ -47,24 +48,27 @@ class SettlementGoods:
         def sell_trading_good(self, trading_good, price, magnitude):
             self.settlement.gold += price*magnitude
             self.settlement.trading_goods[trading_good] -= magnitude
-    
-        def update_preferred_good(self):
-            print(self.settlement.preferred_good_index)
-            self.settlement.preferred_good_index += 1
-            if self.settlement.preferred_good_index >= len(list(self.settlement.trading_goods.keys()))-1:
-                self.settlement.preferred_good_index = -1
             
-            # if self.settlement.preferred_good_index == len(list(self.settlement.trading_goods.keys())):
-            #     self.settlement.select()
-            #     return
+        def reset_preferred_good(self):
+            self.settlement.preferred_good_index = -1
+            self.update_preferred_good()
+        
+        def restore_last_preferred_good(self):
+            self.settlement.preferred_good_index -= 1
+            self.update_preferred_good()
+            
+        def update_preferred_good(self):
+            self.preferred_good_set = True
+            self.settlement.preferred_good_index += 1
+            
+            if self.settlement.preferred_good_index == len(list(self.settlement.trading_goods.keys())):
+                self.reset_preferred_good()
                 
-            self.settlement.preferred_good = self.game_trade.possible_trading_goods[self.settlement.preferred_good_index]
-            self.settlement.image = self.settlement.images[self.settlement.preferred_good+"_image"]
-            if self.settlement.selected:
+            if self.settlement.preferred_good_index >= 0:
+                self.settlement.preferred_good = self.game_trade.possible_trading_goods[self.settlement.preferred_good_index]
+                self.settlement.image = self.settlement.images[self.settlement.preferred_good+"_image"]
+            else:
                 self.settlement.deselect()
-                
-            print(self.settlement.preferred_good_index)
-            print("-----")
         
         def update_trading_stats(self):
             self.settlement.trading_stats["total"] = sum(self.settlement.trading_goods.values())

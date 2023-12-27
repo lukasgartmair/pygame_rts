@@ -33,10 +33,7 @@ class SelectionManager:
             
     def handle_deselection_on_void_click(self):
         for s in self.settlements:
-            if s.connected:
-                s.deselect_connected()
-            else:
-                s.deselect()
+            s.deselect()
         self.selected_settlements = []
         
     def handle_successful_connection(self):
@@ -61,19 +58,15 @@ class SelectionManager:
     def process_settlement_click(self):
 
         s = self.clicked_settlement
-        if not s.selected and not s.connected:
+        if not s.selected and not s.connected and len(self.selected_settlements) == 0:
             s.select()
     
-        if not s.selected and s.connected:
+        if not s.selected and s.connected and len(self.selected_settlements) == 0:
             if len(self.selected_settlements) == 0:
-                s.select_connected()
+                s.settlement_goods.update_preferred_good()
             
-        
-        
-        
-    # def select_settlement(self, settlement):
-        
-    # def deselect_settlement(self, settlement):
+        if len(self.selected_settlements) == 1 and not (self.selected_settlements[0].connected):
+            s.select()
         
         
         
