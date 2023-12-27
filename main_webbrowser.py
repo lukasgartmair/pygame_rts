@@ -21,7 +21,7 @@ import camera
 import colors
 import asyncio
 
-WEBBROWSER = False
+WEBBROWSER = True
 
 name = "City Trade"
 
@@ -47,18 +47,17 @@ clock = pygame.time.Clock()
 
 pygame.key.set_repeat(1, 100)
 
+pygame.init()
+
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption(name)
+clock = pygame.time.Clock()
+
+pygame.key.set_repeat(1, 100)
+
+
 def run_game(starting_scene):
-    pygame.init()
-    
     active_scene = starting_scene
-
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption(name)
-    clock = pygame.time.Clock()
-
-    active_scene = starting_scene
-
-    pygame.key.set_repeat(1, 100)
 
     while active_scene != None:
         pressed_keys = pygame.key.get_pressed()
@@ -109,15 +108,18 @@ def run_game(starting_scene):
         pygame.display.flip()
         clock.tick(FPS)
 
-if WEBBROWSER:
-    async def main():
-    
-            run_game(scene_manager.get_title_scene(game_engine, game_map, global_path, game_sound, sprite_groups))
-            await asyncio.sleep(0)  # Let other tasks run
-    
-    asyncio.run(main())
 
-else:
-    if __name__ == "__main__":
-        # unittest.main()
-        run_game(scene_manager.get_title_scene(game_engine, game_map, global_path, game_sound, sprite_groups))
+# if WEBBROWSER:
+
+
+async def main():
+    run_game(scene_manager.get_title_scene(game_engine, game_map, global_path, game_sound, sprite_groups))
+    await asyncio.sleep(0)  # Let other tasks run
+
+
+asyncio.run(main())
+
+# else:
+#     if __name__ == "__main__":
+#         # unittest.main()
+#         run_game(scene_manager.get_title_scene(game_engine, game_map, global_path, game_sound, sprite_groups))

@@ -10,7 +10,9 @@ import pygame
 
 pygame.font.init()
 
-font_style = pygame.font.match_font("z003")
+styles = pygame.font.get_fonts()
+#monospaced_ 2, 6, 7
+font_style = pygame.font.match_font(styles[7])
 font_size = 30
 
 

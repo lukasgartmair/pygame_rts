@@ -16,7 +16,7 @@ SECOND = None
 def register_trade():
     trade = pygame.USEREVENT + 1
 
-    pygame.time.set_timer(trade, 1000)
+    pygame.time.set_timer(trade, 5000)
 
     return trade
 

@@ -26,12 +26,16 @@ class SettlementGoods:
         self.settlement.preferred_good = ""
         self.settlement.preferred_good_index = -1
 
-    def trading_good_available(self, trading_good):
+    def is_in_stock(self, trading_good):
         if self.settlement.trading_goods[trading_good] > 0:
             return True
         else:
             return False
-
+    
+    def calculate_affordable_magnitude(self, price):
+        affordable_magnitude = self.settlement.gold // price
+        return affordable_magnitude
+    
     def is_affordable(self, price, magnitude):
         if self.settlement.gold >= price * magnitude:
             return True

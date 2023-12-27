@@ -96,7 +96,6 @@ def run_game(starting_scene):
         pygame.display.flip()
         clock.tick(FPS)
 
-
 if __name__ == "__main__":
     # unittest.main()
     run_game(scene_manager.get_title_scene(game_engine, game_map, global_path, game_sound, sprite_groups))

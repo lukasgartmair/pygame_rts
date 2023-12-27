@@ -14,6 +14,8 @@ import image
 import random
 from settlement_goods import SettlementGoods
 import camera
+from beautifultable import BeautifulTable
+import re
 
 faker = Faker()
 
@@ -58,39 +60,43 @@ class Settlement(pygame.sprite.Sprite):
         screen_width, screen_height = screen_dimensions[0], screen_dimensions[1]
         vertical_offset = 25
         horizontal_offset = screen_width // 2
-        width = horizontal_offset
-        height = screen_height - vertical_offset
-        pygame.draw.rect(
-            screen, ((settlement_stats_colors[0])), pygame.Rect(screen_width - width, screen_height - height, width, height)
-        )
-        off = 0
-        text = game_font.render(self.name.upper(), True, (30, 0, 0))
-        screen.blit(text, (screen_width - width, screen_height - height + off))
-        off += vertical_offset
-        # text = game_font.render("population: " + str(self.population), True, (30, 0, 0))
-        # screen.blit(text, (screen_width-width, screen_height-height+off))
-        # off += offset
-        f = "-----------------"
-        text = game_font.render(f, True, (30, 0, 0))
-        screen.blit(text, (screen_width - width, screen_height - height + off))
-        off += vertical_offset
-        formatted_stats = []
+        
+        vertical_offset = 25
+        offset = 0
+        
+        text = game_font.render(self.name, True, (10, 0, 0))
+        screen.blit(text, (horizontal_offset,offset))
+        offset += vertical_offset
+        
+        text = game_font.render("gold: {}".format(self.gold), True, (10, 0, 0))
+        screen.blit(text, (horizontal_offset,offset))
+        offset += vertical_offset
+        
+        text = game_font.render("-"*20, True, (10, 0, 0))
+        screen.blit(text, (horizontal_offset,offset))
+        offset += vertical_offset
+        
+        table = BeautifulTable()
+        table.set_style(BeautifulTable.STYLE_COMPACT)
+        # table.columns.alignment = BeautifulTable.ALIGN_LEFT
+        # table.rows.alignment = BeautifulTable.ALIGN_LEFT
+        table.columns.header = ["","good","magnitude"]
         for k, v in self.trading_goods.items():
-            formatted_stats.append(k + " : " + str(v))
-
-        for f in formatted_stats:
-            text = game_font.render(f, True, (30, 0, 0))
-            screen.blit(text, (screen_width - width, screen_height - height + off))
-            off += vertical_offset
-
-        f = "-----------------"
-        text = game_font.render(f, True, (30, 0, 0))
-        screen.blit(text, (screen_width - width, screen_height - height + off))
-        off += vertical_offset
-        f = "TOTAL : " + str(self.trading_stats["total"])
-        text = game_font.render(f, True, (30, 0, 0))
-        screen.blit(text, (screen_width - width, screen_height - height + off))
-        off += vertical_offset
+            row = ["", k, v]
+            table.append_row(row)
+        
+        splitted_table = re.split("\n", table.get_string())
+        for line in splitted_table:
+            text = game_font.render(line, True, (10, 0, 0))
+            screen.blit(text, (horizontal_offset,offset))
+            offset += vertical_offset
+            
+        text = game_font.render("-"*20, True, (10, 0, 0))
+        screen.blit(text, (horizontal_offset,offset))
+        offset += vertical_offset
+        text = game_font.render("total: {}".format(self.trading_stats["total"]), True, (10, 0, 0))
+        screen.blit(text, (horizontal_offset,offset))
+        offset += vertical_offset
 
     def placed(self, game_sound):
         game_sound.play_place_settlement()
