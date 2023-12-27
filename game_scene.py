@@ -118,8 +118,10 @@ class GameScene(SceneBase):
         surfarray.blit_array(screen, self.game_map.mapped_grid)
         self.global_path.render(screen, self.game_map)
         self.global_path.render_path_length(screen, game_font)
+        self.settlements.draw(screen)
+        self.game_engine.render_settlement_count(screen, game_font)
+    
+    def RenderSecondScreen(self, screen, game_font):
         for s in self.settlements:
             if s.hover:
                 s.render_settlement_stats(screen, game_font)
-        self.settlements.draw(screen)
-        self.game_engine.render_settlement_count(screen, game_font)

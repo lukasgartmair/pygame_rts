@@ -11,9 +11,9 @@ from colors import settlement_stats_colors
 from faker import Faker
 import pygame.gfxdraw
 import image
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 import random
 from settlement_goods import SettlementGoods
+import camera
 
 faker = Faker()
 
@@ -52,27 +52,39 @@ class Settlement(pygame.sprite.Sprite):
             self.got_deconnected()
 
     def render_settlement_stats(self, screen, game_font):
-        width = int(SCREEN_WIDTH//4)
-        height = int(SCREEN_HEIGHT//4)
+        screen_width, screen_height = camera.get_camera_screen_dimensions(screen)
         offset = 25
+        width = screen_width//4
+        height = screen_height - offset
         pygame.draw.rect(screen, ((settlement_stats_colors[0])), pygame.Rect(
-            SCREEN_WIDTH-width, SCREEN_HEIGHT-height, width, height))
+            screen_width-width, screen_height-height, width, height))
+        off = 0
+        text = game_font.render(self.name.upper(), True, (30, 0, 0))
+        screen.blit(text, (screen_width-width, screen_height-height+off))
+        off += offset
+        # text = game_font.render("population: " + str(self.population), True, (30, 0, 0))
+        # screen.blit(text, (screen_width-width, screen_height-height+off))
+        # off += offset
+        f = "-----------------"
+        text = game_font.render(f, True, (30, 0, 0))
+        screen.blit(text, (screen_width-width, screen_height-height+off))
+        off += offset
         formatted_stats = []
         for k, v in self.trading_goods.items():
             formatted_stats.append(k + " : " + str(v))
-        off = 0
+        
         for f in formatted_stats:
             text = game_font.render(f, True, (30, 0, 0))
-            screen.blit(text, (SCREEN_WIDTH-width, SCREEN_HEIGHT-height+off))
+            screen.blit(text, (screen_width-width, screen_height-height+off))
             off += offset
 
         f = "-----------------"
         text = game_font.render(f, True, (30, 0, 0))
-        screen.blit(text, (SCREEN_WIDTH-width, SCREEN_HEIGHT-height+off))
+        screen.blit(text, (screen_width-width, screen_height-height+off))
         off += offset
         f = "TOTAL : " + str(self.trading_stats["total"])
         text = game_font.render(f, True, (30, 0, 0))
-        screen.blit(text, (SCREEN_WIDTH-width, SCREEN_HEIGHT-height+off))
+        screen.blit(text, (screen_width-width, screen_height-height+off))
         off += offset
 
     def placed(self, game_sound):

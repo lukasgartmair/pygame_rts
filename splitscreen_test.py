@@ -9,6 +9,13 @@ Created on Wed Dec 27 14:50:46 2023
 import pygame
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 import sys
+
+def initialize_cameras():
+    camera_1 = Camera(0,0,SCREEN_WIDTH, SCREEN_HEIGHT // 2)
+    camera_2 = Camera(0,SCREEN_HEIGHT // 2,SCREEN_WIDTH, SCREEN_HEIGHT // 2)
+    
+    return camera_1, camera_2
+
 class Camera:
     def __init__(self, top, left, width, height):
 
@@ -16,11 +23,11 @@ class Camera:
         self.camera = pygame.Rect(top, left, SCREEN_WIDTH, SCREEN_HEIGHT // 2)
         self.subsurf = self.canvas.subsurface(self.camera)
         
-    # def get_subsurface_dimensions(self, subsurface):
-    #     return self.subsurface.get_width(), self.subsurface.get_height()
+    def get_subsurface_dimensions(self):
+        return self.subsurface.get_width(), self.subsurface.get_height()
     
-    # def get_subsurface_topleft(self, subsurface):
-    #     return self.subsurface.get_width(), self.subsurface.get_height()
+    def get_subsurface_topleft(self):
+        return self.camera.topleft
         
 camera_1 = Camera(0,0,SCREEN_WIDTH, SCREEN_HEIGHT // 2)
 camera_2 = Camera(0,SCREEN_HEIGHT // 2,SCREEN_WIDTH, SCREEN_HEIGHT // 2)
@@ -70,19 +77,6 @@ def main () :
             
             pygame.display.update()
             clock.tick(FPS)
-
-            # print(cam.get_subsurface_top_left(cam.sub1))
-            # screen.blit(cam.sub1,cam.get_subsurface_top_left(cam.sub1))
-            # cam.sub1.fill(bg)
-            # print(cam.get_subsurface_top_left(cam.sub2))
-            # sub2_rect = cam.sub2.get_rect()
-            # print(sub2_rect)
-            # sub2_rect.topleft =(0, SCREEN_HEIGHT // 2)
-            # print(sub2_rect)
-            # screen.blit(cam.sub2,sub2_rect.topleft)
-            # cam.sub2.fill(bg2)
-            # pygame.display.update()
-            # clock.tick(FPS)
      
 main()
 

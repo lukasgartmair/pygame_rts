@@ -5,20 +5,28 @@ Created on Wed Dec 27 11:52:47 2023
 
 @author: lukasgartmair
 """
+
 import pygame
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
+def initialize_cameras():
+    camera_1 = Camera(0,0,SCREEN_WIDTH, SCREEN_HEIGHT // 2)
+    camera_2 = Camera(0,SCREEN_HEIGHT // 2,SCREEN_WIDTH, SCREEN_HEIGHT // 2)
+    
+    return camera_1, camera_2
+
+def get_camera_screen_dimensions(camera_screen):
+    return camera_screen.get_width(), camera_screen.get_height()
+    
 class Camera:
-    def __init__(self):
+    def __init__(self, top, left, width, height):
 
         self.canvas = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.camera_1 = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT // 2)
-        self.camera_2 = pygame.Rect(0, SCREEN_HEIGHT // 2, SCREEN_WIDTH, SCREEN_HEIGHT // 2)
+        self.camera = pygame.Rect(top, left, SCREEN_WIDTH, SCREEN_HEIGHT // 2)
+        self.camera_screen = self.canvas.subsurface(self.camera)
         
-        self.sub1 = self.canvas.subsurface(self.camera_1)
-
     def get_subsurface_dimensions(self):
-        return self.sub1.get_width(), self.sub1.get_height()
+        return self.camera_screen.get_width(), self.camera_screen.get_height()
     
-    def get_subsurface_center(self):
-        return self.sub1.center[0], self.sub1.center[1]
+    def get_subsurface_topleft(self):
+        return self.camera.topleft

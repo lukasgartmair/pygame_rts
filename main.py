@@ -17,10 +17,14 @@ import path
 import sound
 from sprite_group import SpriteGroup
 import scene_manager
+import camera
+import colors
 
 name = "City Trade"
 
-game_map = level_map.GameMap()
+camera_1, camera_2 = camera.initialize_cameras()
+
+game_map = level_map.GameMap(camera_1)
 
 game_engine = engine.GameEngine()
 
@@ -69,11 +73,18 @@ def run_game(starting_scene):
                 sys.exit()
             else:
                 filtered_events.append(event)
+                
+        screen.blit(camera_1.camera_screen,camera_1.camera.topleft)
+        
+        screen.blit(camera_2.camera_screen,camera_2.camera.topleft)
+        camera_2.camera_screen.fill(colors.settlement_stats_colors[0])
 
         active_scene.ProcessInput(filtered_events, pressed_keys)
         active_scene.Update()
-        active_scene.Render(screen, font_game)
-
+        active_scene.Render(camera_1.camera_screen,font_game)
+        if type(active_scene).__name__ == "GameScene":
+            active_scene.RenderSecondScreen(camera_2.camera_screen, font_game)
+            
         active_scene = active_scene.next
 
         pygame.display.flip()
