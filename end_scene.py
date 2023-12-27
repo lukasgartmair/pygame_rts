@@ -13,8 +13,8 @@ import scene_manager
 import pygame.surfarray as surfarray
 
 class EndScene(SceneBase):
-    def __init__(self, game_engine, game_map, global_path, game_sound, sprite_groups):
-        super().__init__(game_engine, game_map, global_path, game_sound, sprite_groups)
+    def __init__(self, game_camera, game_engine, game_map, global_path, game_sound, sprite_groups):
+        super().__init__(game_camera, game_engine, game_map, global_path, game_sound, sprite_groups)
 
         self.game_map.mapped_grid = image.invert_grid(
             self.game_map.mapped_grid)

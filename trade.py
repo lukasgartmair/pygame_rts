@@ -27,6 +27,10 @@ class Trade():
         self.global_assets = nested_dict(2, int)
         self.initialize_global_assets()
         
+    def print_global_assets(self):
+        for k,v in self.global_assets.items():
+            print(k,self.global_assets[k]["magnitude"], self.global_assets[k]["price"])
+        
     def initialize_global_assets(self):
         
         for p in self.possible_trading_goods:
@@ -38,8 +42,8 @@ class Trade():
             self.global_assets[k]["magnitude"] = 0
             self.global_assets[k]["magnitude"] += v
           
-        # print("global_assets")
-        # print(self.global_assets)
+        print("global_assets")
+        self.print_global_assets()
         
     def transaction(self, settlement_0, settlement_1, need, verbose=False):
         if verbose:

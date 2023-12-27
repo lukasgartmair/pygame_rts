@@ -10,8 +10,9 @@ x = None
 
 
 class SceneBase:
-    def __init__(self, game_engine, game_map, global_path, game_sound, sprite_groups):
+    def __init__(self, game_camera, game_engine, game_map, global_path, game_sound, sprite_groups):
         self.next = self
+        self.game_camera = game_camera
         self.game_engine = game_engine
         self.game_map = game_map
         self.global_path = global_path

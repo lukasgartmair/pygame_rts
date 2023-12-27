@@ -8,7 +8,7 @@ Created on Sun Dec 17 12:34:47 2023
 
 import pygame
 import sys
-import game_map
+import level_map
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 import engine
 import game_font
@@ -17,20 +17,23 @@ import path
 import sound
 from sprite_group import SpriteGroup
 import scene_manager
+from camera import Camera
 
 name = "City Trade"
 
-gm = game_map.GameMap()
+game_map = level_map.GameMap()
 
-ge = engine.GameEngine()
+game_engine = engine.GameEngine()
 
 game_sound = sound.Sound()
 
-global_path = path.Path(gm, game_sound)
+global_path = path.Path(game_map, game_sound)
 
 font_game = game_font.GameFont(game_font.font_style, game_font.font_size)
 
 sprite_groups = SpriteGroup().get_sprite_groups()
+
+game_camera = Camera()
 
 def run_game(starting_scene):
     pygame.init()
@@ -82,4 +85,4 @@ def run_game(starting_scene):
 
 if __name__ == "__main__":
     # unittest.main()
-    run_game(scene_manager.get_title_scene(ge, gm, global_path, game_sound, sprite_groups))
+    run_game(scene_manager.get_title_scene(game_camera, game_engine, game_map, global_path, game_sound, sprite_groups))
