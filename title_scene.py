@@ -12,8 +12,8 @@ import scene_manager
 import image
 
 class TitleScene(SceneBase):
-    def __init__(self, game_engine, game_map, global_path, game_sound, sprite_groups):
-        super().__init__(game_engine, game_map, global_path, game_sound, sprite_groups)
+    def __init__(self, *kargs):
+        super().__init__(*kargs)
         print("Title Scene")
         self.skip = True
 

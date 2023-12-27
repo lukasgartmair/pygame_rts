@@ -17,10 +17,10 @@ import pygame.surfarray as surfarray
 import scene_manager
 
 class GameScene(SceneBase):
-    def __init__(self, game_engine, game_map, global_path, game_sound, sprite_groups):
-        super().__init__(game_engine, game_map, global_path, game_sound, sprite_groups)
+    def __init__(self, *kargs):
+        super().__init__(*kargs)
         print("Game Scene")
-        game_sound.play_background_music_1()
+        self.game_sound.play_background_music_1()
         custom_events.TRADE = custom_events.register_trade()
         self.game_trade = trade.Trade(self.settlements, self.global_path)
         self.any_settlement_clicked = False
