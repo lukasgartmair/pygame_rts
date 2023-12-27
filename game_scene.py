@@ -38,9 +38,9 @@ class GameScene(SceneBase):
             if event.type == custom_events.TRADE:
                 self.game_trade.perform_trade()
                 
-    def check_mouse_click_in_bounds(self, mouse_position, screen):
+    def check_mouse_click_in_bounds(self, mouse_position, screen_dimensions):
         
-        return camera.is_in_bounds(mouse_position, screen)
+        return camera.is_in_bounds(mouse_position, screen_dimensions)
 
     def try_new_settlement_placement(self, mouse_position):
         valid_placement = self.game_map.check_valid_village_placement(
@@ -73,7 +73,7 @@ class GameScene(SceneBase):
             if successfully_connected:
                 self.selection_manager.handle_successful_connection()
                  
-    def ProcessInput(self, events, pressed_keys, screen):
+    def ProcessInput(self, events, pressed_keys, screen_dimensions):
         for event in events:
             
             self.check_for_trade_event(event)
@@ -93,7 +93,7 @@ class GameScene(SceneBase):
                 
                 mouse_position = pygame.mouse.get_pos()
                 
-                if self.check_mouse_click_in_bounds(mouse_position, screen):
+                if self.check_mouse_click_in_bounds(mouse_position, screen_dimensions):
                 
                     self.selection_manager.check_any_settlement_clicked(events)
                 

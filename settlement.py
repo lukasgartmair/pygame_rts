@@ -52,7 +52,8 @@ class Settlement(pygame.sprite.Sprite):
             self.got_deconnected()
 
     def render_settlement_stats(self, screen, game_font):
-        screen_width, screen_height = camera.get_camera_screen_dimensions(screen)
+        screen_dimensions = camera.get_camera_screen_dimensions(screen)
+        screen_width, screen_height = screen_dimensions[0],screen_dimensions[1]
         offset = 25
         width = screen_width//4
         height = screen_height - offset
