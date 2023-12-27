@@ -13,10 +13,10 @@ from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 import engine
 import game_font
 import unittest
-import game_scenes
 import path
 import sound
 from sprite_group import SpriteGroup
+import scene_manager
 
 name = "City Trade"
 
@@ -40,6 +40,8 @@ def run_game(starting_scene):
     clock = pygame.time.Clock()
 
     active_scene = starting_scene
+    
+    pygame.key.set_repeat(1, 100)
 
     while active_scene != None:
         pressed_keys = pygame.key.get_pressed()
@@ -80,4 +82,4 @@ def run_game(starting_scene):
 
 if __name__ == "__main__":
     # unittest.main()
-    run_game(game_scenes.TitleScene(ge, gm, global_path, game_sound, sprite_groups))
+    run_game(scene_manager.get_title_scene(ge, gm, global_path, game_sound, sprite_groups))

@@ -12,7 +12,6 @@ import pygame
 class SpriteGroup:
     def __init__(self):
         self.settlements = pygame.sprite.Group()
-        self.selected_settlements = pygame.sprite.Group()
         self.all_sprites = pygame.sprite.Group()
 
     def get_sprite_groups(self):

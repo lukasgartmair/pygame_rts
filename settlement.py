@@ -13,6 +13,7 @@ import pygame.gfxdraw
 import image
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 import random
+from settlement_goods import SettlementGoods
 
 faker = Faker()
 
@@ -37,71 +38,10 @@ class Settlement(pygame.sprite.Sprite):
         self.hover = False
         self.connected = False
         
-        self.game_trade = game_trade
-        self.gold = 20
-        self.trading_goods = {}
-        self.initialize_trading_goods()
-        self.trading_stats = {"total": 0}
-        
-        self.preferred_good = ""
-        self.preferred_good_index = -1
-        
-        self.number_of_other_selected_settlements = 0
+        self.settlement_goods = SettlementGoods(self, game_trade)
         
     def apply_population_to_scale(self):
         self.scale_factor = self.scale_factor * self.population ** (1. / 3)/40
-        
-    def update_number_of_other_selected_settlements(self, selected_settlements):
-        if self in selected_settlements:
-            self.number_of_other_selected_settlements = len(selected_settlements)-1
-        else:
-            self.number_of_other_selected_settlements = len(selected_settlements)
-
-    def trading_good_available(self, trading_good):
-        if self.trading_goods[trading_good] > 0:
-            return True
-        else:
-            return False
-        
-    def is_affordable(self, price, magnitude):
-        if self.gold >= price * magnitude:
-            return True
-        else:
-            return False
-        
-    def buy_trading_good(self, trading_good, price, magnitude):
-        if self.is_affordable(price, magnitude):
-            self.gold -= price
-            self.trading_goods[trading_good] += magnitude
-        
-    def sell_trading_good(self, trading_good, price, magnitude):
-        self.gold += price*magnitude
-        self.trading_goods[trading_good] -= magnitude
-
-    def update_preferred_good(self):
-        
-        self.preferred_good_index += 1
-        if self.preferred_good_index >= len(list(self.trading_goods.keys()))+1:
-            self.preferred_good_index = 0
-        
-        if self.preferred_good_index == len(list(self.trading_goods.keys())):
-            self.select()
-            return
-            
-        self.preferred_good = self.game_trade.possible_trading_goods[self.preferred_good_index]
-        self.image = self.images[self.preferred_good+"_image"]
-        if self.selected:
-            self.deselect()
-            
-        print(self.preferred_good_index)
-
-    def update_trading_stats(self):
-        self.trading_stats["total"] = sum(self.trading_goods.values())
-
-    def initialize_trading_goods(self):
-        for tg in self.game_trade.possible_trading_goods:
-            self.trading_goods[tg] = random.randint(1, 5)
-        self.game_trade.update_global_assets(self.trading_goods)
 
     def check_if_still_connected(self, global_path):
         still_connected = False
@@ -164,7 +104,7 @@ class Settlement(pygame.sprite.Sprite):
 
     def update(self, events, global_path, game_engine):
         
-        self.update_trading_stats()
+        self.settlement_goods.update_trading_stats()
 
         self.check_hover()
 
@@ -175,11 +115,15 @@ class Settlement(pygame.sprite.Sprite):
             self.check_if_still_connected(global_path)
 
     def select(self):
-        if self.number_of_other_selected_settlements < 2:
-            self.selected = True
-            self.image = self.images["select_image"]
-        else:
-            print("not possible")
+
+        self.selected = True
+        self.image = self.images["select_image"]
+        # else:
+        #     if self.connected:
+        #         self.settlement_goods.update_preferred_good()
+        #     else:
+        #         pass
+                
 
     def deselect(self):
         self.selected = False
@@ -188,7 +132,7 @@ class Settlement(pygame.sprite.Sprite):
     def deselect_connected(self):
         self.selected = False
         self.preferred_good_index -= 1
-        self.update_preferred_good()
+        self.settlement_goods.update_preferred_good()
             
     def on_click(self):
         
@@ -202,18 +146,17 @@ class Settlement(pygame.sprite.Sprite):
         elif not self.connected and not self.selected:
             self.select()
         elif self.connected and not self.selected:
-            self.update_preferred_good()
+            self.settlement_goods.update_preferred_good()
         elif self.connected and self.selected:
-            self.update_preferred_good()
+            self.settlement_goods.update_preferred_good()
         
         elif self.connected and self.number_of_other_selected_settlements == 0:
-            self.update_preferred_good()
+            self.settlement_goods.update_preferred_good()
             self.deselect()
             
-        # elif self.connected and self.number_of_other_selected_settlements == 1:
-        #     pass
-        # else:
-        #     self.deselect()
+        # elif not self.selected and self.connected and self.number_of_other_selected_settlements == 1:
+        #     self.select()
+            
 
 
     def check_hover(self):

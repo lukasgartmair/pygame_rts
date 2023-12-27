@@ -77,37 +77,46 @@ class Path:
         for k in list(self.subpaths.keys()):
             if dict_key_contains_string(settlement_name, k):
                 del self.subpaths[k]
-
-    def connect_settlements(self, selected_settlements, game_map, game_sound):
+                
+    def already_connected(self, selected_settlements):
         already_connected = False
-        s = list(selected_settlements)
-        settlement_0 = s[0]
-        settlement_1 = s[1]
+        settlement_0 = selected_settlements[0]
+        settlement_1 = selected_settlements[1]
         condition_1 = (settlement_0.name, settlement_1.name) in self.subpaths.keys()
         condition_2 = (settlement_1.name, settlement_0.name) in self.subpaths.keys()
         if condition_1 or condition_2:
             already_connected = True
-
-        if not already_connected:
-
-            local_path = None
-
-            local_path = self.pathfinder.find_path(
-                game_map.grid, settlement_0.center, settlement_1.center
-            )
-
-            if local_path:
-                self.add_subpath(
-                    settlement_0.name, settlement_1.name, len(local_path), local_path
-                )
-                settlement_0.got_connected()
-                settlement_1.got_connected()
-
-                game_sound.play_connect_settlement()
-
-            else:
-                print("no_path_found")
-                settlement_0.deselect()
-                settlement_1.deselect()
-                
+            
         return already_connected
+
+    def connect_settlements(self, selected_settlements, game_map, game_sound):
+        
+        successfully_connected = False
+            
+        settlement_0 = selected_settlements[0]
+        settlement_1 = selected_settlements[1]
+
+        local_path = None
+
+        local_path = self.pathfinder.find_path(
+            game_map.grid, settlement_0.center, settlement_1.center
+        )
+
+        if local_path:
+            self.add_subpath(
+                settlement_0.name, settlement_1.name, len(local_path), local_path
+            )
+            settlement_0.got_connected()
+            settlement_1.got_connected()
+
+            game_sound.play_connect_settlement()
+            
+            successfully_connected = True
+
+        else:
+            print("no_path_found")
+            settlement_0.deselect()
+            settlement_1.deselect()
+            
+            successfully_connected = False
+        return successfully_connected
