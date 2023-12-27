@@ -6,13 +6,12 @@ Created on Sun Dec 17 12:37:25 2023
 @author: lukasgartmair
 """
 
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 import random
 import numpy as np
 from enum import Enum
 from colors import terrain_colors
 import scipy.ndimage
-
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
 class Terrains(Enum):
     EARTH = 1

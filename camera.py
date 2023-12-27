@@ -12,12 +12,16 @@ class Camera:
     def __init__(self):
 
         self.canvas = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.camera_1 = pygame.Rect(0,0,int(SCREEN_WIDTH/2),int(SCREEN_HEIGHT/2))
-        self.camera_2 = pygame.Rect(int(SCREEN_WIDTH/2),0,int(SCREEN_WIDTH/2),int(SCREEN_HEIGHT/2))
-        self.camera_3 = pygame.Rect(0,int(SCREEN_HEIGHT/2),int(SCREEN_WIDTH/2),int(SCREEN_HEIGHT/2))
-        self.camera_4 = pygame.Rect(int(SCREEN_WIDTH/2),int(SCREEN_HEIGHT/2),int(SCREEN_WIDTH/2),int(SCREEN_HEIGHT/2))
+        self.camera_1 = pygame.Rect(0,0,int(SCREEN_WIDTH),int(SCREEN_HEIGHT))
+        # self.camera_1 = pygame.Rect(0,0,int(SCREEN_WIDTH/2),int(SCREEN_HEIGHT/2))
+        # self.camera_2 = pygame.Rect(int(SCREEN_WIDTH/2),0,int(SCREEN_WIDTH/2),int(SCREEN_HEIGHT/2))
+        # self.camera_3 = pygame.Rect(0,int(SCREEN_HEIGHT/2),int(SCREEN_WIDTH/2),int(SCREEN_HEIGHT/2))
+        # self.camera_4 = pygame.Rect(int(SCREEN_WIDTH/2),int(SCREEN_HEIGHT/2),int(SCREEN_WIDTH/2),int(SCREEN_HEIGHT/2))
         
         self.sub1 = self.canvas.subsurface(self.camera_1)
-        self.sub2 = self.canvas.subsurface(self.camera_2)
-        self.sub3 = self.canvas.subsurface(self.camera_3)
-        self.sub4 = self.canvas.subsurface(self.camera_4)
+        # self.sub2 = self.canvas.subsurface(self.camera_2)
+        # self.sub3 = self.canvas.subsurface(self.camera_3)
+        # self.sub4 = self.canvas.subsurface(self.camera_4)
+        
+    def get_subsurface_dimensions(self):
+        return self.sub1.get_width(), self.sub1.get_height()

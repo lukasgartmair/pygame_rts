@@ -17,8 +17,8 @@ import pygame.surfarray as surfarray
 import scene_manager
 
 class GameScene(SceneBase):
-    def __init__(self, game_camera, game_engine, game_map, global_path, game_sound, sprite_groups):
-        super().__init__(game_camera, game_engine, game_map, global_path, game_sound, sprite_groups)
+    def __init__(self, game_engine, game_map, global_path, game_sound, sprite_groups):
+        super().__init__(game_engine, game_map, global_path, game_sound, sprite_groups)
         print("Game Scene")
         game_sound.play_background_music_1()
         custom_events.TRADE = custom_events.register_trade()
@@ -106,7 +106,6 @@ class GameScene(SceneBase):
         if self.game_engine.state == GameState.ENDED:
             self.SwitchToScene(
                 scene_manager.get_end_scene(
-                    self.game_camera,
                     self.game_engine,
                     self.game_map,
                     self.global_path,
@@ -116,12 +115,11 @@ class GameScene(SceneBase):
             )
 
     def Render(self, screen, game_font):
-        cam = self.game_camera.sub1
-        surfarray.blit_array(cam, self.game_map.mapped_grid)
-        self.global_path.render(self.game_map, self.game_camera)
+        surfarray.blit_array(screen, self.game_map.mapped_grid)
+        self.global_path.render(screen, self.game_map)
         self.global_path.render_path_length(screen, game_font)
         for s in self.settlements:
             if s.hover:
                 s.render_settlement_stats(screen, game_font)
-        self.settlements.draw(cam)
-        self.game_engine.render_settlement_count(cam, game_font)
+        self.settlements.draw(screen)
+        self.game_engine.render_settlement_count(screen, game_font)

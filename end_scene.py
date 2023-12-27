@@ -13,8 +13,8 @@ import scene_manager
 import pygame.surfarray as surfarray
 
 class EndScene(SceneBase):
-    def __init__(self, game_camera, game_engine, game_map, global_path, game_sound, sprite_groups):
-        super().__init__(game_camera, game_engine, game_map, global_path, game_sound, sprite_groups)
+    def __init__(self, game_engine, game_map, global_path, game_sound, sprite_groups):
+        super().__init__(game_engine, game_map, global_path, game_sound, sprite_groups)
 
         self.game_map.mapped_grid = image.invert_grid(
             self.game_map.mapped_grid)
@@ -46,7 +46,7 @@ class EndScene(SceneBase):
 
     def Render(self, screen, game_font):
         surfarray.blit_array(screen, self.game_map.mapped_grid)
-        self.global_path.render(self.game_map, screen)
+        self.global_path.render(screen, self.game_map)
         self.global_path.render_path_length(screen, game_font)
         self.settlements.draw(screen)
         self.game_engine.render_settlement_count(screen, game_font)

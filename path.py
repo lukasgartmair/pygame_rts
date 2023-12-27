@@ -53,7 +53,7 @@ class Path:
             if (k[1],k[0]) in self.subpaths.keys():
                 del self.subpaths[k[1],k[0]]
 
-    def render(self, game_map, screen):
+    def render(self, screen, game_map):
         self.remove_perturbation_keys()
         self.mapped_grid = game_map.mapped_grid.copy()
         for k, v in self.subpaths.items():
