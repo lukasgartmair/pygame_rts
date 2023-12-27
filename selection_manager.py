@@ -13,6 +13,10 @@ class SelectionManager:
         self.any_settlement_clicked = any_settlement_clicked
         self.clicked_settlement = None
         
+    def deselect_settlement(self, settlement):
+        settlement.deselect()
+        self.selected_settlements = [s for s in self.selected_settlements if s != settlement]
+        
     def check_connection_condition(self):
         if len(self.selected_settlements) == 2:
             return True
@@ -33,14 +37,13 @@ class SelectionManager:
             
     def handle_deselection_on_void_click(self):
         for s in self.settlements:
-            s.deselect()
-        self.selected_settlements = []
+            self.deselect_settlement(s)
         
     def handle_successful_connection(self):
 
         for s in self.selected_settlements:
             if s.selected:
-                s.deselect()
+                self.deselect_settlement(s)
         
     def update_selected_settlements(self):
         self.selected_settlements = []
@@ -61,12 +64,21 @@ class SelectionManager:
         if not s.selected and not s.connected and len(self.selected_settlements) == 0:
             s.select()
     
+        if s.selected and not s.connected and len(self.selected_settlements) == 1:
+            print("here")
+            self.deselect_settlement(s)
+            
+            print(len(self.selected_settlements))
+            print(s.selected)
+    
         if not s.selected and s.connected and len(self.selected_settlements) == 0:
             if len(self.selected_settlements) == 0:
                 s.settlement_goods.update_preferred_good()
             
         if len(self.selected_settlements) == 1 and not (self.selected_settlements[0].connected):
             s.select()
+            
+
         
         
         

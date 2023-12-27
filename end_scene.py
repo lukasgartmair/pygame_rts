@@ -27,7 +27,7 @@ class EndScene(SceneBase):
 
         print(max(trading_good_sums, default=0))
 
-    def ProcessInput(self, events, pressed_keys):
+    def ProcessInput(self, events, pressed_keys, screen):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:

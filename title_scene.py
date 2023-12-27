@@ -15,9 +15,9 @@ class TitleScene(SceneBase):
     def __init__(self, *kargs):
         super().__init__(*kargs)
         print("Title Scene")
-        self.skip = True
+        self.skip = False
 
-    def ProcessInput(self, events, pressed_keys):
+    def ProcessInput(self, events, pressed_keys, screen):
         if self.skip:
             self.SwitchToScene(
                 scene_manager.get_game_scene(

@@ -15,6 +15,7 @@ import trade
 from selection_manager import SelectionManager
 import pygame.surfarray as surfarray
 import scene_manager
+import camera
 
 class GameScene(SceneBase):
     def __init__(self, *kargs):
@@ -36,6 +37,10 @@ class GameScene(SceneBase):
         if len(self.global_path.subpaths) >= 1:
             if event.type == custom_events.TRADE:
                 self.game_trade.perform_trade()
+                
+    def check_mouse_click_in_bounds(self, mouse_position, screen):
+        
+        return camera.is_in_bounds(mouse_position, screen)
 
     def try_new_settlement_placement(self, mouse_position):
         valid_placement = self.game_map.check_valid_village_placement(
@@ -68,7 +73,7 @@ class GameScene(SceneBase):
             if successfully_connected:
                 self.selection_manager.handle_successful_connection()
                  
-    def ProcessInput(self, events, pressed_keys):
+    def ProcessInput(self, events, pressed_keys, screen):
         for event in events:
             
             self.check_for_trade_event(event)
@@ -86,19 +91,25 @@ class GameScene(SceneBase):
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 
-                self.selection_manager.check_any_settlement_clicked(events)
-            
-                if self.selection_manager.selection_and_void_click():
-                    break
+                mouse_position = pygame.mouse.get_pos()
                 
-                if self.selection_manager.any_settlement_clicked:
-                    self.selection_manager.process_settlement_click()
+                if self.check_mouse_click_in_bounds(mouse_position, screen):
                 
-                if (
-                    not self.selection_manager.any_settlement_clicked
-                    and self.game_engine.settlements_available > 0
-                ):
-                    self.try_new_settlement_placement(pygame.mouse.get_pos())
+                    self.selection_manager.check_any_settlement_clicked(events)
+                
+                    if self.selection_manager.selection_and_void_click():
+                        break
+                    
+                    if self.selection_manager.any_settlement_clicked:
+                        self.selection_manager.process_settlement_click()
+                    
+                    if (
+                        not self.selection_manager.any_settlement_clicked
+                        and self.game_engine.settlements_available > 0
+                    ):
+                        self.try_new_settlement_placement(mouse_position)
+                else:
+                    pass
                     
         self.game_engine.check_win_condition(self.settlements)
 
