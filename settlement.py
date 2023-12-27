@@ -86,17 +86,13 @@ class Settlement(pygame.sprite.Sprite):
         self.connected = False
         self.deselect()
         
-    def check_if_clicked(self, events):
+    def is_clicked(self, events):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.rect.collidepoint(event.pos[0],event.pos[1]):
                     return True
         return False
-                    
-    def is_clicked(self):
-        self.callback()
-        self.clicks += 1
-
+    
     def remove(self, global_path, game_engine):
         self.kill()
         global_path.remove_subpath(self.name)
@@ -108,60 +104,61 @@ class Settlement(pygame.sprite.Sprite):
 
         self.check_hover()
 
-        if self.check_if_clicked(events):
-            self.is_clicked()
+        if self.is_clicked(events):
+            self.callback()
+            self.clicks += 1
 
         if self.connected:
             self.check_if_still_connected(global_path)
-
-    def select(self):
-
-        self.selected = True
-        self.image = self.images["select_image"]
-        # else:
-        #     if self.connected:
-        #         self.settlement_goods.update_preferred_good()
-        #     else:
-        #         pass
-                
-
-    def deselect(self):
-        self.selected = False
-        self.image = self.images["main_image"]
-
-    def deselect_connected(self):
-        self.selected = False
-        self.preferred_good_index -= 1
-        self.settlement_goods.update_preferred_good()
             
-    def on_click(self):
-        
-        # if self.selected:
-        #     self.deselect()
-        # else:
-        #     self.select()
-            
-        if not self.connected and self.selected:
-            self.deselect()
-        elif not self.connected and not self.selected:
-            self.select()
-        elif self.connected and not self.selected:
-            self.settlement_goods.update_preferred_good()
-        elif self.connected and self.selected:
-            self.settlement_goods.update_preferred_good()
-        
-        elif self.connected and self.number_of_other_selected_settlements == 0:
-            self.settlement_goods.update_preferred_good()
-            self.deselect()
-            
-        # elif not self.selected and self.connected and self.number_of_other_selected_settlements == 1:
-        #     self.select()
-            
-
-
     def check_hover(self):
         self.hover = False
         if self.rect.collidepoint(pygame.mouse.get_pos()):
             self.hover = True
         else:
             self.hover = False
+
+    def select(self):
+        self.selected = True
+        self.image = self.images["select_image"]
+                
+    def deselect(self):
+        self.selected = False
+        self.image = self.images["main_image"]
+    
+    def select_connected(self):
+        self.settlement_goods.update_preferred_good()
+
+    def deselect_connected(self):
+        # self.selected = False
+        # self.preferred_good_index -= 1
+        # self.settlement_goods.update_preferred_good()
+        pass
+            
+    def on_click(self):
+        
+        # # if self.selected:
+        # #     self.deselect()
+        # # else:
+        # #     self.select()
+            
+        # if not self.connected and self.selected:
+        #     self.deselect()
+        # elif not self.connected and not self.selected:
+        #     self.select()
+        # elif self.connected and not self.selected:
+        #     self.settlement_goods.update_preferred_good()
+        # elif self.connected and self.selected:
+        #     self.settlement_goods.update_preferred_good()
+        
+        # elif self.connected and self.number_of_other_selected_settlements == 0:
+        #     self.settlement_goods.update_preferred_good()
+        #     self.deselect()
+            
+        # # elif not self.selected and self.connected and self.number_of_other_selected_settlements == 1:
+        # #     self.select()
+        pass
+            
+
+
+

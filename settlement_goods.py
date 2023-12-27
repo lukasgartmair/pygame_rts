@@ -49,20 +49,23 @@ class SettlementGoods:
             self.settlement.trading_goods[trading_good] -= magnitude
     
         def update_preferred_good(self):
-            
+            print(self.settlement.preferred_good_index)
             self.settlement.preferred_good_index += 1
-            if self.settlement.preferred_good_index >= len(list(self.settlement.trading_goods.keys()))+1:
-                self.settlement.preferred_good_index = 0
+            if self.settlement.preferred_good_index >= len(list(self.settlement.trading_goods.keys()))-1:
+                self.settlement.preferred_good_index = -1
             
-            if self.settlement.preferred_good_index == len(list(self.settlement.trading_goods.keys())):
-                self.settlement.select()
-                return
+            # if self.settlement.preferred_good_index == len(list(self.settlement.trading_goods.keys())):
+            #     self.settlement.select()
+            #     return
                 
             self.settlement.preferred_good = self.game_trade.possible_trading_goods[self.settlement.preferred_good_index]
             self.settlement.image = self.settlement.images[self.settlement.preferred_good+"_image"]
             if self.settlement.selected:
                 self.settlement.deselect()
-    
+                
+            print(self.settlement.preferred_good_index)
+            print("-----")
+        
         def update_trading_stats(self):
             self.settlement.trading_stats["total"] = sum(self.settlement.trading_goods.values())
     
