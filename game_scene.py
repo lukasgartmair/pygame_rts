@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+ #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Wed Dec 27 09:16:56 2023
@@ -7,13 +7,13 @@ Created on Wed Dec 27 09:16:56 2023
 """
 
 import pygame
+from pygame import surfarray
 from scene_base import SceneBase
 import settlement
 from engine import GameState
 import custom_events
 import trade
 from selection_manager import SelectionManager
-import pygame.surfarray as surfarray
 import scene_manager
 import camera
 from colors import settlement_stats_colors
@@ -113,14 +113,19 @@ class GameScene(SceneBase):
                 )
             )
 
-    def Render(self, screen, game_font):
-        surfarray.blit_array(screen, self.game_map.mapped_grid)
-        self.global_path.render(screen, self.game_map)
-        self.global_path.render_path_length(screen, game_font)
+    def Render(self, game_camera, game_font):
+        screen = game_camera.camera_screen
+        surfarray.blit_array(screen,game_camera.get_map_cutout(self.game_map.mapped_grid))
+        tmp = game_camera.get_map_cutout(self.game_map.mapped_grid) 
+        surfarray.blit_array(screen, tmp)
+        self.global_path.map_paths_to_grid(self.game_map)
+        tmp = game_camera.get_map_cutout(self.global_path.mapped_grid)
+        surfarray.blit_array(screen, tmp)
         self.settlements.draw(screen)
         self.game_engine.render_settlement_count(screen, game_font)
 
-    def RenderSecondScreen(self, screen, game_font):
+    def RenderSecondScreen(self, game_camera, game_font):
+        screen = game_camera.camera_screen
         screen.get_rect()
         screen_dimensions = camera.get_camera_screen_dimensions(screen)
         pygame.draw.rect(screen, (settlement_stats_colors[0]), pygame.Rect(0, 0, screen_dimensions[0], screen_dimensions[1]))

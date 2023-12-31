@@ -52,7 +52,7 @@ class Path:
             if (k[1], k[0]) in self.subpaths.keys():
                 del self.subpaths[k[1], k[0]]
 
-    def render(self, screen, game_map):
+    def map_paths_to_grid(self, game_map):
         self.remove_perturbation_keys()
         self.mapped_grid = game_map.mapped_grid.copy()
         for k, v in self.subpaths.items():
@@ -63,8 +63,6 @@ class Path:
 
                 for a in adjacent_cells:
                     self.mapped_grid[a[0], a[1]] = self.color
-
-        surfarray.blit_array(screen, self.mapped_grid)
 
     def render_path_length(self, screen, font_game):
         text = font_game.render("path length: " + str(self.get_total_length()), True, font_game.text_color)

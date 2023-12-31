@@ -26,7 +26,7 @@ class TitleScene(SceneBase):
                     self.game_map,
                     self.global_path,
                     self.game_sound,
-                    self.sprite_groups,
+                    self.sprite_groups
                 )
             )
 
@@ -47,7 +47,8 @@ class TitleScene(SceneBase):
     def Update(self):
         pass
 
-    def Render(self, screen, game_font):
+    def Render(self, game_camera, game_font):
+        screen = game_camera.camera_screen
         background_start = image.load_title_screen_background(screen)
         screen.blit(background_start, (0, 0))
 

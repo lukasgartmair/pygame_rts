@@ -7,10 +7,11 @@ Created on Sun Dec 17 12:37:25 2023
 """
 
 import random
-import numpy as np
 from enum import Enum
+import numpy as np
 from colors import terrain_colors
 import scipy.ndimage
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 class Terrains(Enum):
@@ -33,11 +34,8 @@ class MapGenerator:
         self.earth_water_ratio = 0.5
 
     def inside_screen_boundaries(self, x, y):
-        if 0 <= x < self.width and 0 <= y < self.height:
-            return True
-        else:
-            return False
-
+        return  0 <= x < self.width and 0 <= y < self.height
+    
     def process(self):
         binary = self.grid
         img_fill_holes = scipy.ndimage.binary_fill_holes(binary[:, :]).astype(int)
@@ -51,9 +49,8 @@ class MapGenerator:
 
         current_amount = 0
 
-        s = ((random.randint(0, self.width)), random.randint(0, self.height))
-        x_temp = int(s[0])
-        y_temp = int(s[1])
+        
+        x_temp, y_temp = ((random.randint(0, self.width)), random.randint(0, self.height))
 
         counter = 0
         max_iterations = 1000000
@@ -73,8 +70,7 @@ class MapGenerator:
             if self.inside_screen_boundaries(x_temp, y_temp):
                 self.grid[x_temp, y_temp] = terrain
                 current_amount += 1
-            else:
-                next
+                
             counter += 1
 
     def generate_seas(self, terrain=Terrains.WATER.value):
@@ -87,9 +83,7 @@ class MapGenerator:
         counter = 0
 
         for n in range(number_of_seas):
-            s = ((random.randint(0, self.width)), random.randint(0, self.height))
-            x_temp = int(s[0])
-            y_temp = int(s[1])
+            x_temp, y_temp = ((random.randint(0, self.width)), random.randint(0, self.height))
 
             counter = 0
             max_iterations = 1000000
@@ -109,8 +103,7 @@ class MapGenerator:
                 if self.inside_screen_boundaries(x_temp, y_temp):
                     self.grid[x_temp, y_temp] = terrain
                     current_amount += 1
-                else:
-                    next
+
                 counter += 1
 
     def generate_terrain(self, terrain, ratio):
@@ -128,18 +121,18 @@ class MapGenerator:
 
 
 class GameMap:
-    def __init__(self, camera):
-        self.width = camera.get_subsurface_dimensions()[0]
-        self.height = camera.get_subsurface_dimensions()[1]
+    def __init__(self):
+        self.width = SCREEN_WIDTH #* 2
+        self.height = SCREEN_HEIGHT #* 2
         self.grid = np.zeros((self.width, self.height))
         self.mapped_grid = np.zeros((self.width, self.height, 3))
         self.generate()
 
     def generate(self):
-        m = MapGenerator(self)
-        m.generate_rnd_map()
-        m.process()
-        self.grid = m.grid.copy()
+        mg = MapGenerator(self)
+        mg.generate_rnd_map()
+        mg.process()
+        self.grid = mg.grid.copy()
         self.map_colors()
 
     def map_colors(self):
@@ -152,6 +145,3 @@ class GameMap:
             return True
         else:
             return False
-
-    def place_village(self, village):
-        pass

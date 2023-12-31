@@ -25,7 +25,7 @@ class SceneBase:
     def Update(self):
         print("uh-oh, you didn't override this in the child class")
 
-    def Render(self, screen, font_game):
+    def Render(self, camera, font_game):
         print("uh-oh, you didn't override this in the child class")
 
     def SwitchToScene(self, next_scene):

@@ -29,10 +29,11 @@ def inside_screen_boundaries(x, y):
 
 class MapGenerator:
     def __init__(self):
-        self.size_x = SCREEN_WIDTH
-        self.size_y = SCREEN_HEIGHT
-        self.grid = np.zeros((self.size_x, self.size_y))
-        self.mapped_grid = np.zeros((self.size_x, self.size_y, 3))
+        self.width = SCREEN_WIDTH
+        self.height = SCREEN_HEIGHT
+        self.grid = np.zeros((self.width, self.height))
+        z_dimensions = 3
+        self.mapped_grid = np.zeros((self.width, self.height, z_dimensions))
         self.earth_water_ratio = 0.5
 
     def map_colors(self):

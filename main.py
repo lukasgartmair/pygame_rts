@@ -22,9 +22,10 @@ import colors
 
 name = "City Trade"
 
-camera_0, camera_1, camera_2 = camera.initialize_cameras()
 
-game_map = level_map.GameMap(camera_1)
+game_map = level_map.GameMap()
+
+camera_0, camera_1, camera_2 = camera.initialize_cameras(game_map)
 
 game_engine = engine.GameEngine()
 
@@ -75,6 +76,10 @@ def run_game(starting_scene):
                 filtered_events.append(event)
 
         if type(active_scene).__name__ == "GameScene":
+            
+            # TODO find better place for this, jut a test for now
+            camera_1.check_user_input_camera_movement(event_list)
+
             screen.blit(camera_1.camera_screen, camera_1.camera.topleft)
 
             screen.blit(camera_2.camera_screen, camera_2.camera.topleft)
@@ -82,14 +87,15 @@ def run_game(starting_scene):
 
             active_scene.ProcessInput(filtered_events, pressed_keys, camera.get_camera_screen_dimensions(camera_1.camera_screen))
             active_scene.Update()
-            active_scene.Render(camera_1.camera_screen, font_game)
-            active_scene.RenderSecondScreen(camera_2.camera_screen, font_game)
+            
+            active_scene.Render(camera_1, font_game)
+            active_scene.RenderSecondScreen(camera_2, font_game)
 
         else:
             screen.blit(camera_0.camera_screen, camera_0.camera.topleft)
             active_scene.ProcessInput(filtered_events, pressed_keys, camera.get_camera_screen_dimensions(camera_0.camera_screen))
             active_scene.Update()
-            active_scene.Render(camera_0.camera_screen, font_game)
+            active_scene.Render(camera_0, font_game)
 
         active_scene = active_scene.next
 
