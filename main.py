@@ -22,7 +22,6 @@ import colors
 
 name = "City Trade"
 
-
 game_map = level_map.GameMap()
 
 camera_0, camera_1, camera_2 = camera.initialize_cameras(game_map)
@@ -84,7 +83,7 @@ def run_game(starting_scene):
             screen.blit(camera_2.camera_screen, camera_2.camera.topleft)
             camera_2.camera_screen.fill(colors.settlement_stats_colors[0])
 
-            active_scene.ProcessInput(filtered_events, pressed_keys, camera.get_camera_screen_dimensions(camera_1.camera_screen))
+            active_scene.ProcessInput(filtered_events, pressed_keys, camera_1)
             active_scene.Update()
             
             active_scene.Render(camera_1, font_game)
@@ -92,7 +91,7 @@ def run_game(starting_scene):
 
         else:
             screen.blit(camera_0.camera_screen, camera_0.camera.topleft)
-            active_scene.ProcessInput(filtered_events, pressed_keys, camera.get_camera_screen_dimensions(camera_0.camera_screen))
+            active_scene.ProcessInput(filtered_events, pressed_keys, camera_0)
             active_scene.Update()
             active_scene.Render(camera_0, font_game)
 

@@ -19,32 +19,28 @@ def initialize_cameras(game_map):
 
     return camera_0, camera_1, camera_2
 
-def get_camera_screen_dimensions(camera_screen):
-    return (camera_screen.get_width(), camera_screen.get_height())
-
-
-def is_in_bounds(pos, camera_screen_dimensions):
-    return 0 <= pos[0] < camera_screen_dimensions[0] and 0 <= pos[1] < camera_screen_dimensions[1]
-
 class Camera:
     def __init__(self, top, left, width, height, game_map):
         self.top = top
         self.left = left
         self.width = width
         self.height = height
-        print(self.height)
         self.game_map = game_map
         self.canvas = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.camera = pygame.Rect(self.top, self.left, self.width, self.height)
         self.camera_screen = self.canvas.subsurface(self.camera)
-        self.scroll_speed = 100
+        self.scroll_speed = 50
         self.topleft = (self.top, self.left)
-        self.set_topleft_center_view()          
+        self.set_topleft_center_view()
+        
+    def get_camera_screen_dimensions(self):
+        return (self.camera_screen.get_width(), self.camera_screen.get_height())
+    
+    def is_in_bounds(self, pos):
+        return 0 <= pos[0] < self.get_camera_screen_dimensions()[0] and 0 <= pos[1] < self.get_camera_screen_dimensions()[1]
         
     def within_boundaries(self, x_temp, y_temp):
-        
         inside = [x_temp >= 0 and y_temp >= 0 and x_temp <= self.game_map.width-SCREEN_WIDTH and y_temp <= self.game_map.height-SCREEN_HEIGHT]
-        print(inside)
         return all(inside)
         
     def set_topleft_center_view(self):
@@ -58,6 +54,12 @@ class Camera:
         grid = grid[x:x+self.width,y:y+self.height]
         return grid
 
+    def get_absolute_map_position(self, position):
+        return (position[0]+self.topleft[0],position[1]+self.topleft[1])
+    
+    def get_relative_screen_position(self, position):
+        return (position[0]-self.topleft[0],position[1]-self.topleft[1])
+
     def get_subsurface_dimensions(self):
         return self.camera_screen.get_width(), self.camera_screen.get_height()
 
@@ -70,25 +72,34 @@ class Camera:
     def handle_user_input_camera_movement(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key in [pygame.K_a, pygame.K_LEFT]:
-                    x_temp, y_temp = (self.topleft[0]-self.scroll_speed,self.topleft[1])
-                    if self.within_boundaries(x_temp, y_temp):
-                        self.topleft = (x_temp, y_temp)
-                if event.key in [pygame.K_d, pygame.K_RIGHT]:
-                    x_temp, y_temp = (self.topleft[0]+self.scroll_speed,self.topleft[1])
-                    if self.within_boundaries(x_temp, y_temp):
-                        self.topleft = (x_temp, y_temp)
-                if event.key in [pygame.K_w ,pygame.K_UP]:
-                    x_temp, y_temp = (self.topleft[0],self.topleft[1]-self.scroll_speed)
-                    if self.within_boundaries(x_temp, y_temp):
-                        self.topleft = (x_temp, y_temp)
-                if event.key in [pygame.K_s, pygame.K_DOWN]:
-                    x_temp, y_temp = (self.topleft[0],self.topleft[1]+self.scroll_speed)
-                    if self.within_boundaries(x_temp, y_temp):
-                        self.topleft = (x_temp, y_temp)
+                self.try_move_left(event)
+                self.try_move_right(event)
+                self.try_move_up(event)
+                self.try_move_down(event)
+                
                 if event.key == pygame.K_RETURN:
                     self.set_topleft_center_view()
-        
-        print(self.topleft)
-
-        
+    
+    def try_move_left(self, event):
+        if event.key in [pygame.K_a, pygame.K_LEFT]:
+            x_temp, y_temp = (self.topleft[0]-self.scroll_speed,self.topleft[1])
+            if self.within_boundaries(x_temp, y_temp):
+                self.topleft = (x_temp, y_temp)
+                
+    def try_move_right(self, event):
+        if event.key in [pygame.K_d, pygame.K_RIGHT]:
+            x_temp, y_temp = (self.topleft[0]+self.scroll_speed,self.topleft[1])
+            if self.within_boundaries(x_temp, y_temp):
+                self.topleft = (x_temp, y_temp)
+            
+    def try_move_up(self, event):
+        if event.key in [pygame.K_w ,pygame.K_UP]:
+            x_temp, y_temp = (self.topleft[0],self.topleft[1]-self.scroll_speed)
+            if self.within_boundaries(x_temp, y_temp):
+                self.topleft = (x_temp, y_temp)
+                
+    def try_move_down(self, event):
+        if event.key in [pygame.K_s, pygame.K_DOWN]:
+            x_temp, y_temp = (self.topleft[0],self.topleft[1]+self.scroll_speed)
+            if self.within_boundaries(x_temp, y_temp):
+                self.topleft = (x_temp, y_temp)

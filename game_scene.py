@@ -39,13 +39,13 @@ class GameScene(SceneBase):
             if event.type == custom_events.TRADE:
                 self.game_trade.perform_trade()
 
-    def check_mouse_click_in_bounds(self, mouse_position, screen_dimensions):
-        return camera.is_in_bounds(mouse_position, screen_dimensions)
+    def check_mouse_click_in_bounds(self, mouse_position, game_camera):
+        return game_camera.is_in_bounds(mouse_position)
 
-    def try_new_settlement_placement(self, mouse_position):
+    def try_new_settlement_placement(self, game_camera, mouse_position):
         valid_placement = self.game_map.check_valid_village_placement(mouse_position)
         if valid_placement:
-            new_settlement = settlement.Settlement(mouse_position, self.game_sound, self.game_trade)
+            new_settlement = settlement.Settlement(game_camera.get_absolute_map_position(mouse_position), self.game_sound, self.game_trade)
             overlap = pygame.sprite.spritecollideany(new_settlement, self.settlements)
             if not overlap:
                 settlement_placed = self.game_engine.place_settlement()
@@ -67,7 +67,7 @@ class GameScene(SceneBase):
             if successfully_connected:
                 self.selection_manager.handle_successful_connection()
 
-    def ProcessInput(self, events, pressed_keys, screen_dimensions):
+    def ProcessInput(self, events, pressed_keys, game_camera):
         for event in events:
             self.check_for_trade_event(event)
 
@@ -76,28 +76,29 @@ class GameScene(SceneBase):
             if self.selection_manager.check_connection_condition():
                 self.try_connect_settlements()
 
-            self.settlements.update(events, self.global_path, self.game_engine)
+            self.settlements.update(events, game_camera, self.global_path, self.game_engine)
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DELETE:
                     self.check_for_settlement_removals(event)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_position = pygame.mouse.get_pos()
-
-                if self.check_mouse_click_in_bounds(mouse_position, screen_dimensions):
-                    self.selection_manager.check_any_settlement_clicked(events)
-
-                    if self.selection_manager.selection_and_void_click():
-                        break
-
-                    if self.selection_manager.any_settlement_clicked:
-                        self.selection_manager.process_settlement_click()
-
-                    if not self.selection_manager.any_settlement_clicked and self.game_engine.settlements_available > 0:
-                        self.try_new_settlement_placement(mouse_position)
-                else:
-                    pass
+                if event.button == 1:
+                    mouse_position = pygame.mouse.get_pos()
+    
+                    if self.check_mouse_click_in_bounds(mouse_position, game_camera):
+                        self.selection_manager.check_any_settlement_clicked(events)
+    
+                        if self.selection_manager.selection_and_void_click():
+                            break
+    
+                        if self.selection_manager.any_settlement_clicked:
+                            self.selection_manager.process_settlement_click()
+    
+                        if not self.selection_manager.any_settlement_clicked and self.game_engine.settlements_available > 0:
+                            self.try_new_settlement_placement(game_camera, mouse_position)
+                    else:
+                        pass
 
         self.game_engine.check_win_condition(self.settlements)
 
@@ -121,17 +122,18 @@ class GameScene(SceneBase):
         self.global_path.map_paths_to_grid(self.game_map)
         tmp = game_camera.get_map_cutout(self.global_path.mapped_grid)
         surfarray.blit_array(screen, tmp)
+            
         self.settlements.draw(screen)
         self.game_engine.render_settlement_count(screen, game_font)
 
     def RenderSecondScreen(self, game_camera, game_font):
         screen = game_camera.camera_screen
         screen.get_rect()
-        screen_dimensions = camera.get_camera_screen_dimensions(screen)
+        screen_dimensions = game_camera.get_camera_screen_dimensions()
         pygame.draw.rect(screen, (settlement_stats_colors[0]), pygame.Rect(0, 0, screen_dimensions[0], screen_dimensions[1]))
 
         for s in self.settlements:
             if s.hover:
-                s.render_settlement_stats(screen, game_font)
+                s.render_settlement_stats(game_camera, game_font)
 
         self.game_trade.render_global_assets(screen, game_font)
