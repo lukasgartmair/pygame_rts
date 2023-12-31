@@ -34,7 +34,7 @@ class MapGenerator:
         self.grid = np.zeros((self.width, self.height))
         z_dimensions = 3
         self.mapped_grid = np.zeros((self.width, self.height, z_dimensions))
-        self.earth_water_ratio = 0.5
+        self.earth_water_ratio = 0.1
 
     def map_colors(self):
         for k, v in terrain_colors.items():

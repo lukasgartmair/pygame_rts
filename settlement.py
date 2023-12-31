@@ -17,7 +17,6 @@ import re
 
 faker = Faker()
 
-
 class Settlement(pygame.sprite.Sprite):
     def __init__(self, center, game_sound, game_trade):
         super().__init__()
@@ -49,7 +48,6 @@ class Settlement(pygame.sprite.Sprite):
         self.name = faker.city()
         self.hover = False
         self.connected = False
-        self.settlement_goods = SettlementGoods(self, game_trade)
 
     def apply_population_to_scale(self):
         self.scale_factor = self.scale_factor * self.population ** (1.0 / 3) / 40
@@ -108,7 +106,8 @@ class Settlement(pygame.sprite.Sprite):
         screen.blit(text, (horizontal_offset, offset))
         offset += vertical_offset
 
-    def placed(self, game_sound):
+    def placed(self, game_trade, game_sound):
+        self.settlement_goods = SettlementGoods(self, game_trade)
         game_sound.play_place_settlement()
 
     def got_connected(self):
@@ -135,7 +134,11 @@ class Settlement(pygame.sprite.Sprite):
     def update_render_center(self, game_camera):
         self.render_center = game_camera.get_relative_screen_position(self.center)
         self.rect = self.surf.get_rect(center=self.render_center)
-
+        
+    def update_rect_center_for_sprite_collision(self):
+        
+        self.rect = self.surf.get_rect(center=self.center)
+        
     def update(self, events, game_camera, global_path, game_engine):
         self.settlement_goods.update_trading_stats()
 

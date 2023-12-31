@@ -14,13 +14,12 @@ class GameState(Enum):
     PLAYING = 0
     ENDED = 1
 
-
 class GameEngine:
     def __init__(self):
         self.state = None
         self.currentPlayer = None
         self.settlements_available = 5
-        self.win_condition = 15
+        self.win_condition = 20
         self.state = GameState.PLAYING
 
     def get_settlements_availabe(self):

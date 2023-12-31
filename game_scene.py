@@ -43,8 +43,22 @@ class GameScene(SceneBase):
     def check_mouse_click_in_bounds(self, mouse_position, game_camera):
         return game_camera.is_in_bounds(mouse_position)
 
+    def check_for_settlement_overlap(self, new_settlement, game_camera):
+
+        new_settlement.update_rect_center_for_sprite_collision()
+        for s in self.settlements:
+            s.update_rect_center_for_sprite_collision()
+        overlap = pygame.sprite.spritecollideany(
+            new_settlement, self.settlements)
+        new_settlement.update_render_center(game_camera)
+        for s in self.settlements:
+            s.update_render_center(game_camera)
+
+        return overlap
+
     def try_new_settlement_placement(self, game_camera, mouse_position):
-        valid_placement = self.game_map.check_valid_village_placement(mouse_position)
+        valid_placement = self.game_map.check_valid_village_placement(
+            mouse_position)
         if valid_placement:
             absolute_map_position = game_camera.get_absolute_map_position(
                 mouse_position
@@ -52,13 +66,16 @@ class GameScene(SceneBase):
             new_settlement = settlement.Settlement(
                 absolute_map_position, self.game_sound, self.game_trade
             )
-            overlap = pygame.sprite.spritecollideany(new_settlement, self.settlements)
-            if not overlap:
+            overlap = None
+            overlap = self.check_for_settlement_overlap(
+                new_settlement, game_camera)
+
+            if overlap is None:
                 settlement_placed = self.game_engine.place_settlement()
                 if settlement_placed:
                     self.settlements.add(new_settlement)
                     self.all_sprites.add(new_settlement)
-                    new_settlement.placed(self.game_sound)
+                    new_settlement.placed(self.game_trade, self.game_sound)
             else:
                 new_settlement.kill()
 
@@ -67,7 +84,7 @@ class GameScene(SceneBase):
             self.selection_manager.selected_settlements
         )
         successfully_connected = False
-        if not already_connected:
+        if already_connected == False:
             successfully_connected = self.global_path.connect_settlements(
                 self.selection_manager.selected_settlements,
                 self.game_map,
@@ -79,15 +96,13 @@ class GameScene(SceneBase):
 
     def process_input(self, events, pressed_keys, game_camera):
         for event in events:
-            
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-            # self.check_for_trade_event(event)
+                    # self.check_for_trade_event(event)
 
                     self.game_trade.perform_trade()
 
-                    
-                    
             self.selection_manager.update_selected_settlements()
 
             if self.selection_manager.check_connection_condition():
@@ -103,11 +118,12 @@ class GameScene(SceneBase):
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    
+
                     mouse_position = pygame.mouse.get_pos()
 
                     if self.check_mouse_click_in_bounds(mouse_position, game_camera):
-                        self.selection_manager.check_any_settlement_clicked(events)
+                        self.selection_manager.check_any_settlement_clicked(
+                            events)
 
                         if self.selection_manager.selection_and_void_click():
                             break
@@ -116,7 +132,7 @@ class GameScene(SceneBase):
                             self.selection_manager.process_settlement_click()
 
                         if (
-                            not self.selection_manager.any_settlement_clicked
+                            self.selection_manager.any_settlement_clicked == False
                             and self.game_engine.settlements_available > 0
                         ):
                             self.try_new_settlement_placement(

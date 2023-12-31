@@ -99,14 +99,14 @@ class Ladder:
     
     def create_ladder_entry(self, settlement, good, magnitude, price, entry_type):
         if entry_type == EntryType.BID:
-            if not self.check_if_bidder_already_bidding_for_this_good(settlement, good):
+            if self.check_if_bidder_already_bidding_for_this_good(settlement, good) == False:
                 bid = Bid(settlement, good, magnitude, price)
                 self.remove_all_other_bids_from_bidder(settlement)
                 self.add_bid(bid)
                 
         elif entry_type == EntryType.ASK:
-            if not self.check_if_possible_asker_is_already_bidding_the_good(settlement, good):
-                if not self.check_if_ask_for_certain_good_already_in_ladder(settlement, good):
+            if self.check_if_possible_asker_is_already_bidding_the_good(settlement, good) == False:
+                if self.check_if_ask_for_certain_good_already_in_ladder(settlement, good) == False:
                     ask = Ask(settlement, good, magnitude, price)
                     self.add_ask(ask)
 
@@ -174,7 +174,7 @@ class Trade:
     
     def create_possible_ask(self, settlement, good, magnitude):
         
-        if not self.ladder.check_if_ask_for_certain_good_already_in_ladder(settlement, good):
+        if self.ladder.check_if_ask_for_certain_good_already_in_ladder(settlement, good) == False:
         
             if settlement.settlement_goods.has_at_least_one_in_stock(good):
                 trading_good_price = self.global_assets[good]["price"]
