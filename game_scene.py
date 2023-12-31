@@ -100,7 +100,7 @@ class GameScene(SceneBase):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     # self.check_for_trade_event(event)
-
+                    print("HERE")
                     self.game_trade.perform_trade()
 
             self.selection_manager.update_selected_settlements()
@@ -108,9 +108,12 @@ class GameScene(SceneBase):
             if self.selection_manager.check_connection_condition():
                 self.try_connect_settlements()
 
-            self.settlements.update(
-                events, game_camera, self.global_path, self.game_engine
-            )
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+
+                    self.settlements.update(
+                        event.pos, game_camera, self.global_path, self.game_engine
+                    )
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DELETE:
@@ -123,7 +126,7 @@ class GameScene(SceneBase):
 
                     if self.check_mouse_click_in_bounds(mouse_position, game_camera):
                         self.selection_manager.check_any_settlement_clicked(
-                            events)
+                            event.pos)
 
                         if self.selection_manager.selection_and_void_click():
                             break

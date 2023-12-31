@@ -26,9 +26,9 @@ class SelectionManager:
         else:
             return False
 
-    def check_any_settlement_clicked(self, events):
+    def check_any_settlement_clicked(self, mouse_position):
         self.any_settlement_clicked = False
-        clicked_settlements = [s for s in self.settlements if s.is_clicked(events)]
+        clicked_settlements = [s for s in self.settlements if s.is_clicked(mouse_position)]
         self.any_settlement_clicked = any(clicked_settlements)
         if self.any_settlement_clicked:
             self.clicked_settlement = clicked_settlements[0]

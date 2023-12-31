@@ -52,6 +52,8 @@ class SettlementGoods:
         if self.settlement.settlement_goods.is_affordable(price, magnitude):
             self.settlement.gold -= price
             self.settlement.trading_goods[trading_good] += magnitude
+            
+            self.reset_preferred_good()
 
     def sell_trading_good(self, trading_good, price, magnitude):
         self.settlement.gold += price * magnitude

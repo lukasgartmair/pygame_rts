@@ -118,12 +118,9 @@ class Settlement(pygame.sprite.Sprite):
         self.connected = False
         self.deselect()
 
-    def is_clicked(self, events):
-        for event in events:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    if self.rect.collidepoint(event.pos[0], event.pos[1]):
-                        return True
+    def is_clicked(self, mouse_position):
+        if self.rect.collidepoint(mouse_position[0], mouse_position[1]):
+            return True
         return False
 
     def remove(self, global_path, game_engine):
@@ -139,12 +136,12 @@ class Settlement(pygame.sprite.Sprite):
         
         self.rect = self.surf.get_rect(center=self.center)
         
-    def update(self, events, game_camera, global_path, game_engine):
+    def update(self, mouse_position, game_camera, global_path, game_engine):
         self.settlement_goods.update_trading_stats()
 
         self.check_hover()
 
-        if self.is_clicked(events):
+        if self.is_clicked(mouse_position):
             self.callback()
             self.clicks += 1
 

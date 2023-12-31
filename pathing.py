@@ -11,7 +11,7 @@ strategies = ["astar", "diagonal"]
 
 class PathFinder:
     def __init__(self, strategy="diagonal"):
-        self.strategy = "astar"
+        self.strategy = "diagonal"
         self.local_path = []
 
     def init_local_path(self):

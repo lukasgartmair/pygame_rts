@@ -26,7 +26,7 @@ class SceneBase:
         for k, v in self.sprite_groups.items():
             setattr(self, k, v)
 
-    def process_input(self, events, pressed_keys, game_camera):
+    def process_input(self, mouse_position, pressed_keys, game_camera):
         print("uh-oh, you didn't override this in the child class")
 
     def update(self):

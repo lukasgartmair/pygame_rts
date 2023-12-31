@@ -33,7 +33,6 @@ font_game = game_font.GameFont(game_font.font_style, game_font.font_size)
 
 sprite_groups = SpriteGroup().get_sprite_groups()
 
-
 def run_game(starting_scene):
     pygame.init()
 
@@ -46,6 +45,7 @@ def run_game(starting_scene):
     pygame.key.set_repeat(1, 100)
 
     while active_scene != None:
+        
         pressed_keys = pygame.key.get_pressed()
 
         filtered_events = []
@@ -73,6 +73,7 @@ def run_game(starting_scene):
                 filtered_events.append(event)
 
         if type(active_scene).__name__ in ["GameScene","EndScene"]:
+            
             camera_1.handle_user_input_camera_movement(event_list)
 
             screen.blit(camera_1.camera_screen, camera_1.camera.topleft)
@@ -95,10 +96,9 @@ def run_game(starting_scene):
             active_scene.render(camera_0, font_game)
             
         active_scene = active_scene.next
-
+ 
         pygame.display.flip()
         clock.tick(FPS)
-
 
 if __name__ == "__main__":
     # unittest.main()
