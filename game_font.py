@@ -11,7 +11,7 @@ import pygame
 pygame.font.init()
 
 styles = pygame.font.get_fonts()
-#monospaced_ 2, 6, 7
+# monospaced_ 2, 6, 7
 font_style = pygame.font.match_font(styles[7])
 font_size = 30
 

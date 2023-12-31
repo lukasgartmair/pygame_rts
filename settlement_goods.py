@@ -31,11 +31,11 @@ class SettlementGoods:
             return True
         else:
             return False
-    
+
     def calculate_affordable_magnitude(self, price):
         affordable_magnitude = self.settlement.gold // price
         return affordable_magnitude
-    
+
     def is_affordable(self, price, magnitude):
         if self.settlement.gold >= price * magnitude:
             return True
@@ -63,17 +63,25 @@ class SettlementGoods:
         self.preferred_good_set = True
         self.settlement.preferred_good_index += 1
 
-        if self.settlement.preferred_good_index == len(list(self.settlement.trading_goods.keys())):
+        if self.settlement.preferred_good_index == len(
+            list(self.settlement.trading_goods.keys())
+        ):
             self.reset_preferred_good()
 
         if self.settlement.preferred_good_index >= 0:
-            self.settlement.preferred_good = self.game_trade.possible_trading_goods[self.settlement.preferred_good_index]
-            self.settlement.image = self.settlement.images[self.settlement.preferred_good + "_image"]
+            self.settlement.preferred_good = self.game_trade.possible_trading_goods[
+                self.settlement.preferred_good_index
+            ]
+            self.settlement.image = self.settlement.images[
+                self.settlement.preferred_good + "_image"
+            ]
         else:
             self.settlement.deselect()
 
     def update_trading_stats(self):
-        self.settlement.trading_stats["total"] = sum(self.settlement.trading_goods.values())
+        self.settlement.trading_stats["total"] = sum(
+            self.settlement.trading_goods.values()
+        )
 
     def initialize_trading_goods(self):
         for tg in self.game_trade.possible_trading_goods:

@@ -16,7 +16,9 @@ class SelectionManager:
 
     def deselect_settlement(self, settlement):
         settlement.deselect()
-        self.selected_settlements = [s for s in self.selected_settlements if s != settlement]
+        self.selected_settlements = [
+            s for s in self.selected_settlements if s != settlement
+        ]
 
     def check_connection_condition(self):
         if len(self.selected_settlements) == 2:
@@ -67,5 +69,7 @@ class SelectionManager:
             if len(self.selected_settlements) == 0:
                 s.settlement_goods.update_preferred_good()
 
-        if len(self.selected_settlements) == 1 and not (self.selected_settlements[0].connected):
+        if len(self.selected_settlements) == 1 and not (
+            self.selected_settlements[0].connected
+        ):
             s.select()

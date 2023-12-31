@@ -92,14 +92,22 @@ def run_game(starting_scene):
             screen.blit(camera_2.camera_screen, camera_2.camera.topleft)
             camera_2.camera_screen.fill(colors.settlement_stats_colors[0])
 
-            active_scene.ProcessInput(filtered_events, pressed_keys, camera_1.get_camera_screen_dimensions(camera_1.camera_screen))
+            active_scene.ProcessInput(
+                filtered_events,
+                pressed_keys,
+                camera_1.get_camera_screen_dimensions(camera_1.camera_screen),
+            )
             active_scene.Update()
             active_scene.Render(camera_1, font_game)
             active_scene.RenderSecondScreen(camera_2, font_game)
 
         else:
             screen.blit(camera_0.camera_screen, camera_0.camera.topleft)
-            active_scene.ProcessInput(filtered_events, pressed_keys, camera_1.get_camera_screen_dimensions(camera_0.camera_screen))
+            active_scene.ProcessInput(
+                filtered_events,
+                pressed_keys,
+                camera_1.get_camera_screen_dimensions(camera_0.camera_screen),
+            )
             active_scene.Update()
             active_scene.Render(camera_0, font_game)
 
@@ -113,7 +121,11 @@ def run_game(starting_scene):
 
 
 async def main():
-    run_game(scene_manager.get_title_scene(game_engine, game_map, global_path, game_sound, sprite_groups))
+    run_game(
+        scene_manager.get_title_scene(
+            game_engine, game_map, global_path, game_sound, sprite_groups
+        )
+    )
     await asyncio.sleep(0)  # Let other tasks run
 
 

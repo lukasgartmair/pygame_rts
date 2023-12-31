@@ -18,15 +18,15 @@ class TitleScene(SceneBase):
         print("Title Scene")
         self.skip = True
 
-    def ProcessInput(self, events, pressed_keys, screen):
+    def process_input(self, events, pressed_keys, screen):
         if self.skip:
-            self.SwitchToScene(
+            self.switch_to_scene(
                 scene_manager.get_game_scene(
                     self.game_engine,
                     self.game_map,
                     self.global_path,
                     self.game_sound,
-                    self.sprite_groups
+                    self.sprite_groups,
                 )
             )
 
@@ -35,8 +35,7 @@ class TitleScene(SceneBase):
                 event.type == pygame.MOUSEBUTTONDOWN and event.button == 1
             ):
                 if event.button == 1:
-
-                    self.SwitchToScene(
+                    self.switch_to_scene(
                         scene_manager.get_game_scene(
                             self.game_engine,
                             self.game_map,
@@ -46,10 +45,10 @@ class TitleScene(SceneBase):
                         )
                     )
 
-    def Update(self):
+    def update(self):
         pass
 
-    def Render(self, game_camera, game_font):
+    def render(self, game_camera, game_font):
         screen = game_camera.camera_screen
         background_start = image.load_title_screen_background(screen)
         screen.blit(background_start, (0, 0))

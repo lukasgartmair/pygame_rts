@@ -8,7 +8,14 @@ Created on Sat Dec 23 20:10:50 2023
 
 
 class SceneBase:
-    def __init__(self, game_engine=None, game_map=None, global_path=None, game_sound=None, sprite_groups=None):
+    def __init__(
+        self,
+        game_engine=None,
+        game_map=None,
+        global_path=None,
+        game_sound=None,
+        sprite_groups=None,
+    ):
         self.next = self
         self.game_engine = game_engine
         self.game_map = game_map
@@ -19,17 +26,17 @@ class SceneBase:
         for k, v in self.sprite_groups.items():
             setattr(self, k, v)
 
-    def ProcessInput(self, events, pressed_keys, screen):
+    def process_input(self, events, pressed_keys, game_camera):
         print("uh-oh, you didn't override this in the child class")
 
-    def Update(self):
+    def update(self):
         print("uh-oh, you didn't override this in the child class")
 
-    def Render(self, camera, font_game):
+    def render(self, game_camera, game_font):
         print("uh-oh, you didn't override this in the child class")
 
-    def SwitchToScene(self, next_scene):
+    def switch_to_scene(self, next_scene):
         self.next = next_scene
 
-    def Terminate(self):
-        self.SwitchToScene(None)
+    def terminate(self):
+        self.switch_to_scene(None)

@@ -18,17 +18,27 @@ import re
 
 faker = Faker()
 
+
 class Settlement(pygame.sprite.Sprite):
     def __init__(self, center, game_sound, game_trade):
         super().__init__()
         self.center = center
-        self.render_center = (center)
+        self.render_center = center
         self.images = image.load_settlement_images("settlement_1")
         self.population = random.randint(1000, 200000)
         self.scale_factor = 0.15
         self.apply_population_to_scale()
         self.images.update(
-            (k, pygame.transform.scale(v, (v.get_width() * self.scale_factor, v.get_height() * self.scale_factor)))
+            (
+                k,
+                pygame.transform.scale(
+                    v,
+                    (
+                        v.get_width() * self.scale_factor,
+                        v.get_height() * self.scale_factor,
+                    ),
+                ),
+            )
             for k, v in self.images.items()
         )
         self.image = self.images["main_image"]
@@ -59,42 +69,44 @@ class Settlement(pygame.sprite.Sprite):
         screen_width, screen_height = screen_dimensions[0], screen_dimensions[1]
         vertical_offset = 25
         horizontal_offset = screen_width // 2
-        
+
         vertical_offset = 25
         offset = 0
-        
+
         text = game_font.render(self.name, True, (10, 0, 0))
-        screen.blit(text, (horizontal_offset,offset))
+        screen.blit(text, (horizontal_offset, offset))
         offset += vertical_offset
-        
+
         text = game_font.render("gold: {}".format(self.gold), True, (10, 0, 0))
-        screen.blit(text, (horizontal_offset,offset))
+        screen.blit(text, (horizontal_offset, offset))
         offset += vertical_offset
-        
-        text = game_font.render("-"*20, True, (10, 0, 0))
-        screen.blit(text, (horizontal_offset,offset))
+
+        text = game_font.render("-" * 20, True, (10, 0, 0))
+        screen.blit(text, (horizontal_offset, offset))
         offset += vertical_offset
-        
+
         table = BeautifulTable()
         table.set_style(BeautifulTable.STYLE_COMPACT)
         # table.columns.alignment = BeautifulTable.ALIGN_LEFT
         # table.rows.alignment = BeautifulTable.ALIGN_LEFT
-        table.columns.header = ["","good","magnitude"]
+        table.columns.header = ["", "good", "magnitude"]
         for k, v in self.trading_goods.items():
             row = ["", k, v]
             table.append_row(row)
-        
+
         splitted_table = re.split("\n", table.get_string())
         for line in splitted_table:
             text = game_font.render(line, True, (10, 0, 0))
-            screen.blit(text, (horizontal_offset,offset))
+            screen.blit(text, (horizontal_offset, offset))
             offset += vertical_offset
-            
-        text = game_font.render("-"*20, True, (10, 0, 0))
-        screen.blit(text, (horizontal_offset,offset))
+
+        text = game_font.render("-" * 20, True, (10, 0, 0))
+        screen.blit(text, (horizontal_offset, offset))
         offset += vertical_offset
-        text = game_font.render("total: {}".format(self.trading_stats["total"]), True, (10, 0, 0))
-        screen.blit(text, (horizontal_offset,offset))
+        text = game_font.render(
+            "total: {}".format(self.trading_stats["total"]), True, (10, 0, 0)
+        )
+        screen.blit(text, (horizontal_offset, offset))
         offset += vertical_offset
 
     def placed(self, game_sound):
@@ -122,10 +134,9 @@ class Settlement(pygame.sprite.Sprite):
         game_engine.remove_settlement()
 
     def update_render_center(self, game_camera):
-        
         self.render_center = game_camera.get_relative_screen_position(self.center)
         self.rect = self.surf.get_rect(center=self.render_center)
-        
+
     def update(self, events, game_camera, global_path, game_engine):
         self.settlement_goods.update_trading_stats()
 
@@ -137,7 +148,7 @@ class Settlement(pygame.sprite.Sprite):
 
         if self.connected:
             self.check_if_still_connected(global_path)
-            
+
         self.update_render_center(game_camera)
 
     def check_hover(self):

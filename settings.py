@@ -5,9 +5,12 @@ Created on Sun Dec 17 12:39:07 2023
 
 @author: lukasgartmair
 """
-SCREEN_WIDTH = 900
-SCREEN_HEIGHT = 600
-FPS = 60
+
+NAME = "City Trade"
+
+SCREEN_WIDTH = 900 * 2
+SCREEN_HEIGHT = 600 * 2
+FPS = 39
 
 CAMERA_0_X = 0
 CAMERA_0_Y = 0

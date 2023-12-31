@@ -65,7 +65,9 @@ class Path:
                     self.mapped_grid[a[0], a[1]] = self.color
 
     def render_path_length(self, screen, font_game):
-        text = font_game.render("path length: " + str(self.get_total_length()), True, font_game.text_color)
+        text = font_game.render(
+            "path length: " + str(self.get_total_length()), True, font_game.text_color
+        )
         screen.blit(text, (SCREEN_WIDTH * 0.1, SCREEN_HEIGHT * 0.15))
 
     def remove_subpath(self, settlement_name):
@@ -92,10 +94,14 @@ class Path:
 
         local_path = None
 
-        local_path = self.pathfinder.find_path(game_map.grid, settlement_0.center, settlement_1.center)
+        local_path = self.pathfinder.find_path(
+            game_map.grid, settlement_0.center, settlement_1.center
+        )
 
         if local_path:
-            self.add_subpath(settlement_0.name, settlement_1.name, len(local_path), local_path)
+            self.add_subpath(
+                settlement_0.name, settlement_1.name, len(local_path), local_path
+            )
             settlement_0.got_connected()
             settlement_1.got_connected()
 

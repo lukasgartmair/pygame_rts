@@ -30,11 +30,11 @@ class Sound:
 
     def play_place_settlement(self):
         place_settlement_path = "sounds/place_settlement.wav"
-        #play_sound(place_settlement_path, loop=0)
+        # play_sound(place_settlement_path, loop=0)
 
     def play_connect_settlement(self):
         place_settlement_path = "sounds/settlements_connect.wav"
-        #play_sound(place_settlement_path, loop=0)
+        # play_sound(place_settlement_path, loop=0)
 
     def play_background_music_1(self):
         background_music_1_path = "sounds/background_music_1.wav"

@@ -34,8 +34,8 @@ class MapGenerator:
         self.earth_water_ratio = 0.5
 
     def inside_screen_boundaries(self, x, y):
-        return  0 <= x < self.width and 0 <= y < self.height
-    
+        return 0 <= x < self.width and 0 <= y < self.height
+
     def process(self):
         binary = self.grid
         img_fill_holes = scipy.ndimage.binary_fill_holes(binary[:, :]).astype(int)
@@ -49,8 +49,10 @@ class MapGenerator:
 
         current_amount = 0
 
-        
-        x_temp, y_temp = ((random.randint(0, self.width)), random.randint(0, self.height))
+        x_temp, y_temp = (
+            (random.randint(0, self.width)),
+            random.randint(0, self.height),
+        )
 
         counter = 0
         max_iterations = 1000000
@@ -70,7 +72,7 @@ class MapGenerator:
             if self.inside_screen_boundaries(x_temp, y_temp):
                 self.grid[x_temp, y_temp] = terrain
                 current_amount += 1
-                
+
             counter += 1
 
     def generate_seas(self, terrain=Terrains.WATER.value):
@@ -83,7 +85,10 @@ class MapGenerator:
         counter = 0
 
         for n in range(number_of_seas):
-            x_temp, y_temp = ((random.randint(0, self.width)), random.randint(0, self.height))
+            x_temp, y_temp = (
+                (random.randint(0, self.width)),
+                random.randint(0, self.height),
+            )
 
             counter = 0
             max_iterations = 1000000

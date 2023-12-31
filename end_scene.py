@@ -27,11 +27,11 @@ class EndScene(SceneBase):
 
         print(max(trading_good_sums, default=0))
 
-    def ProcessInput(self, events, pressed_keys, screen):
+    def process_input(self, events, pressed_keys, screen):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    self.SwitchToScene(
+                    self.switch_to_scene(
                         scene_manager.get_title_scene(
                             self.game_engine,
                             self.game_map,
@@ -41,10 +41,10 @@ class EndScene(SceneBase):
                         )
                     )
 
-    def Update(self):
+    def update(self):
         pass
 
-    def Render(self, screen, game_font):
+    def render(self, screen, game_font):
         surfarray.blit_array(screen, self.game_map.mapped_grid)
         self.global_path.render(screen, self.game_map)
         self.global_path.render_path_length(screen, game_font)

@@ -47,7 +47,9 @@ class PathFinder:
 
         end_node = grid.node(end[0], end[1])
 
-        finder = AStarFinder(time_limit=TIME_LIMIT, diagonal_movement=DiagonalMovement.always)
+        finder = AStarFinder(
+            time_limit=TIME_LIMIT, diagonal_movement=DiagonalMovement.always
+        )
 
         try:
             path, runs = finder.find_path(start_node, end_node, grid)
