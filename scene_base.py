@@ -28,7 +28,7 @@ class SceneBase:
 
     def process_input(self, mouse_position, pressed_keys, game_camera):
         print("uh-oh, you didn't override this in the child class")
-
+        
     def update(self):
         print("uh-oh, you didn't override this in the child class")
 

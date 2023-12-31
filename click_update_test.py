@@ -31,7 +31,7 @@ def fib(limit):
         yield a 
         a, b = b, a + b 
         
-x = fib(5) 
+x = fib(10) 
 
 clicked = False
 
@@ -47,24 +47,26 @@ def on_click(x, y, button, pressed):
 def main () :
     color = 0
     counter = 0
-    for i in fib(10):  
-      for event in pygame.event.get() :
-        if event.type == pygame.QUIT :
-            pygame.quit()
-            sys.exit()
-        with mouse.Listener(on_click=on_click, on_move=on_move) as listener:
-            listener.join()
 
-        if clicked:
-            WINDOW.fill(colors[color])
-            if color == 0:
-                color = 1
-            else:
-                color = 0
-        pygame.display.flip()
+    for event in pygame.event.get() :
+      if event.type == pygame.QUIT :
+          pygame.quit()
+          sys.exit()
+      # with mouse.Listener(on_click=on_click, on_move=on_move) as listener:
+      #     listener.join()
+      if event.type == pygame.MOUSEBUTTONDOWN:
+          if event.button == 1:
 
-        counter += 1
-        print(counter)
+              WINDOW.fill(colors[color])
+              if color == 0:
+                  color = 1
+              else:
+                  color = 0
+              pygame.display.flip()
+              next(x)
+
+      counter += 1
+      print(counter)
 
 
  

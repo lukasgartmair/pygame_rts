@@ -29,7 +29,7 @@ class GameScene(SceneBase):
         self.selection_manager = SelectionManager(
             self.settlements, self.any_settlement_clicked
         )
-
+        
     def check_for_settlement_removals(self):
         if self.selection_manager.selected_settlements:
             for s in self.selection_manager.selected_settlements:
@@ -96,12 +96,11 @@ class GameScene(SceneBase):
 
     def process_input(self, events, pressed_keys, game_camera):
         for event in events:
-
+            
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     # self.check_for_trade_event(event)
-                    print("HERE")
-                    self.game_trade.perform_trade()
+                    self.game_trade.perform_trade()    
 
             self.selection_manager.update_selected_settlements()
 

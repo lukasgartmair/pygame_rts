@@ -69,24 +69,25 @@ def run_game(starting_scene):
                 pygame.display.quit()
                 pygame.quit()
                 sys.exit()
-            else:
+
+            if event.type == event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.KEYDOWN:
                 filtered_events.append(event)
 
         if type(active_scene).__name__ in ["GameScene","EndScene"]:
             
-            camera_1.handle_user_input_camera_movement(event_list)
+            camera_1.handle_user_input_camera_movement(filtered_events)
 
             screen.blit(camera_1.camera_screen, camera_1.camera.topleft)
 
             screen.blit(camera_2.camera_screen, camera_2.camera.topleft)
             camera_2.camera_screen.fill(colors.settlement_stats_colors[0])
-
+            
             active_scene.process_input(filtered_events, pressed_keys, camera_1)
             active_scene.update()
-
+            
             active_scene.render(camera_1, font_game)
             active_scene.render_second_screen(camera_2, font_game)
-            
+        
             game_engine.check_win_condition(active_scene.settlements)
 
         else:
