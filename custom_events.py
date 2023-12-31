@@ -7,7 +7,6 @@ Created on Mon Dec 25 14:05:38 2023
 """
 
 import pygame
-import random
 
 TRADE = None
 SECOND = None

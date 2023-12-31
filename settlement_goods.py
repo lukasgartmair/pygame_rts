@@ -8,7 +8,6 @@ Created on Wed Dec 27 09:42:21 2023
 
 import random
 
-
 class SettlementGoods:
     def __init__(self, settlement, game_trade):
         self.settlement = settlement
@@ -18,16 +17,23 @@ class SettlementGoods:
 
     def initialze_trading_attributes(self):
         self.settlement.game_trade = self.game_trade
-        self.settlement.gold = 20
+        self.settlement.gold = 15
         self.settlement.trading_goods = {}
         self.initialize_trading_goods()
         self.settlement.trading_stats = {"total": 0}
 
         self.settlement.preferred_good = ""
         self.settlement.preferred_good_index = -1
-
-    def is_in_stock(self, trading_good):
+        
+    def has_at_least_one_in_stock(self, trading_good):
         if self.settlement.trading_goods[trading_good] > 0:
+            return True
+        else:
+            return False
+
+
+    def has_magnitude_in_stock(self, trading_good, magnitude):
+        if self.settlement.trading_goods[trading_good] >= magnitude:
             return True
         else:
             return False
@@ -43,7 +49,7 @@ class SettlementGoods:
             return False
 
     def buy_trading_good(self, trading_good, price, magnitude):
-        if self.settlement.is_affordable(price, magnitude):
+        if self.settlement.settlement_goods.is_affordable(price, magnitude):
             self.settlement.gold -= price
             self.settlement.trading_goods[trading_good] += magnitude
 

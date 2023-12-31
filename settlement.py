@@ -12,7 +12,6 @@ import pygame.gfxdraw
 import image
 import random
 from settlement_goods import SettlementGoods
-import camera
 from beautifultable import BeautifulTable
 import re
 

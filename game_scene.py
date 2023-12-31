@@ -37,7 +37,7 @@ class GameScene(SceneBase):
 
     def check_for_trade_event(self, event):
         if len(self.global_path.subpaths) >= 1:
-            if event.type == custom_events.TRADE:
+            if event.type == pygame.TRADE:
                 self.game_trade.perform_trade()
 
     def check_mouse_click_in_bounds(self, mouse_position, game_camera):
@@ -79,8 +79,15 @@ class GameScene(SceneBase):
 
     def process_input(self, events, pressed_keys, game_camera):
         for event in events:
-            self.check_for_trade_event(event)
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+            # self.check_for_trade_event(event)
 
+                    self.game_trade.perform_trade()
+
+                    
+                    
             self.selection_manager.update_selected_settlements()
 
             if self.selection_manager.check_connection_condition():
@@ -92,10 +99,11 @@ class GameScene(SceneBase):
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DELETE:
-                    self.check_for_settlement_removals(event)
+                    self.check_for_settlement_removals()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
+                    
                     mouse_position = pygame.mouse.get_pos()
 
                     if self.check_mouse_click_in_bounds(mouse_position, game_camera):
@@ -120,16 +128,18 @@ class GameScene(SceneBase):
         self.game_engine.check_win_condition(self.settlements)
 
     def update(self):
-        if self.game_engine.state == GameState.ENDED:
-            self.switch_to_scene(
-                scene_manager.get_end_scene(
-                    self.game_engine,
-                    self.game_map,
-                    self.global_path,
-                    self.game_sound,
-                    self.sprite_groups,
-                )
-            )
+        # if self.game_engine.state == GameState.ENDED:
+        #     self.switch_to_scene(
+        #         scene_manager.get_end_scene(
+        #             self.game_engine,
+        #             self.game_map,
+        #             self.global_path,
+        #             self.game_sound,
+        #             self.sprite_groups,
+        #         )
+        #     )
+
+        pass
 
     def render(self, game_camera, game_font):
         screen = game_camera.camera_screen

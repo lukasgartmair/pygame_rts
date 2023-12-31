@@ -8,7 +8,6 @@ Created on Mon Dec 25 14:11:37 2023
 
 import random
 from collections import defaultdict
-import pygame
 from beautifultable import BeautifulTable
 import re
 
@@ -28,17 +27,15 @@ def nested_dict(n, type):
 
 
 class Bid:
-    # SELLER
-    # OFFER The bid price refers to the highest price a buyer will pay for a security
+    # BUY The bid price refers to the highest price a buyer will pay for a security
     def __init__(self, bidder, good, magnitude, price):
         self.bidder = bidder
         self.good = good
         self.magnitude = magnitude
         self.price = price
 
-
 class Ask:
-    # GEBOT The ask price refers to the lowest price a seller will accept for a security.
+    # SELL The ask price refers to the lowest price a seller will accept for a security.
     def __init__(self, asker, good, magnitude, price):
         self.asker = asker
         self.good = good
@@ -52,32 +49,66 @@ class Ladder:
         self.bids = []
         self.asks = []
 
+    def clear_asks(self):
+        self.asks = []
+        
+    def clear_certain_good_asks(self, good):
+        for ask in self.asks:
+            if ask.good == good:
+                self.asks.remove(ask)
+                
+    def update(self):
+        pass
+
     def add_ask(self, ask):
         self.asks.append(ask)
 
     def add_bid(self, bid):
         self.bids.append(bid)
+        
+    def remove_all_other_bids_from_bidder(self, bidder):
+        bids = [b for b in self.bids if b.bidder == bidder]
+        for bid in bids:
+            self.bids.remove(bid)
 
-    def resolve_open(self):
-        pass
+    def resolve(self):
+        resolutions = []
+        for bid in self.bids:
+            valid_asks = [a for a in self.asks if a.good == bid.good and a.magnitude > 0]
 
-    def check_if_bidder_already_in_ladder(self, bidder):
-        return any([b for b in self.bids if b.bidder == bidder])
+            if valid_asks:
+                random.shuffle(valid_asks)
+                accepted_ask = valid_asks[0]
+                resolutions.append((accepted_ask,bid))
+                
+                self.bids.remove(bid)
+                self.asks.remove(accepted_ask)
 
-    def check_if_max_asks_in_ladder_reached(self, asker):
-        print([a for a in self.asks if a.asker == asker])
-        return sum([True for a in self.asks if a.asker == asker]) <= self.max_asks
+        return resolutions
 
+    def check_if_bidder_already_bidding_for_this_good(self, bidder, good):
+        return bool([b for b in self.bids if b.bidder == bidder and b.good == good])
+    
+    def check_if_possible_asker_is_already_bidding_the_good(self, settlement, good):
+        is_bidding_for_the_good = [b for b in self.bids if b.bidder == settlement and b.good == good]
+        return bool(is_bidding_for_the_good)       
+
+    def check_if_ask_for_certain_good_already_in_ladder(self, asker, good):
+        ask_for_this_good_from_this_asker = [a for a in self.asks if a.asker == asker and a.good == good]
+        return bool(ask_for_this_good_from_this_asker)       
+    
     def create_ladder_entry(self, settlement, good, magnitude, price, entry_type):
         if entry_type == EntryType.BID:
-            bid = Bid(settlement, 1, good, price)
-            if not self.check_if_bidder_already_in_ladder(settlement):
+            if not self.check_if_bidder_already_bidding_for_this_good(settlement, good):
+                bid = Bid(settlement, good, magnitude, price)
+                self.remove_all_other_bids_from_bidder(settlement)
                 self.add_bid(bid)
+                
         elif entry_type == EntryType.ASK:
-            ask = Ask(settlement, 1, good, price)
-            if self.check_if_max_asks_in_ladder_reached(settlement):
-                self.add_ask(ask)
-
+            if not self.check_if_possible_asker_is_already_bidding_the_good(settlement, good):
+                if not self.check_if_ask_for_certain_good_already_in_ladder(settlement, good):
+                    ask = Ask(settlement, good, magnitude, price)
+                    self.add_ask(ask)
 
 class Trade:
     def __init__(self, settlements, global_path):
@@ -119,16 +150,41 @@ class Trade:
     def initialize_global_assets(self):
         for p in self.possible_trading_goods:
             self.global_assets[p]["magnitude"] = 0
-            # self.global_assets[p]["price"] = random.randint(1, 10)
-            self.global_assets[p]["price"] = 1
+            self.global_assets[p]["price"] = random.randint(1, 5)
 
     def update_global_asset_magnitudes(self, trading_goods):
         for k, v in trading_goods.items():
             self.global_assets[k]["magnitude"] += v
 
-    def transaction(self, ask, bid, verbose=False):
-        if verbose:
-            print("TRANSACTION")
+    def transaction(self, ask, bid):
+        
+        good = bid.good
+        
+        magnitude = 0
+        if bid.magnitude <= ask.magnitude:
+            magnitude = bid.magnitude
+        elif bid.magnitude > ask.magnitude:
+            magnitude == ask.magnitude
+        
+        bid.bidder.settlement_goods.buy_trading_good(good, self.global_assets[good]["price"], magnitude)
+        print("{} bought {} x {} for {} from {}".format(bid.bidder.name, magnitude, good, self.global_assets[good]["price"] * bid.magnitude, ask.asker.name))
+        ask.asker.settlement_goods.sell_trading_good(good, self.global_assets[good]["price"], magnitude) 
+        print("{} sold {} x {} for {} to {}".format(ask.asker.name, magnitude, good, self.global_assets[good]["price"] * magnitude, bid.bidder.name))
+        return True
+    
+    def create_possible_ask(self, settlement, good, magnitude):
+        
+        if not self.ladder.check_if_ask_for_certain_good_already_in_ladder(settlement, good):
+        
+            if settlement.settlement_goods.has_at_least_one_in_stock(good):
+                trading_good_price = self.global_assets[good]["price"]
+                self.ladder.create_ladder_entry(
+                    settlement,
+                    good,
+                    settlement.trading_goods[good],
+                    trading_good_price,
+                    EntryType.ASK,
+                )
 
     def create_possible_bids(self, settlements):
         for s in settlements:
@@ -152,28 +208,46 @@ class Trade:
         if verbose:
             print("perform trade")
 
+        trading_settlements = []
+        
         for k, v in self.global_path.subpaths.items():
             print(k)
 
             settlement_0 = [s for s in self.settlements if s.name == k[0]][0]
             settlement_1 = [s for s in self.settlements if s.name == k[1]][0]
+            
+            trading_settlements.append((settlement_0, settlement_1))
 
-            ss = [settlement_0, settlement_1]
+        for traders in trading_settlements:
+            
+            settlement_0, settlement_1 = traders
 
-            self.create_possible_bids(ss)
+            self.create_possible_bids([settlement_0, settlement_1])
+            
+        unique_bid_goods = sorted(set([b.good for b in self.ladder.bids]))
+        
+        connected_settlements = [s for s in self.settlements if s.connected]
+        
+        for requested_good in unique_bid_goods:
+            
+            minimum_requested_magnitude = min([b.magnitude for b in self.ladder.bids if b.good == requested_good])
+            for connected_settlement in connected_settlements:
+                
+                self.create_possible_ask(connected_settlement, requested_good, minimum_requested_magnitude)
+                
+        print("bids")
+        for b in self.ladder.bids:
 
-            for s in ss:
-                for trading_good in self.possible_trading_goods:
-                    trading_good_price = self.global_assets[trading_good]["price"]
-                    if s.settlement_goods.is_in_stock(trading_good):
-                        self.ladder.create_ladder_entry(
-                            s,
-                            trading_good,
-                            s.trading_goods[trading_good],
-                            trading_good_price,
-                            EntryType.ASK,
-                        )
-
-        print(self.ladder.bids)
-        print(self.ladder.asks)
-        print(len(self.ladder.asks))
+            print(b.__dict__)
+        
+        print("asks")        
+        for b in self.ladder.asks:
+            print(b.__dict__)
+                
+        resolutions = []
+        resolutions = self.ladder.resolve()
+        transactions = []
+        transactions = [self.transaction(a, b) for a,b in resolutions]
+        
+        print(transactions)
+        

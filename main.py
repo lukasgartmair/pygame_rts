@@ -12,7 +12,6 @@ import level_map
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, NAME
 import engine
 import game_font
-import unittest
 import path
 import sound
 from sprite_group import SpriteGroup
@@ -73,7 +72,7 @@ def run_game(starting_scene):
             else:
                 filtered_events.append(event)
 
-        if type(active_scene).__name__ == "GameScene":
+        if type(active_scene).__name__ in ["GameScene","EndScene"]:
             camera_1.handle_user_input_camera_movement(event_list)
 
             screen.blit(camera_1.camera_screen, camera_1.camera.topleft)
@@ -86,13 +85,15 @@ def run_game(starting_scene):
 
             active_scene.render(camera_1, font_game)
             active_scene.render_second_screen(camera_2, font_game)
+            
+            game_engine.check_win_condition(active_scene.settlements)
 
         else:
             screen.blit(camera_0.camera_screen, camera_0.camera.topleft)
             active_scene.process_input(filtered_events, pressed_keys, camera_0)
             active_scene.update()
             active_scene.render(camera_0, font_game)
-
+            
         active_scene = active_scene.next
 
         pygame.display.flip()

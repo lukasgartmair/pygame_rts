@@ -11,6 +11,7 @@ from scene_base import SceneBase
 import image
 import scene_manager
 import pygame.surfarray as surfarray
+from colors import settlement_stats_colors
 
 
 class EndScene(SceneBase):
@@ -44,9 +45,18 @@ class EndScene(SceneBase):
     def update(self):
         pass
 
-    def render(self, screen, game_font):
-        surfarray.blit_array(screen, self.game_map.mapped_grid)
-        self.global_path.render(screen, self.game_map)
-        self.global_path.render_path_length(screen, game_font)
+    def render(self, game_camera, game_font):
+        screen = game_camera.camera_screen
+        surfarray.blit_array(
+            screen, game_camera.get_map_cutout(self.game_map.mapped_grid)
+        )
+        tmp = game_camera.get_map_cutout(self.game_map.mapped_grid)
+        surfarray.blit_array(screen, tmp)
+        self.global_path.map_paths_to_grid(self.game_map)
+        tmp = game_camera.get_map_cutout(self.global_path.mapped_grid)
+        surfarray.blit_array(screen, tmp)
+
         self.settlements.draw(screen)
         self.game_engine.render_settlement_count(screen, game_font)
+
+

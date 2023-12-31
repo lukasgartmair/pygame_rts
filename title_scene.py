@@ -34,16 +34,15 @@ class TitleScene(SceneBase):
             if (event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN) or (
                 event.type == pygame.MOUSEBUTTONDOWN and event.button == 1
             ):
-                if event.button == 1:
-                    self.switch_to_scene(
-                        scene_manager.get_game_scene(
-                            self.game_engine,
-                            self.game_map,
-                            self.global_path,
-                            self.game_sound,
-                            self.sprite_groups,
-                        )
+                self.switch_to_scene(
+                    scene_manager.get_game_scene(
+                        self.game_engine,
+                        self.game_map,
+                        self.global_path,
+                        self.game_sound,
+                        self.sprite_groups,
                     )
+                )
 
     def update(self):
         pass

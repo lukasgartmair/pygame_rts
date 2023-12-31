@@ -20,7 +20,7 @@ class GameEngine:
         self.state = None
         self.currentPlayer = None
         self.settlements_available = 5
-        self.win_condition = 100
+        self.win_condition = 15
         self.state = GameState.PLAYING
 
     def get_settlements_availabe(self):
@@ -43,8 +43,7 @@ class GameEngine:
             trading_good_sums.append(sum_goods)
             if sum_goods >= self.win_condition:
                 self.state = GameState.ENDED
-
-        # print(max(trading_good_sums, default=0))
+                self.settlements_available = 0
 
     def game_ended_by_player(self):
         self.state = GameState.ENDED
