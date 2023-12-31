@@ -37,41 +37,24 @@ class Camera:
         self.canvas = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.camera = pygame.Rect(self.top, self.left, self.width, self.height)
         self.camera_screen = self.canvas.subsurface(self.camera)
-        self.scroll_speed = 5
+        self.scroll_speed = 100
         self.topleft = (self.top, self.left)
         self.set_topleft_center_view()          
         
-    def check_screen_boundaries(self):
+    def within_boundaries(self, x_temp, y_temp):
         
-        print(self.topleft)
-        x,y = self.topleft
-        if x < 0:
-            self.topleft = (0,y)
-            print("no more left")
-        elif y < 0:
-            self.topleft = (x,0)
-            print("no more left")
-        elif x >= self.game_map.width-SCREEN_WIDTH:
-            self.topleft = (self.game_map.width-SCREEN_WIDTH, y)
-            print("no more right")
-        elif y >= self.game_map.height-SCREEN_HEIGHT:
-            self.topleft = (x, self.game_map.height-SCREEN_HEIGHT)
-            print("no more down")
-        else:
-            pass
+        inside = [x_temp >= 0 and y_temp >= 0 and x_temp <= self.game_map.width-SCREEN_WIDTH and y_temp <= self.game_map.height-SCREEN_HEIGHT]
+        print(inside)
+        return all(inside)
         
     def set_topleft_center_view(self):
-
-        if self.game_map.width == SCREEN_WIDTH and self.game_map.height == SCREEN_HEIGHT:
-            self.topleft = (0,0)
-        else:
-            x_offset = (self.game_map.width - SCREEN_WIDTH) // 2
-            y_offset = (self.game_map.height - SCREEN_HEIGHT) // 2
-            self.update_topleft = (x_offset, y_offset)
-            
+        # print("SET TOPLEFT")
+        x_offset = (self.game_map.width // 2) - (SCREEN_WIDTH // 2)
+        y_offset = (self.game_map.height // 2) - (SCREEN_HEIGHT // 2)
+        self.topleft = (x_offset, y_offset)
+                
     def get_map_cutout(self, grid):
         x,y = self.topleft
-        # grid = np.zeros((self.width, self.height))
         grid = grid[x:x+self.width,y:y+self.height]
         return grid
 
@@ -84,30 +67,28 @@ class Camera:
     def get_current_view(self):
         pass
         
-    def check_user_input_camera_movement(self, events):
+    def handle_user_input_camera_movement(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key in [pygame.K_a, pygame.K_LEFT]:
-                    self.move_left()
+                    x_temp, y_temp = (self.topleft[0]-self.scroll_speed,self.topleft[1])
+                    if self.within_boundaries(x_temp, y_temp):
+                        self.topleft = (x_temp, y_temp)
                 if event.key in [pygame.K_d, pygame.K_RIGHT]:
-                    self.move_right()
+                    x_temp, y_temp = (self.topleft[0]+self.scroll_speed,self.topleft[1])
+                    if self.within_boundaries(x_temp, y_temp):
+                        self.topleft = (x_temp, y_temp)
                 if event.key in [pygame.K_w ,pygame.K_UP]:
-                    self.move_up()
+                    x_temp, y_temp = (self.topleft[0],self.topleft[1]-self.scroll_speed)
+                    if self.within_boundaries(x_temp, y_temp):
+                        self.topleft = (x_temp, y_temp)
                 if event.key in [pygame.K_s, pygame.K_DOWN]:
-                    self.move_down()
+                    x_temp, y_temp = (self.topleft[0],self.topleft[1]+self.scroll_speed)
+                    if self.within_boundaries(x_temp, y_temp):
+                        self.topleft = (x_temp, y_temp)
+                if event.key == pygame.K_RETURN:
+                    self.set_topleft_center_view()
         
-        # TODO apply offset for camera with arrow movement
-    def move_left(self):
-        print("move left")
-        self.check_screen_boundaries()
-    def move_right(self):
-        print("move right")
-        self.check_screen_boundaries()
-    def move_up(self):
-        print("move up")
-        self.check_screen_boundaries()
-    def move_down(self):
-        print("move down")
-        self.check_screen_boundaries()
+        print(self.topleft)
 
         

@@ -122,8 +122,8 @@ class MapGenerator:
 
 class GameMap:
     def __init__(self):
-        self.width = SCREEN_WIDTH #* 2
-        self.height = SCREEN_HEIGHT #* 2
+        self.width = SCREEN_WIDTH * 2
+        self.height = SCREEN_HEIGHT * 2
         self.grid = np.zeros((self.width, self.height))
         self.mapped_grid = np.zeros((self.width, self.height, 3))
         self.generate()

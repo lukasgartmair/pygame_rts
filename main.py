@@ -76,9 +76,8 @@ def run_game(starting_scene):
                 filtered_events.append(event)
 
         if type(active_scene).__name__ == "GameScene":
-            
-            # TODO find better place for this, jut a test for now
-            camera_1.check_user_input_camera_movement(event_list)
+
+            camera_1.handle_user_input_camera_movement(event_list)
 
             screen.blit(camera_1.camera_screen, camera_1.camera.topleft)
 
