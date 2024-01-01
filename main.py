@@ -106,9 +106,9 @@ def run_game(starting_scene):
         clock.tick(FPS)
 
 if __name__ == "__main__":
-    unittest.main()
-    # run_game(
-    #     scene_manager.get_title_scene(
-    #         game_engine, game_map, game_sound, sprite_groups
-    #     )
-    # )
+    # unittest.main()
+    run_game(
+        scene_manager.get_title_scene(
+            game_engine, game_map, game_sound, sprite_groups
+        )
+    )

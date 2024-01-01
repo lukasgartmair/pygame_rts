@@ -8,12 +8,24 @@ Created on Mon Jan  1 08:44:25 2024
 
 import networkx as nx
 import matplotlib.pyplot as plt
-        
+import numpy as np
+import math
+
 class SettlementGraph(nx.Graph):
 
     def __init__(self):
         super(SettlementGraph, self).__init__()
         self = nx.Graph()
+        
+    def get_connections(self, include_data=False):
+        return self.edges(data=include_data)
+    
+    def get_all_connected_settlement_ids(self):
+        return np.unique(list(self.edges)).tolist()
+    
+    def get_node_data(self, node):
+        print(self[node])
+        return self[node]
         
     def print_data(self):
         print(list(self.nodes))
@@ -27,7 +39,7 @@ class SettlementGraph(nx.Graph):
         
     def add_settlement_connection(self, settlement_a, settlement_b, path):
         if settlement_a != settlement_b:
-            self.add_edge(settlement_a.id, settlement_b.id, weight=1, path=path)
+            self.add_edge(settlement_a.id, settlement_b.id, weight=1, path=path,distance=math.dist(settlement_a.center, settlement_b.center))
 
     def remove_settlement_connection(self, settlement_a, settlement_b):
         if settlement_a != settlement_b:

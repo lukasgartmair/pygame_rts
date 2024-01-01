@@ -67,7 +67,7 @@ class ConnectionManager:
     
     def map_paths_to_grid(self, game_map):
         mapped_grid = game_map.mapped_grid.copy()
-        for node_a, node_b, data in self.settlement_connections.edges(data=True):
+        for node_a, node_b, data in self.settlement_connections.get_connections(include_data=True):
             for p in data["path"]:
                 mapped_grid[p[0], p[1]] = path_colors[0]
 

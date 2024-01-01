@@ -12,10 +12,10 @@ class SettlementGoods:
     def __init__(self, settlement, game_trade):
         self.settlement = settlement
         self.game_trade = game_trade
-        self.initialze_trading_attributes()
+        self.initialze_settlement_goods()
         self.preferred_good_set = False
 
-    def initialze_trading_attributes(self):
+    def initialze_settlement_goods(self):
         self.settlement.game_trade = self.game_trade
         self.settlement.gold = 15
         self.settlement.trading_goods = {}
@@ -28,40 +28,44 @@ class SettlementGoods:
         def remove_settlement_goods_from_market(self):
             self.game_trade
         
-    def has_at_least_one_in_stock(self, trading_good):
-        if self.settlement.trading_goods[trading_good] > 0:
+    def has_at_least_one_in_stock(self, trading_form):
+        if self.settlement.trading_goods[trading_form.good] > 0:
             return True
         else:
             return False
 
-
-    def has_magnitude_in_stock(self, trading_good, magnitude):
-        if self.settlement.trading_goods[trading_good] >= magnitude:
+    def has_magnitude_in_stock(self, trading_form):
+        if self.settlement.trading_goods[trading_form.good] >= trading_form.magnitude:
             return True
         else:
             return False
 
-    def calculate_affordable_magnitude(self, price):
-        affordable_magnitude = self.settlement.gold // price
+    def calculate_affordable_magnitude(self, trading_form):
+        affordable_magnitude = self.settlement.gold // trading_form.price
         return affordable_magnitude
 
-    def is_affordable(self, price, magnitude):
-        if self.settlement.gold >= price * magnitude:
+    def is_affordable(self, trading_form):
+        if self.settlement.gold >= trading_form.price * trading_form.magnitude:
             return True
         else:
             return False
 
-    def buy_trading_good(self, trading_good, price, magnitude):
-        if self.settlement.settlement_goods.is_affordable(price, magnitude):
-            self.settlement.gold -= price
-            self.settlement.trading_goods[trading_good] += magnitude
-            
+    def buy_trading_good(self, trading_form):
+        if self.settlement.settlement_goods.is_affordable(trading_form):
+            print("{} balance BEFORE: {}".format(self.settlement.name, self.settlement.gold))
+            self.settlement.gold -= trading_form.price * trading_form.magnitude
+            self.settlement.trading_goods[trading_form.good] += trading_form.magnitude
             self.reset_preferred_good()
-
-    def sell_trading_good(self, trading_good, price, magnitude):
-        self.settlement.gold += price * magnitude
-        self.settlement.trading_goods[trading_good] -= magnitude
-
+            
+            print("{} balance AFTER: {}".format(self.settlement.name, self.settlement.gold))
+    
+    def sell_trading_good(self, trading_form):
+        if self.has_magnitude_in_stock(trading_form):
+            print("{} balance BEFORE: {}".format(self.settlement.name, self.settlement.gold))
+            self.settlement.gold += trading_form.price * trading_form.magnitude
+            self.settlement.trading_goods[trading_form.good] -= trading_form.magnitude
+            print("{} balance AFTER: {}".format(self.settlement.name, self.settlement.gold))
+        
     def reset_preferred_good(self):
         self.settlement.preferred_good_index = -1
         self.update_preferred_good()
@@ -83,9 +87,11 @@ class SettlementGoods:
             self.settlement.preferred_good = self.game_trade.possible_trading_goods[
                 self.settlement.preferred_good_index
             ]
-            self.settlement.image = self.settlement.images[
-                self.settlement.preferred_good + "_image"
-            ]
+            # introduced for test purposes, check whether it has side effects!
+            if self.settlement.images:
+                self.settlement.image = self.settlement.images[
+                    self.settlement.preferred_good + "_image"
+                ]
         else:
             self.settlement.deselect()
 
