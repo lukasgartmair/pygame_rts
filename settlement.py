@@ -55,14 +55,6 @@ class Settlement(pygame.sprite.Sprite):
     def apply_population_to_scale(self):
         self.scale_factor = self.scale_factor * self.population ** (1.0 / 3) / 40
 
-    def check_if_still_connected(self, global_path):
-        still_connected = False
-        for k, v in global_path.subpaths.items():
-            if self.name in k:
-                still_connected = True
-        if still_connected == False:
-            self.got_deconnected()
-
     def render_settlement_stats(self, game_camera, game_font):
         screen = game_camera.camera_screen
         screen_dimensions = game_camera.get_camera_screen_dimensions()
@@ -129,7 +121,7 @@ class Settlement(pygame.sprite.Sprite):
 
     def remove(self, global_path, game_engine):
         self.kill()
-        global_path.remove_subpath(self.name)
+        global_path.remove_subpath(self)
         game_engine.remove_settlement()
 
     def update_render_center(self, game_camera):
@@ -150,7 +142,7 @@ class Settlement(pygame.sprite.Sprite):
             self.clicks += 1
 
         if self.connected:
-            self.check_if_still_connected(global_path)
+            global_path.check_if_connection_exists(self)
 
         self.update_render_center(game_camera)
 

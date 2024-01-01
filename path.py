@@ -8,9 +8,8 @@ Created on Sun Dec 24 23:56:22 2023
 
 from pathing import PathFinder
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
-import pygame.surfarray as surfarray
 from colors import path_colors
-
+from settlement_graph import SettlementGraph
 
 def get_adjacent_cells(x, y, k=0):
     adjacent_cells = []
@@ -20,13 +19,11 @@ def get_adjacent_cells(x, y, k=0):
     adjacent_cells.remove((x, y))
     return adjacent_cells
 
-
 def dict_key_contains_string(string, tup):
     if string in str(tup):
         return True
     else:
         return False
-
 
 class Path:
     def __init__(self, game_map, game_sound):
@@ -35,9 +32,16 @@ class Path:
         self.mapped_grid = game_map.mapped_grid.copy()
         self.color = path_colors[0]
         self.pathfinder = PathFinder()
+        self.settlement_connections = SettlementGraph()
+        
+    def check_if_connection_exists(self, settlement):
+        return any([settlement.name in key for key in self.subpaths])
 
     def add_subpath(self, a, b, length, chain):
+        
         self.subpaths[a, b] = {"length": length, "chain": chain}
+        
+        self.settlement_connections.add_edge(a,b)
 
         self.remove_perturbation_keys()
 
@@ -64,27 +68,26 @@ class Path:
                 for a in adjacent_cells:
                     self.mapped_grid[a[0], a[1]] = self.color
 
-    def render_path_length(self, screen, font_game):
-        text = font_game.render(
-            "path length: " + str(self.get_total_length()), True, font_game.text_color
-        )
-        screen.blit(text, (SCREEN_WIDTH * 0.1, SCREEN_HEIGHT * 0.15))
-
-    def remove_subpath(self, settlement_name):
+    def remove_subpath(self, settlement):
         for k in list(self.subpaths.keys()):
-            if dict_key_contains_string(settlement_name, k):
+            if dict_key_contains_string(settlement.name, k):
                 del self.subpaths[k]
+                
+        self.settlement_connections.remove_settlement(settlement)
 
     def already_connected(self, selected_settlements):
-        already_connected = False
+
         settlement_a = selected_settlements[0]
         settlement_b = selected_settlements[1]
-        condition_a = (settlement_a.name, settlement_b.name) in self.subpaths.keys()
-        condition_b = (settlement_b.name, settlement_a.name) in self.subpaths.keys()
-        if condition_a or condition_b:
-            already_connected = True
+        
+        return self.settlement_connections.are_connected(settlement_a, settlement_b)
+        
+        # condition_a = (settlement_a.name, settlement_b.name) in self.subpaths.keys()
+        # condition_b = (settlement_b.name, settlement_a.name) in self.subpaths.keys()
+        # if condition_a or condition_b:
+        #     already_connected = True
 
-        return already_connected
+        # return already_connected
 
     def connect_settlements(self, selected_settlements, game_map, game_sound):
         successfully_connected = False
@@ -104,6 +107,8 @@ class Path:
             )
             settlement_a.got_connected()
             settlement_b.got_connected()
+            
+            self.settlement_connections.add_settlement_connection(settlement_a, settlement_b)
 
             game_sound.play_connect_settlement()
 

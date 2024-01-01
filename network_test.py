@@ -61,6 +61,25 @@ class TestMethods(unittest.TestCase):
             labels[s.id] = s.name
         if plot:
             nx.draw(G, nx.get_node_attributes(G, 'pos'), with_labels=True, labels=labels)
+            
+    def test_1_5(self):
+        G = nx.Graph()
+    
+        settlements = [TestSettlement() for n in range(n_settlements)]
+    
+        for i,s in enumerate(settlements):
+            G.add_node(s.id, pos=(i,i), name=s.name)
+            
+            
+        G.add_edge(s.id, 3)
+    
+        has_edge = G.has_edge(s.id, 3)
+        
+        self.assertEqual(has_edge, True)
+        
+        G.remove_node(s.id)
+        has_edge = G.has_edge(s.id, 3)
+        self.assertEqual(has_edge, False)
         
     def test_2(self):
         
