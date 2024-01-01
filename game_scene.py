@@ -95,8 +95,7 @@ class GameScene(SceneBase):
             successfully_connected = self.connection_manager.connect_settlements(
                 self.selection_manager.selected_settlements[0],
                 self.selection_manager.selected_settlements[1],
-                self.game_map,
-                self.game_sound,
+                self.game_map
             )
 
             if successfully_connected:

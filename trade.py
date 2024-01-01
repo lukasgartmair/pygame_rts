@@ -11,7 +11,7 @@ import ladder
 from beautifultable import BeautifulTable, BTRowCollection
 import re
 from collections import defaultdict
-
+import itertools
 
 def nested_dict(n, type):
     if n == 1:
@@ -21,7 +21,9 @@ def nested_dict(n, type):
 
 
 class Trade:
+    
     def __init__(self, settlements, connection_manager):
+        self.id_iterator = itertools.count()
         self.settlements = settlements
         self.connection_manager = connection_manager
 
@@ -31,6 +33,9 @@ class Trade:
 
         self.global_assets = nested_dict(2, int)
         self.initialize_global_assets()
+        
+        self.transaction_history = {}
+
 
     def render_global_assets(self, screen, game_font):
         vertical_offset = 25
@@ -107,6 +112,15 @@ class Trade:
                 )
             )
         return sold
+    
+    def create_transaction_history_entry(self, trading_form):
+        
+        if bool(self.transaction_history) == False:
+            transaction_id = 0
+        else:
+            transaction_id = max(self.transaction_history) + 1
+            
+        self.transaction_history[transaction_id] = trading_form
 
     def transaction(self, resolution):
         magnitude = 0
@@ -115,7 +129,6 @@ class Trade:
         print(magnitude)
         
         transaction_successfull = False
-        
 
         trading_form = ladder.TradingForm(
             bidder=resolution.bid.bidder,
@@ -130,6 +143,9 @@ class Trade:
 
         transaction_successfull = bool(bought and sold)
         
+        if transaction_successfull:
+            self.create_transaction_history_entry(trading_form)
+        
         if bought == False:
             print("Failure in buying process")
         elif sold == False:
@@ -143,9 +159,10 @@ class Trade:
             self.connection_manager.settlement_connections.get_all_connected_settlement_ids()
         )
         for s_id in settlement_ids:
-            s = [s for s in self.settlements if s.id == s_id][0]
-            if s not in trading_settlements:
-                trading_settlements.append(s)
+            for s in self.settlements:
+                if s.id == s_id:
+                    if s not in trading_settlements:
+                        trading_settlements.append(s)
         return trading_settlements
 
     def perform_trade(self, verbose=True):
@@ -187,3 +204,5 @@ class Trade:
         self.trade_ladder.resolve()
         transactions = []
         transactions = [self.transaction(r) for r in self.trade_ladder.resolutions]
+        
+        return self.global_assets, self.transaction_history

@@ -37,7 +37,7 @@ class ConnectionManager:
             selected_settlements[0], selected_settlements[1]
         )
 
-    def connect_settlements(self, settlement_a, settlement_b, game_map, game_sound):
+    def connect_settlements(self, settlement_a, settlement_b, game_map):
         successfully_connected = False
 
         path = None
@@ -55,7 +55,7 @@ class ConnectionManager:
             settlement_a.got_connected()
             settlement_b.got_connected()
 
-            game_sound.play_connect_settlement()
+            # game_sound.play_connect_settlement()
 
             successfully_connected = True
 
