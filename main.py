@@ -37,6 +37,7 @@ def run_game(starting_scene):
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption(NAME)
+
     clock = pygame.time.Clock()
 
     active_scene = starting_scene
@@ -113,5 +114,6 @@ def run_game(starting_scene):
 if __name__ == "__main__":
     # unittest.main()
     run_game(
-        scene_manager.get_title_scene(game_engine, game_map, game_sound, sprite_groups)
+        scene_manager.get_title_scene(
+            game_engine, game_map, game_sound, sprite_groups)
     )
