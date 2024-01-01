@@ -58,7 +58,7 @@ class Settlement(pygame.sprite.Sprite):
     def render_settlement_stats(self, game_camera, game_font):
         screen = game_camera.camera_screen
         screen_dimensions = game_camera.get_camera_screen_dimensions()
-        screen_width, screen_height = screen_dimensions[0], screen_dimensions[1]
+        screen_width = screen_dimensions[0]
         vertical_offset = 25
         horizontal_offset = screen_width // 2
 
@@ -102,8 +102,9 @@ class Settlement(pygame.sprite.Sprite):
         screen.blit(text, (horizontal_offset, offset))
         offset += vertical_offset
 
-    def placed(self, game_trade, game_sound):
+    def placed(self, connection_manager, game_trade, game_sound):
         self.settlement_goods = SettlementGoods(self, game_trade)
+        connection_manager.settlement_connections.add_settlement(self)
         game_sound.play_place_settlement()
 
     def got_connected(self):
@@ -119,10 +120,8 @@ class Settlement(pygame.sprite.Sprite):
             return True
         return False
 
-    def remove(self, global_path, game_engine):
+    def remove(self):
         self.kill()
-        global_path.remove_subpath(self)
-        game_engine.remove_settlement()
 
     def update_render_center(self, game_camera):
         self.render_center = game_camera.get_relative_screen_position(self.center)
@@ -132,17 +131,19 @@ class Settlement(pygame.sprite.Sprite):
         
         self.rect = self.surf.get_rect(center=self.center)
         
-    def update(self, mouse_position, game_camera, global_path, game_engine):
+    def update(self, connection_manager, event, game_camera, game_engine):
         self.settlement_goods.update_trading_stats()
 
         self.check_hover()
-        
-        if self.is_clicked(mouse_position):
-            self.callback()
-            self.clicks += 1
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if self.is_clicked(event.pos):
+                    self.callback()
+                    self.clicks += 1
 
         if self.connected:
-            global_path.check_if_connection_exists(self)
+            connection_manager.settlement_connections.is_connected(self)
 
         self.update_render_center(game_camera)
 

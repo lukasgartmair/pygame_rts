@@ -24,7 +24,6 @@ class TitleScene(SceneBase):
                 scene_manager.get_game_scene(
                     self.game_engine,
                     self.game_map,
-                    self.global_path,
                     self.game_sound,
                     self.sprite_groups,
                 )
@@ -38,7 +37,6 @@ class TitleScene(SceneBase):
                     scene_manager.get_game_scene(
                         self.game_engine,
                         self.game_map,
-                        self.global_path,
                         self.game_sound,
                         self.sprite_groups,
                     )

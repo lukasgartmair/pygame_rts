@@ -27,8 +27,6 @@ game_engine = engine.GameEngine()
 
 game_sound = sound.Sound()
 
-global_path = path.Path(game_map, game_sound)
-
 font_game = game_font.GameFont(game_font.font_style, game_font.font_size)
 
 sprite_groups = SpriteGroup().get_sprite_groups()
@@ -70,10 +68,16 @@ def run_game(starting_scene):
                 pygame.quit()
                 sys.exit()
 
-            if event.type == event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.KEYDOWN:
+            if event.type == event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.KEYDOWN or event.type == pygame.MOUSEMOTION:
                 filtered_events.append(event)
+                
+            filtered_events_copy = filtered_events.copy()
+            filtered_events = []
+            for f in filtered_events_copy:
+                if f.type not in [fi.type for fi in filtered_events]:
+                    filtered_events.append(f)
 
-        if type(active_scene).__name__ in ["GameScene","EndScene"]:
+        if type(active_scene).__name__ in ["GameScene"]:
             
             camera_1.handle_user_input_camera_movement(filtered_events)
 
@@ -105,6 +109,6 @@ if __name__ == "__main__":
     # unittest.main()
     run_game(
         scene_manager.get_title_scene(
-            game_engine, game_map, global_path, game_sound, sprite_groups
+            game_engine, game_map, game_sound, sprite_groups
         )
     )

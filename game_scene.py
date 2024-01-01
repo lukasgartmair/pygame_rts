@@ -14,9 +14,9 @@ from engine import GameState
 import custom_events
 import trade
 from selection_manager import SelectionManager
+from connection_manager import ConnectionManager
 import scene_manager
 from colors import settlement_stats_colors
-
 
 class GameScene(SceneBase):
     def __init__(self, *kargs):
@@ -24,7 +24,11 @@ class GameScene(SceneBase):
         print("Game Scene")
         self.game_sound.play_background_music_1()
         custom_events.TRADE = custom_events.register_trade()
-        self.game_trade = trade.Trade(self.settlements, self.global_path)
+        
+        self.connection_manager = ConnectionManager(self.game_map, self.game_sound)
+        
+        self.game_trade = trade.Trade(self.settlements, self.connection_manager)
+        
         self.any_settlement_clicked = False
         self.selection_manager = SelectionManager(
             self.settlements, self.any_settlement_clicked
@@ -33,10 +37,11 @@ class GameScene(SceneBase):
     def check_for_settlement_removals(self):
         if self.selection_manager.selected_settlements:
             for s in self.selection_manager.selected_settlements:
-                s.remove(self.global_path, self.game_engine)
+                pass
+                self.connection_manager.remove_settlement(s, self.game_engine)
 
     def check_for_trade_event(self, event):
-        if len(self.global_path.subpaths) >= 1:
+        if len(self.connection_manager.path.subpaths) >= 1:
             if event.type == pygame.TRADE:
                 self.game_trade.perform_trade()
 
@@ -75,68 +80,29 @@ class GameScene(SceneBase):
                 if settlement_placed:
                     self.settlements.add(new_settlement)
                     self.all_sprites.add(new_settlement)
-                    new_settlement.placed(self.game_trade, self.game_sound)
+                    new_settlement.placed(self.connection_manager.path, self.game_trade, self.game_sound)
             else:
                 new_settlement.kill()
 
     def try_connect_settlements(self):
-        already_connected = self.global_path.already_connected(
+        already_connected = self.connection_manager.already_connected(
             self.selection_manager.selected_settlements
         )
         successfully_connected = False
         if already_connected == False:
-            successfully_connected = self.global_path.connect_settlements(
-                self.selection_manager.selected_settlements,
+            successfully_connected = self.connection_manager.connect_settlements(
+                self.selection_manager.selected_settlements[0],
+                self.selection_manager.selected_settlements[1],
                 self.game_map,
                 self.game_sound,
             )
 
             if successfully_connected:
-                self.selection_manager.handle_successful_connection()
+                self.selection_manager.handle_successful_connection()      
                 
-    # def ProcessInput(self, events, pressed_keys, screen_dimensions):
-    #     for event in events:
-            
-    #         self.check_for_trade_event(event)
-
-    #         self.selection_manager.update_selected_settlements()
-            
-    #         if self.selection_manager.check_connection_condition():
-    #             self.try_connect_settlements()
-                
-    #         self.settlements.update(events, self.global_path, self.game_engine)
-                
-    #         if event.type == pygame.KEYDOWN:
-    #             if event.key == pygame.K_DELETE:
-    #                 self.check_for_settlement_removals(event)
-
-    #         if event.type == pygame.MOUSEBUTTONDOWN:
-                
-    #             mouse_position = pygame.mouse.get_pos()
-                
-    #             if self.check_mouse_click_in_bounds(mouse_position, screen_dimensions):
-                
-    #                 self.selection_manager.check_any_settlement_clicked(events)
-                
-    #                 if self.selection_manager.selection_and_void_click():
-    #                     break
-                    
-    #                 if self.selection_manager.any_settlement_clicked:
-    #                     self.selection_manager.process_settlement_click()
-                    
-    #                 if (
-    #                     not self.selection_manager.any_settlement_clicked
-    #                     and self.game_engine.settlements_available > 0
-    #                 ):
-    #                     self.try_new_settlement_placement(mouse_position)
-    #             else:
-    #                 pass
-                    
-    #     self.game_engine.check_win_condition(self.settlements)
-
     def process_input(self, events, pressed_keys, game_camera):
         for event in events:
-            
+                 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     # self.check_for_trade_event(event)
@@ -144,18 +110,10 @@ class GameScene(SceneBase):
 
             self.selection_manager.update_selected_settlements()
 
-
-            connected_any_settlements = False
-
             if self.selection_manager.check_connection_condition():
                 self.try_connect_settlements()
-    
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    mouse_position = event.pos
-                    self.settlements.update(
-                        mouse_position, game_camera, self.global_path, self.game_engine
-                    )
+
+            self.settlements.update(self.connection_manager, event, game_camera, self.game_engine)
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DELETE:
@@ -163,30 +121,76 @@ class GameScene(SceneBase):
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-
                     mouse_position = pygame.mouse.get_pos()
-
+    
                     if self.check_mouse_click_in_bounds(mouse_position, game_camera):
-                        self.selection_manager.check_any_settlement_clicked(
-                            event.pos)
-
+                        self.selection_manager.check_any_settlement_clicked(mouse_position)
+    
                         if self.selection_manager.selection_and_void_click():
                             break
-
+    
                         if self.selection_manager.any_settlement_clicked:
                             self.selection_manager.process_settlement_click()
-
-                        if (
-                            self.selection_manager.any_settlement_clicked == False
-                            and self.game_engine.settlements_available > 0
-                        ):
-                            self.try_new_settlement_placement(
-                                game_camera, mouse_position
-                            )
+    
+                        if not self.selection_manager.any_settlement_clicked and self.game_engine.settlements_available > 0:
+                            self.try_new_settlement_placement(game_camera, mouse_position)
                     else:
                         pass
 
         self.game_engine.check_win_condition(self.settlements)
+
+    # def process_input(self, events, pressed_keys, game_camera):
+    #     for event in events:
+            
+    #         if event.type == pygame.KEYDOWN:
+    #             if event.key == pygame.K_RETURN:
+    #                 # self.check_for_trade_event(event)
+    #                 self.game_trade.perform_trade()    
+
+    #         self.selection_manager.update_selected_settlements()
+            
+    #         self.connection_manager.settlement_connections.print_data()
+
+    #         if self.selection_manager.check_connection_condition():
+    #             self.try_connect_settlements()
+    
+    #         if event.type == pygame.MOUSEBUTTONDOWN:
+    #             if event.button == 1:
+    #                 mouse_position = event.pos
+    #                 self.settlements.update(
+    #                     self.connection_manager, mouse_position, game_camera, self.game_engine
+    #                 )
+
+    #         # if event.type == pygame.KEYDOWN:
+    #         #     if event.key == pygame.K_DELETE:
+    #         #         self.check_for_settlement_removals()
+
+    #         if event.type == pygame.MOUSEBUTTONDOWN:
+    #             if event.button == 1:
+
+    #                 mouse_position = pygame.mouse.get_pos()
+
+    #                 if self.check_mouse_click_in_bounds(mouse_position, game_camera):
+    #                     self.selection_manager.check_any_settlement_clicked(
+    #                         event.pos)
+
+    #                     if self.selection_manager.selection_and_void_click():
+    #                         break
+
+    #                     if self.selection_manager.any_settlement_clicked:
+    #                         self.selection_manager.process_settlement_click()
+
+    #                     if (
+    #                         self.selection_manager.any_settlement_clicked == False
+    #                         and self.game_engine.settlements_available > 0
+    #                     ):
+    #                         self.try_new_settlement_placement(
+    #                             game_camera, mouse_position
+    #                         )
+    #                 else:
+    #                     pass
+
+    #     self.game_engine.check_win_condition(self.settlements)
 
     def update(self):
         # if self.game_engine.state == GameState.ENDED:
@@ -194,7 +198,7 @@ class GameScene(SceneBase):
         #         scene_manager.get_end_scene(
         #             self.game_engine,
         #             self.game_map,
-        #             self.global_path,
+        #             self.connection_manager.path,
         #             self.game_sound,
         #             self.sprite_groups,
         #         )
@@ -209,8 +213,8 @@ class GameScene(SceneBase):
         )
         tmp = game_camera.get_map_cutout(self.game_map.mapped_grid)
         surfarray.blit_array(screen, tmp)
-        self.global_path.map_paths_to_grid(self.game_map)
-        tmp = game_camera.get_map_cutout(self.global_path.mapped_grid)
+        self.connection_manager.path.map_paths_to_grid(self.game_map)
+        tmp = game_camera.get_map_cutout(self.connection_manager.path.mapped_grid)
         surfarray.blit_array(screen, tmp)
 
         self.settlements.draw(screen)

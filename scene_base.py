@@ -12,14 +12,12 @@ class SceneBase:
         self,
         game_engine=None,
         game_map=None,
-        global_path=None,
         game_sound=None,
         sprite_groups=None,
     ):
         self.next = self
         self.game_engine = game_engine
         self.game_map = game_map
-        self.global_path = global_path
         self.game_sound = game_sound
         self.sprite_groups = sprite_groups
 

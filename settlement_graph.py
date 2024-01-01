@@ -20,6 +20,7 @@ class SettlementGraph(nx.Graph):
         
     def add_settlement(self, settlement):
         self.add_node(settlement.id, pos=settlement.center, name=settlement.name)
+        self.print_data()
         
     def remove_settlement(self, settlement):
         self.print_data()
@@ -32,6 +33,9 @@ class SettlementGraph(nx.Graph):
     def remove_settlement_connection(self, settlement_a, settlement_b):
         if settlement_a != settlement_b:
             self.remove_edge(settlement_a.id, settlement_b.id)
+            
+    def is_connected(self, settlement):
+        return any([(settlement.id in edge) for edge in list(self.edges)])
             
     def are_connected(self, settlement_a, settlement_b):
         return self.has_edge(settlement_a.id, settlement_b.id)

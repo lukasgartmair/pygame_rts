@@ -77,6 +77,14 @@ class TestMethods(unittest.TestCase):
         
         self.assertEqual(has_edge, True)
         
+        has_edge = G.has_edge(3, s.id)
+        
+        self.assertEqual(has_edge, True)
+
+        is_connected = G.has_edge(3, s.id)
+        
+        self.assertEqual(has_edge, True)
+        
         G.remove_node(s.id)
         has_edge = G.has_edge(s.id, 3)
         self.assertEqual(has_edge, False)

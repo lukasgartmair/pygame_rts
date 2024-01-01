@@ -11,7 +11,6 @@ from scene_base import SceneBase
 import image
 import scene_manager
 import pygame.surfarray as surfarray
-from colors import settlement_stats_colors
 
 
 class EndScene(SceneBase):
@@ -36,7 +35,6 @@ class EndScene(SceneBase):
                         scene_manager.get_title_scene(
                             self.game_engine,
                             self.game_map,
-                            self.global_path,
                             self.game_sound,
                             self.sprite_groups,
                         )
@@ -52,8 +50,6 @@ class EndScene(SceneBase):
         )
         tmp = game_camera.get_map_cutout(self.game_map.mapped_grid)
         surfarray.blit_array(screen, tmp)
-        self.global_path.map_paths_to_grid(self.game_map)
-        tmp = game_camera.get_map_cutout(self.global_path.mapped_grid)
         surfarray.blit_array(screen, tmp)
 
         self.settlements.draw(screen)

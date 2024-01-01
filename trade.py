@@ -111,9 +111,9 @@ class Ladder:
                     self.add_ask(ask)
 
 class Trade:
-    def __init__(self, settlements, global_path):
+    def __init__(self, settlements, connection_manager):
         self.settlements = settlements
-        self.global_path = global_path
+        self.connection_manager = connection_manager
 
         self.possible_trading_goods = sorted(["brass", "silver", "wood", "rubins"])
 
@@ -211,7 +211,7 @@ class Trade:
 
         trading_settlements = []
         
-        for k, v in self.global_path.subpaths.items():
+        for k, v in self.connection_manager.path.subpaths.items():
             print(k)
 
             settlement_a = [s for s in self.settlements if s.name == k[0]][0]
