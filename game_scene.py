@@ -34,10 +34,9 @@ class GameScene(SceneBase):
             self.settlements, self.any_settlement_clicked
         )
         
-    def check_for_settlement_removals(self):
+    def remove_selected_settlements(self):
         if self.selection_manager.selected_settlements:
             for s in self.selection_manager.selected_settlements:
-                pass
                 self.connection_manager.remove_settlement(s, self.game_engine)
 
     def check_for_trade_event(self, event):
@@ -68,21 +67,25 @@ class GameScene(SceneBase):
             absolute_map_position = game_camera.get_absolute_map_position(
                 mouse_position
             )
-            new_settlement = settlement.Settlement(
+            
+            tmp_settlement = settlement.Settlement(
                 absolute_map_position, self.game_sound, self.game_trade
             )
+
             overlap = None
             overlap = self.check_for_settlement_overlap(
-                new_settlement, game_camera)
+                tmp_settlement, game_camera)
 
             if overlap is None:
                 settlement_placed = self.game_engine.place_settlement()
                 if settlement_placed:
-                    self.settlements.add(new_settlement)
-                    self.all_sprites.add(new_settlement)
-                    new_settlement.placed(self.connection_manager.path, self.game_trade, self.game_sound)
+                    self.settlements.add(tmp_settlement)
+                    self.all_sprites.add(tmp_settlement)
+                    
+                    self.connection_manager.settlement_connections.add_settlement(tmp_settlement)
+                    tmp_settlement.placed(self.game_trade, self.game_sound)
             else:
-                new_settlement.kill()
+                self.connection_manager.remove_settlement(tmp_settlement, self.game_engine)
 
     def try_connect_settlements(self):
         already_connected = self.connection_manager.already_connected(
@@ -117,7 +120,7 @@ class GameScene(SceneBase):
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DELETE:
-                    self.check_for_settlement_removals()
+                    self.remove_selected_settlements()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:

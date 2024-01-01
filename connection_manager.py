@@ -14,11 +14,11 @@ class ConnectionManager:
         
         self.path = Path(game_map, game_sound)
         self.settlement_connections = SettlementGraph()
-        
+
     def check_if_connection_exists(self, settlement):
         return bool(self.settlement_connections.are_connected())
 
-    def add_settlement_connnection(self, a, b, length, chain):
+    def add_settlement_connection(self, a, b, length, chain):
         
         self.settlement_connections.add_edge(a,b)
         
@@ -29,14 +29,11 @@ class ConnectionManager:
         
         if any([settlement.name in key for key in self.path.subpaths]):
             del self.path.subpaths[settlement.name]
-                
-        game_engine.remove_settlement()
-        settlement.remove()
+        self.settlement_connections.remove_settlement(settlement)
         
-        # self.settlement_connections.remove_node(settlement.id)
-
-        # self.settlement_connections.remove_settlement(settlement)
-
+        settlement.remove()
+        game_engine.remove_settlement()
+        
     def already_connected(self, selected_settlements):
         return self.settlement_connections.are_connected(selected_settlements[0], selected_settlements[1])
 
@@ -53,7 +50,7 @@ class ConnectionManager:
             
             self.settlement_connections.add_settlement_connection(settlement_a, settlement_b)
 
-            self.add_settlement_connnection(
+            self.add_settlement_connection(
                 settlement_a.name, settlement_b.name, len(local_path), local_path
             )
             settlement_a.got_connected()

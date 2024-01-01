@@ -16,6 +16,7 @@ class SettlementGraph(nx.Graph):
         self = nx.Graph()
         
     def print_data(self):
+        print(list(self.nodes))
         print(self.nodes.data())
         
     def add_settlement(self, settlement):
@@ -23,7 +24,7 @@ class SettlementGraph(nx.Graph):
         self.print_data()
         
     def remove_settlement(self, settlement):
-        self.print_data()
+        print(self.nodes)
         self.remove_node(settlement.id)
         
     def add_settlement_connection(self, settlement_a, settlement_b):

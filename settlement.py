@@ -102,9 +102,8 @@ class Settlement(pygame.sprite.Sprite):
         screen.blit(text, (horizontal_offset, offset))
         offset += vertical_offset
 
-    def placed(self, connection_manager, game_trade, game_sound):
+    def placed(self, game_trade, game_sound):
         self.settlement_goods = SettlementGoods(self, game_trade)
-        connection_manager.settlement_connections.add_settlement(self)
         game_sound.play_place_settlement()
 
     def got_connected(self):
