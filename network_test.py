@@ -10,7 +10,8 @@ import networkx as nx
 import random
 import itertools
 from faker import Faker
-import matplotlib.pyplot as plt
+import unittest
+from settlement_graph import SettlementGraph
 
 faker = Faker()
 
@@ -21,62 +22,133 @@ n_settlements = 5
 
 weight = 1
 
-def test_1():
-    G = nx.Graph()
+from faker import Faker
 
-    settlements = [Settlement() for n in range(n_settlements)]
+faker = Faker()
+plot = False
 
-    for i,s in enumerate(settlements):
+def get_number_of_edges(n):
+    return n*(n-1)/2
 
-        G.add_node(s.id, pos=(i,i), name=s.name)
-
-    print(G.nodes.data())
-
-    e = (2, 3)
-
-    G.add_edge(*e)
-
-    labels = {}
-    for s in settlements:
-        labels[s.id] = s.name
-
-    nx.draw(G, nx.get_node_attributes(G, 'pos'), with_labels=True, labels=labels)
-    
-def test_2():
-    
-    settlement_graph = SettlementGraph()
-        
-    settlements = [Settlement() for n in range(n_settlements)]
-    
-    for i,s in enumerate(settlements):
-        settlement_graph.add_settlement(s)
-
-    print(settlement_graph.nodes.data())
-        
-    settlement_graph.plot()
-
-class Settlement:
+class TestSettlement:
     id_iterator = itertools.count()
-
+    
     def __init__(self):
         self.id = next(self.id_iterator)
         self.name = faker.city()
-        #self.center = (random.randint(0, width), random.randint(0, height))
-        self.center = (self.id, self.id)
-        
-class SettlementGraph(nx.Graph):
+        self.center = (random.randint(0, width), random.randint(0, height))
+        #self.center = (self.id, self.id)
 
-    def __init__(self):
-        super(SettlementGraph, self).__init__()
-        self = nx.Graph()
-        
-    def add_settlement(self, settlement):
-        self.add_node(settlement.id, pos=settlement.center, name=settlement.name)
-        
-    def add_settlement_connection(self, settlement_a, settlement_b):
-        self.add_edge(settlement_a.id, settlement_b)
+class TestMethods(unittest.TestCase):
 
-    def plot(self):
-        nx.draw(self, nx.get_node_attributes(self, 'pos'), with_labels=True, labels=nx.get_node_attributes(self, 'name'))
+    def test_1(self):
+        G = nx.Graph()
+    
+        settlements = [TestSettlement() for n in range(n_settlements)]
+    
+        for i,s in enumerate(settlements):
+    
+            G.add_node(s.id, pos=(i,i), name=s.name)
+    
+        print(G.nodes.data())
+    
+        e = (2, 3)
+    
+        G.add_edge(*e)
+    
+        labels = {}
+        for s in settlements:
+            labels[s.id] = s.name
+        if plot:
+            nx.draw(G, nx.get_node_attributes(G, 'pos'), with_labels=True, labels=labels)
+        
+    def test_2(self):
+        
+        settlement_graph = SettlementGraph()
+            
+        settlements = [TestSettlement() for n in range(n_settlements)]
+        
+        for i,s in enumerate(settlements):
+            settlement_graph.add_settlement(s)
+    
+        print(settlement_graph.nodes.data())
+        
+        if plot:
+            settlement_graph.plot()
+        
+    def test_3(self):
+        
+        settlement_graph = SettlementGraph()
+            
+        settlements = [TestSettlement() for n in range(n_settlements)]
+        
+        for i,s in enumerate(settlements):
+            settlement_graph.add_settlement(s)
+            
+        for i,s_a in enumerate(settlements):
+            for j,s_b in enumerate(settlements):
+                if i != j:
+                    settlement_graph.add_settlement_connection(s_a, s_b)
+    
+        print(settlement_graph.nodes.data())
+        if plot:
+            settlement_graph.plot()
+        
+    def test_4(self):
+        
+        settlement_graph = SettlementGraph()
+            
+        settlements = [TestSettlement() for n in range(n_settlements)]
+        
+        print(settlements)
+        
+        for i,s in enumerate(settlements):
+            settlement_graph.add_settlement(s)
+            
+        for i,s_a in enumerate(settlements):
+            for j,s_b in enumerate(settlements):
+                if i != j:
+                    settlement_graph.add_settlement_connection(s_a, s_b)
+                    
+        self.assertEqual(len(settlement_graph.nodes.data()),len(settlements))
 
-test_2()
+        print(settlement_graph.nodes.data())
+        
+        settlement_graph.remove_settlement(settlements[0])
+        
+        self.assertEqual(len(settlement_graph.nodes.data()),len(settlements)-1)
+        if plot:
+            settlement_graph.plot()
+        
+    def test_5(self):
+        
+        settlement_graph = SettlementGraph()
+            
+        settlements = [TestSettlement() for n in range(n_settlements)]
+        
+        print(settlements)
+        
+        for i,s in enumerate(settlements):
+            settlement_graph.add_settlement(s)
+            
+        for i,s_a in enumerate(settlements):
+            for j,s_b in enumerate(settlements):
+                if i != j:
+                    settlement_graph.add_settlement_connection(s_a, s_b)
+                    
+
+        self.assertEqual(len(settlement_graph.nodes.data()),len(settlements))
+        self.assertEqual(len(list(settlement_graph.edges)),get_number_of_edges(n_settlements))
+        print(settlement_graph.nodes.data())
+        print(list(settlement_graph.edges))
+        print(len(list(settlement_graph.edges)))
+        settlement_graph.remove_settlement(settlements[0])
+        print(len(list(settlement_graph.edges)))
+        self.assertEqual(len(settlement_graph.nodes.data()),len(settlements)-1)
+        self.assertEqual(len(list(settlement_graph.edges)),get_number_of_edges(n_settlements-1))
+    
+        if plot:
+            settlement_graph.plot()
+    
+if __name__ == "__main__":
+    unittest.main()

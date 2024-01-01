@@ -93,6 +93,46 @@ class GameScene(SceneBase):
 
             if successfully_connected:
                 self.selection_manager.handle_successful_connection()
+                
+    # def ProcessInput(self, events, pressed_keys, screen_dimensions):
+    #     for event in events:
+            
+    #         self.check_for_trade_event(event)
+
+    #         self.selection_manager.update_selected_settlements()
+            
+    #         if self.selection_manager.check_connection_condition():
+    #             self.try_connect_settlements()
+                
+    #         self.settlements.update(events, self.global_path, self.game_engine)
+                
+    #         if event.type == pygame.KEYDOWN:
+    #             if event.key == pygame.K_DELETE:
+    #                 self.check_for_settlement_removals(event)
+
+    #         if event.type == pygame.MOUSEBUTTONDOWN:
+                
+    #             mouse_position = pygame.mouse.get_pos()
+                
+    #             if self.check_mouse_click_in_bounds(mouse_position, screen_dimensions):
+                
+    #                 self.selection_manager.check_any_settlement_clicked(events)
+                
+    #                 if self.selection_manager.selection_and_void_click():
+    #                     break
+                    
+    #                 if self.selection_manager.any_settlement_clicked:
+    #                     self.selection_manager.process_settlement_click()
+                    
+    #                 if (
+    #                     not self.selection_manager.any_settlement_clicked
+    #                     and self.game_engine.settlements_available > 0
+    #                 ):
+    #                     self.try_new_settlement_placement(mouse_position)
+    #             else:
+    #                 pass
+                    
+    #     self.game_engine.check_win_condition(self.settlements)
 
     def process_input(self, events, pressed_keys, game_camera):
         for event in events:
@@ -104,14 +144,17 @@ class GameScene(SceneBase):
 
             self.selection_manager.update_selected_settlements()
 
+
+            connected_any_settlements = False
+
             if self.selection_manager.check_connection_condition():
                 self.try_connect_settlements()
-
+    
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-
+                    mouse_position = event.pos
                     self.settlements.update(
-                        event.pos, game_camera, self.global_path, self.game_engine
+                        mouse_position, game_camera, self.global_path, self.game_engine
                     )
 
             if event.type == pygame.KEYDOWN:

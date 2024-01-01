@@ -144,7 +144,7 @@ class Settlement(pygame.sprite.Sprite):
         self.settlement_goods.update_trading_stats()
 
         self.check_hover()
-
+        
         if self.is_clicked(mouse_position):
             self.callback()
             self.clicks += 1
