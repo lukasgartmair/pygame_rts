@@ -11,10 +11,13 @@ import trade
 import settlement
 import matplotlib.pyplot as plt
 import numpy as np
-import dist
+import simpy
+import settlement
 
-game_trade = trade.Trade()
+class TradingSimulator:
+    def __init__(self):
+        self.number_of_settlements = 5
+        self.settlements = [settlement()
+                            for i in range(self.number_of_settlements)]
 
-number_of_settlements = 5
-
-possible_trading_goods = 
+    def initialize_settlements(self):

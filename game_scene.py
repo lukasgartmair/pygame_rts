@@ -18,22 +18,23 @@ from connection_manager import ConnectionManager
 import scene_manager
 from colors import settlement_stats_colors
 
+
 class GameScene(SceneBase):
     def __init__(self, *kargs):
         super().__init__(*kargs)
         print("Game Scene")
         self.game_sound.play_background_music_1()
         custom_events.TRADE = custom_events.register_trade()
-        
-        self.connection_manager = ConnectionManager(self.game_map, self.game_sound)
-        
+
+        self.connection_manager = ConnectionManager(self.game_map)
+
         self.game_trade = trade.Trade(self.settlements, self.connection_manager)
-        
+
         self.any_settlement_clicked = False
         self.selection_manager = SelectionManager(
             self.settlements, self.any_settlement_clicked
         )
-        
+
     def remove_selected_settlements(self):
         if self.selection_manager.selected_settlements:
             for s in self.selection_manager.selected_settlements:
@@ -48,12 +49,10 @@ class GameScene(SceneBase):
         return game_camera.is_in_bounds(mouse_position)
 
     def check_for_settlement_overlap(self, new_settlement, game_camera):
-
         new_settlement.update_rect_center_for_sprite_collision()
         for s in self.settlements:
             s.update_rect_center_for_sprite_collision()
-        overlap = pygame.sprite.spritecollideany(
-            new_settlement, self.settlements)
+        overlap = pygame.sprite.spritecollideany(new_settlement, self.settlements)
         new_settlement.update_render_center(game_camera)
         for s in self.settlements:
             s.update_render_center(game_camera)
@@ -61,28 +60,28 @@ class GameScene(SceneBase):
         return overlap
 
     def try_new_settlement_placement(self, game_camera, mouse_position):
-        valid_placement = self.game_map.check_valid_village_placement(
-            mouse_position)
+        valid_placement = self.game_map.check_valid_village_placement(mouse_position)
         if valid_placement:
             absolute_map_position = game_camera.get_absolute_map_position(
                 mouse_position
             )
-            
+
             tmp_settlement = settlement.Settlement(
-                absolute_map_position, self.game_sound, self.game_trade
+                absolute_map_position, self.game_trade
             )
 
             overlap = None
-            overlap = self.check_for_settlement_overlap(
-                tmp_settlement, game_camera)
+            overlap = self.check_for_settlement_overlap(tmp_settlement, game_camera)
 
             if overlap is None:
                 settlement_placed = self.game_engine.place_settlement()
                 if settlement_placed:
                     self.settlements.add(tmp_settlement)
                     self.all_sprites.add(tmp_settlement)
-                    
-                    self.connection_manager.settlement_connections.add_settlement(tmp_settlement)
+
+                    self.connection_manager.settlement_connections.add_settlement(
+                        tmp_settlement
+                    )
                     tmp_settlement.placed(self.game_trade, self.game_sound)
             else:
                 tmp_settlement.remove()
@@ -101,22 +100,23 @@ class GameScene(SceneBase):
             )
 
             if successfully_connected:
-                self.selection_manager.handle_successful_connection()      
-                
+                self.selection_manager.handle_successful_connection()
+
     def process_input(self, events, pressed_keys, game_camera):
         for event in events:
-                 
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
                     # self.check_for_trade_event(event)
-                    self.game_trade.perform_trade()    
+                    self.game_trade.perform_trade()
 
             self.selection_manager.update_selected_settlements()
 
             if self.selection_manager.check_connection_condition():
                 self.try_connect_settlements()
 
-            self.settlements.update(self.connection_manager, event, game_camera, self.game_engine)
+            self.settlements.update(
+                self.connection_manager, event, game_camera, self.game_engine
+            )
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DELETE:
@@ -125,18 +125,25 @@ class GameScene(SceneBase):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     mouse_position = pygame.mouse.get_pos()
-    
+
                     if self.check_mouse_click_in_bounds(mouse_position, game_camera):
-                        self.selection_manager.check_any_settlement_clicked(mouse_position)
-    
+                        self.selection_manager.check_any_settlement_clicked(
+                            mouse_position
+                        )
+
                         if self.selection_manager.selection_and_void_click():
                             break
-    
+
                         if self.selection_manager.any_settlement_clicked:
                             self.selection_manager.process_settlement_click()
-    
-                        if not self.selection_manager.any_settlement_clicked and self.game_engine.settlements_available > 0:
-                            self.try_new_settlement_placement(game_camera, mouse_position)
+
+                        if (
+                            not self.selection_manager.any_settlement_clicked
+                            and self.game_engine.settlements_available > 0
+                        ):
+                            self.try_new_settlement_placement(
+                                game_camera, mouse_position
+                            )
                     else:
                         pass
 

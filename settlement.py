@@ -18,9 +18,11 @@ import itertools
 
 faker = Faker()
 
+
 class Settlement(pygame.sprite.Sprite):
     id_iterator = itertools.count()
-    def __init__(self, center, game_sound, game_trade):
+
+    def __init__(self, center, game_trade):
         super().__init__()
         self.id = next(self.id_iterator)
         self.center = center
@@ -126,11 +128,10 @@ class Settlement(pygame.sprite.Sprite):
     def update_render_center(self, game_camera):
         self.render_center = game_camera.get_relative_screen_position(self.center)
         self.rect = self.surf.get_rect(center=self.render_center)
-        
+
     def update_rect_center_for_sprite_collision(self):
-        
         self.rect = self.surf.get_rect(center=self.center)
-        
+
     def update(self, connection_manager, event, game_camera, game_engine):
         self.settlement_goods.update_trading_stats()
 

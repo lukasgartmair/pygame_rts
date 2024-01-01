@@ -14,6 +14,7 @@ class GameState(Enum):
     PLAYING = 0
     ENDED = 1
 
+
 class GameEngine:
     def __init__(self):
         self.state = None

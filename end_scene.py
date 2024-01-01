@@ -54,5 +54,3 @@ class EndScene(SceneBase):
 
         self.settlements.draw(screen)
         self.game_engine.render_settlement_count(screen, game_font)
-
-

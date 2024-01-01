@@ -28,7 +28,9 @@ class SelectionManager:
 
     def check_any_settlement_clicked(self, mouse_position):
         self.any_settlement_clicked = False
-        clicked_settlements = [s for s in self.settlements if s.is_clicked(mouse_position)]
+        clicked_settlements = [
+            s for s in self.settlements if s.is_clicked(mouse_position)
+        ]
         self.any_settlement_clicked = any(clicked_settlements)
         if self.any_settlement_clicked:
             self.clicked_settlement = clicked_settlements[0]
@@ -51,7 +53,10 @@ class SelectionManager:
                 self.selected_settlements.append(s)
 
     def selection_and_void_click(self):
-        if self.any_settlement_clicked == 0 and len(self.selected_settlements) in [1, 2]:
+        if self.any_settlement_clicked == 0 and len(self.selected_settlements) in [
+            1,
+            2,
+        ]:
             self.handle_deselection_on_void_click()
             return True
         else:
@@ -59,7 +64,11 @@ class SelectionManager:
 
     def process_settlement_click(self):
         s = self.clicked_settlement
-        if s.selected == False and s.connected == False and len(self.selected_settlements) == 0:
+        if (
+            s.selected == False
+            and s.connected == False
+            and len(self.selected_settlements) == 0
+        ):
             s.select()
 
         if s.selected and s.connected == False and len(self.selected_settlements) == 1:
@@ -69,7 +78,8 @@ class SelectionManager:
             if len(self.selected_settlements) == 0:
                 s.settlement_goods.update_preferred_good()
 
-        if len(self.selected_settlements) == 1 and (
-            self.selected_settlements[0].connected
-        ) == False:
+        if (
+            len(self.selected_settlements) == 1
+            and (self.selected_settlements[0].connected) == False
+        ):
             s.select()

@@ -8,6 +8,7 @@ Created on Wed Dec 27 09:42:21 2023
 
 import random
 
+
 class SettlementGoods:
     def __init__(self, settlement, game_trade):
         self.settlement = settlement
@@ -24,11 +25,12 @@ class SettlementGoods:
 
         self.settlement.preferred_good = ""
         self.settlement.preferred_good_index = -1
-        
+
         def remove_settlement_goods_from_market(self):
             self.game_trade
-        
+
     def has_at_least_one_in_stock(self, trading_form):
+        print(trading_form)
         if self.settlement.trading_goods[trading_form.good] > 0:
             return True
         else:
@@ -52,20 +54,39 @@ class SettlementGoods:
 
     def buy_trading_good(self, trading_form):
         if self.settlement.settlement_goods.is_affordable(trading_form):
-            print("{} balance BEFORE: {}".format(self.settlement.name, self.settlement.gold))
+            print(
+                "{} balance BEFORE: {}".format(
+                    self.settlement.name, self.settlement.gold
+                )
+            )
             self.settlement.gold -= trading_form.price * trading_form.magnitude
             self.settlement.trading_goods[trading_form.good] += trading_form.magnitude
             self.reset_preferred_good()
+
+            print(
+                "{} balance AFTER: {}".format(
+                    self.settlement.name, self.settlement.gold
+                )
+            )
             
-            print("{} balance AFTER: {}".format(self.settlement.name, self.settlement.gold))
-    
+            return True
+
     def sell_trading_good(self, trading_form):
         if self.has_magnitude_in_stock(trading_form):
-            print("{} balance BEFORE: {}".format(self.settlement.name, self.settlement.gold))
+            print(
+                "{} balance BEFORE: {}".format(
+                    self.settlement.name, self.settlement.gold
+                )
+            )
             self.settlement.gold += trading_form.price * trading_form.magnitude
             self.settlement.trading_goods[trading_form.good] -= trading_form.magnitude
-            print("{} balance AFTER: {}".format(self.settlement.name, self.settlement.gold))
-        
+            print(
+                "{} balance AFTER: {}".format(
+                    self.settlement.name, self.settlement.gold
+                )
+            )
+        return True
+
     def reset_preferred_good(self):
         self.settlement.preferred_good_index = -1
         self.update_preferred_good()

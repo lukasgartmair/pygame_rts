@@ -9,14 +9,13 @@ Created on Sun Dec 24 22:13:25 2023
 import unittest
 from connection_manager import get_adjacent_cells
 
+
 class TestMethods(unittest.TestCase):
     def setUp(self):
         self.test_x = 0
         self.test_y = 0
-        
+
     def test_get_adjacent_cells(self):
-
-
         solution = [
             (-1, -1),
             (-1, 0),
@@ -64,6 +63,7 @@ class TestMethods(unittest.TestCase):
 
         for i, s in enumerate(result):
             self.assertEqual(result[i], solution[i])
+
 
 if __name__ == "__main__":
     unittest.main()

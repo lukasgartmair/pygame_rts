@@ -9,6 +9,7 @@ from pathing import PathFinder
 from colors import path_colors
 from settlement_graph import SettlementGraph
 
+
 def get_adjacent_cells(x, y, k=0):
     adjacent_cells = []
     for xi in range(-k, k + 1):
@@ -17,23 +18,24 @@ def get_adjacent_cells(x, y, k=0):
     adjacent_cells.remove((x, y))
     return adjacent_cells
 
-class ConnectionManager:
-    def __init__(self, game_map, game_sound):
 
+class ConnectionManager:
+    def __init__(self, game_map):
         self.settlement_connections = SettlementGraph()
 
     def check_if_connection_exists(self, settlement):
         return bool(self.settlement_connections.are_connected())
 
     def remove_settlement(self, settlement, game_engine):
-
         self.settlement_connections.remove_settlement(settlement)
 
         settlement.remove()
         game_engine.remove_settlement()
 
     def already_connected(self, selected_settlements):
-        return self.settlement_connections.are_connected(selected_settlements[0], selected_settlements[1])
+        return self.settlement_connections.are_connected(
+            selected_settlements[0], selected_settlements[1]
+        )
 
     def connect_settlements(self, settlement_a, settlement_b, game_map, game_sound):
         successfully_connected = False
@@ -46,9 +48,9 @@ class ConnectionManager:
         )
 
         if path:
-
             self.settlement_connections.add_settlement_connection(
-                settlement_a, settlement_b, path=path)
+                settlement_a, settlement_b, path=path
+            )
 
             settlement_a.got_connected()
             settlement_b.got_connected()
@@ -64,10 +66,12 @@ class ConnectionManager:
 
             successfully_connected = False
         return successfully_connected
-    
+
     def map_paths_to_grid(self, game_map):
         mapped_grid = game_map.mapped_grid.copy()
-        for node_a, node_b, data in self.settlement_connections.get_connections(include_data=True):
+        for node_a, node_b, data in self.settlement_connections.get_connections(
+            include_data=True
+        ):
             for p in data["path"]:
                 mapped_grid[p[0], p[1]] = path_colors[0]
 

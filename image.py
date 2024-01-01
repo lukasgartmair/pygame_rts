@@ -52,7 +52,6 @@ def load_settlement_images(name):
         if f.endswith("red.png"):
             images["rubins_image"] = get_image(path + f)
 
-
     return images
 
 
