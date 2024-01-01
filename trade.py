@@ -8,7 +8,7 @@ Created on Mon Dec 25 14:11:37 2023
 
 import random
 from collections import defaultdict
-from beautifultable import BeautifulTable
+from beautifultable import BeautifulTable, BTRowCollection
 import re
 
 from enum import Enum
@@ -133,15 +133,16 @@ class Trade:
         table.columns.alignment = BeautifulTable.ALIGN_LEFT
         table.rows.alignment = BeautifulTable.ALIGN_LEFT
         table.columns.header = ["good", "magnitude", "price"]
+        rows = BTRowCollection(table)
         for k, v in self.global_assets.items():
             row = [
                 k,
                 self.global_assets[k]["magnitude"],
                 self.global_assets[k]["price"],
             ]
-            table.append_row(row)
+            rows.append(row)
 
-        splitted_table = re.split("\n", table.get_string())
+        splitted_table = re.split("\n", str(table))
         for line in splitted_table:
             text = game_font.render(line, True, (10, 0, 0))
             screen.blit(text, (0, offset))

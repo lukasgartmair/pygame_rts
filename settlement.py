@@ -12,14 +12,17 @@ import pygame.gfxdraw
 import image
 import random
 from settlement_goods import SettlementGoods
-from beautifultable import BeautifulTable
+from beautifultable import BeautifulTable, BTRowCollection
 import re
+import itertools
 
 faker = Faker()
 
 class Settlement(pygame.sprite.Sprite):
+    id_iterator = itertools.count()
     def __init__(self, center, game_sound, game_trade):
         super().__init__()
+        self.id = next(self.id_iterator)
         self.center = center
         self.render_center = center
         self.images = image.load_settlement_images("settlement_1")
@@ -87,11 +90,12 @@ class Settlement(pygame.sprite.Sprite):
         # table.columns.alignment = BeautifulTable.ALIGN_LEFT
         # table.rows.alignment = BeautifulTable.ALIGN_LEFT
         table.columns.header = ["", "good", "magnitude"]
+        rows = BTRowCollection(table)
         for k, v in self.trading_goods.items():
             row = ["", k, v]
-            table.append_row(row)
+            rows.append(row)
 
-        splitted_table = re.split("\n", table.get_string())
+        splitted_table = re.split("\n", str(table))
         for line in splitted_table:
             text = game_font.render(line, True, (10, 0, 0))
             screen.blit(text, (horizontal_offset, offset))
