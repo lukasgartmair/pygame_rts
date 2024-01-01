@@ -153,9 +153,13 @@ class Trade:
             self.global_assets[p]["magnitude"] = 0
             self.global_assets[p]["price"] = random.randint(1, 5)
 
-    def update_global_asset_magnitudes(self, trading_goods):
-        for k, v in trading_goods.items():
+    def add_goods_to_global_assets(self, settlement):
+        for k, v in settlement.trading_goods.items():
             self.global_assets[k]["magnitude"] += v
+            
+    def remove_goods_from_global_assets(self, settlement):
+        for k, v in settlement.trading_goods.items():
+            self.global_assets[k]["magnitude"] -= v
 
     def transaction(self, ask, bid):
         

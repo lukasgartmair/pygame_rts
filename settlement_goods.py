@@ -25,6 +25,9 @@ class SettlementGoods:
         self.settlement.preferred_good = ""
         self.settlement.preferred_good_index = -1
         
+        def remove_settlement_goods_from_market(self):
+            self.game_trade
+        
     def has_at_least_one_in_stock(self, trading_good):
         if self.settlement.trading_goods[trading_good] > 0:
             return True
@@ -94,4 +97,4 @@ class SettlementGoods:
     def initialize_trading_goods(self):
         for tg in self.game_trade.possible_trading_goods:
             self.settlement.trading_goods[tg] = random.randint(1, 5)
-        self.game_trade.update_global_asset_magnitudes(self.settlement.trading_goods)
+        self.game_trade.add_goods_to_global_assets(self.settlement)

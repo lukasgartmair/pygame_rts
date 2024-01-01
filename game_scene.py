@@ -85,7 +85,7 @@ class GameScene(SceneBase):
                     self.connection_manager.settlement_connections.add_settlement(tmp_settlement)
                     tmp_settlement.placed(self.game_trade, self.game_sound)
             else:
-                self.connection_manager.remove_settlement(tmp_settlement, self.game_engine)
+                tmp_settlement.remove()
 
     def try_connect_settlements(self):
         already_connected = self.connection_manager.already_connected(

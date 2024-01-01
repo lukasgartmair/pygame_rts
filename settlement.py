@@ -120,6 +120,7 @@ class Settlement(pygame.sprite.Sprite):
         return False
 
     def remove(self):
+        self.settlement_goods.game_trade.remove_goods_from_global_assets(self)
         self.kill()
 
     def update_render_center(self, game_camera):
