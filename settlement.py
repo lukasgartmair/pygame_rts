@@ -53,24 +53,22 @@ class Settlement(pygame.sprite.Sprite):
         self.name = faker.city()
         self.hover = False
         self.connected = False
-        
+
         self.animation_index = 0
         self.last_animation_time = 0
         self.animation_delay = 160  # shoot delay in milliseconds
         self.play_placement_animation = True
-        
-    def animate_placement(self):
 
+    def animate_placement(self):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_animation_time >= self.animation_delay:
             self.last_animation_time = current_time
             next_key = list(self.images.keys())[self.animation_index]
             self.image = self.images[next_key]
-            if self.animation_index >= len(self.images)-1:
+            if self.animation_index >= len(self.images) - 1:
                 self.play_placement_animation = False
                 self.image = self.images["main_image"]
             self.animation_index += 1
-
 
     def apply_population_to_scale(self):
         self.scale_factor = self.scale_factor * self.population ** (1.0 / 3) / 40
@@ -151,10 +149,9 @@ class Settlement(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect(center=self.center)
 
     def update(self, connection_manager, event, game_camera, game_engine):
-                
         if self.play_placement_animation:
             self.animate_placement()
-        
+
         self.settlement_goods.update_trading_stats()
 
         self.check_hover()

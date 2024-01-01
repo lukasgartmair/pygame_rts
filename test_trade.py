@@ -311,7 +311,7 @@ class TestMethods(unittest.TestCase):
         )
         self.assertEqual(test_transaction_magnitude, self.test_magnitude)
         test_transaction = self.test_trade.transaction(resolution)
-        
+
 
 if __name__ == "__main__":
     unittest.main()

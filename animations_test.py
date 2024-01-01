@@ -21,8 +21,10 @@ window = pygame.display.set_mode((600, 600))
 
 # Create a list of different sprites
 # that you want to use in the animation
-image_sprite = [pygame.image.load("sprite1.png").convert(),
-                pygame.image.load("sprite2.png").convert()]
+image_sprite = [
+    pygame.image.load("sprite1.png").convert(),
+    pygame.image.load("sprite2.png").convert(),
+]
 
 
 # Creating a new clock object to
@@ -41,7 +43,6 @@ run = True
 # Creating an infinite loop
 # to run our game
 while run:
-
     # Setting the framerate to 3fps just
     # to see the result properly
     clock.tick(0.5)

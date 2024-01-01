@@ -35,7 +35,6 @@ class GameScene(SceneBase):
             self.settlements, self.any_settlement_clicked
         )
 
-
     def remove_selected_settlements(self):
         if self.selection_manager.selected_settlements:
             for s in self.selection_manager.selected_settlements:
@@ -84,7 +83,7 @@ class GameScene(SceneBase):
                         tmp_settlement
                     )
                     tmp_settlement.placed(self.game_trade, self.game_sound)
-                    
+
             else:
                 tmp_settlement.remove()
 
@@ -97,7 +96,7 @@ class GameScene(SceneBase):
             successfully_connected = self.connection_manager.connect_settlements(
                 self.selection_manager.selected_settlements[0],
                 self.selection_manager.selected_settlements[1],
-                self.game_map
+                self.game_map,
             )
 
             if successfully_connected:
@@ -163,7 +162,7 @@ class GameScene(SceneBase):
         path_map = self.connection_manager.map_paths_to_grid(self.game_map)
         tmp = game_camera.get_map_cutout(path_map)
         surfarray.blit_array(screen, tmp)
-        
+
         # TODO check overlap collision rectangles, does not feel right
         # for s in self.settlements:
         #     pygame.draw.rect(
@@ -171,7 +170,7 @@ class GameScene(SceneBase):
         #         (255,0,0),
         #         pygame.Rect(s.surf.x, s.surf.x, screen_dimensions[0], screen_dimensions[1]),0
         #     )
-        
+
         self.settlements.draw(screen)
 
         self.game_engine.render_settlement_count(screen, game_font)

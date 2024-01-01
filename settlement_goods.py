@@ -68,7 +68,7 @@ class SettlementGoods:
                     self.settlement.name, self.settlement.gold
                 )
             )
-            
+
             return True
 
     def sell_trading_good(self, trading_form):
