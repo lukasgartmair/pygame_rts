@@ -214,16 +214,16 @@ class Trade:
         for k, v in self.global_path.subpaths.items():
             print(k)
 
-            settlement_0 = [s for s in self.settlements if s.name == k[0]][0]
-            settlement_1 = [s for s in self.settlements if s.name == k[1]][0]
+            settlement_a = [s for s in self.settlements if s.name == k[0]][0]
+            settlement_b = [s for s in self.settlements if s.name == k[1]][0]
             
-            trading_settlements.append((settlement_0, settlement_1))
+            trading_settlements.append((settlement_a, settlement_b))
 
         for traders in trading_settlements:
             
-            settlement_0, settlement_1 = traders
+            settlement_a, settlement_b = traders
 
-            self.create_possible_bids([settlement_0, settlement_1])
+            self.create_possible_bids([settlement_a, settlement_b])
             
         unique_bid_goods = sorted(set([b.good for b in self.ladder.bids]))
         

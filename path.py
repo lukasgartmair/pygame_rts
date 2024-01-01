@@ -77,11 +77,11 @@ class Path:
 
     def already_connected(self, selected_settlements):
         already_connected = False
-        settlement_0 = selected_settlements[0]
-        settlement_1 = selected_settlements[1]
-        condition_1 = (settlement_0.name, settlement_1.name) in self.subpaths.keys()
-        condition_2 = (settlement_1.name, settlement_0.name) in self.subpaths.keys()
-        if condition_1 or condition_2:
+        settlement_a = selected_settlements[0]
+        settlement_b = selected_settlements[1]
+        condition_a = (settlement_a.name, settlement_b.name) in self.subpaths.keys()
+        condition_b = (settlement_b.name, settlement_a.name) in self.subpaths.keys()
+        if condition_a or condition_b:
             already_connected = True
 
         return already_connected
@@ -89,21 +89,21 @@ class Path:
     def connect_settlements(self, selected_settlements, game_map, game_sound):
         successfully_connected = False
 
-        settlement_0 = selected_settlements[0]
-        settlement_1 = selected_settlements[1]
+        settlement_a = selected_settlements[0]
+        settlement_b = selected_settlements[1]
 
         local_path = None
 
         local_path = self.pathfinder.find_path(
-            game_map.grid, settlement_0.center, settlement_1.center
+            game_map.grid, settlement_a.center, settlement_b.center
         )
 
         if local_path:
             self.add_subpath(
-                settlement_0.name, settlement_1.name, len(local_path), local_path
+                settlement_a.name, settlement_b.name, len(local_path), local_path
             )
-            settlement_0.got_connected()
-            settlement_1.got_connected()
+            settlement_a.got_connected()
+            settlement_b.got_connected()
 
             game_sound.play_connect_settlement()
 
@@ -111,8 +111,8 @@ class Path:
 
         else:
             print("no_path_found")
-            settlement_0.deselect()
-            settlement_1.deselect()
+            settlement_a.deselect()
+            settlement_b.deselect()
 
             successfully_connected = False
         return successfully_connected
