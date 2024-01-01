@@ -12,7 +12,6 @@ import level_map
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, NAME
 import engine
 import game_font
-import path
 import sound
 from sprite_group import SpriteGroup
 import scene_manager

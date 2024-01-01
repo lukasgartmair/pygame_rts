@@ -21,15 +21,13 @@ class SettlementGraph(nx.Graph):
         
     def add_settlement(self, settlement):
         self.add_node(settlement.id, pos=settlement.center, name=settlement.name)
-        self.print_data()
         
     def remove_settlement(self, settlement):
-        print(self.nodes)
         self.remove_node(settlement.id)
         
-    def add_settlement_connection(self, settlement_a, settlement_b):
+    def add_settlement_connection(self, settlement_a, settlement_b, path):
         if settlement_a != settlement_b:
-            self.add_edge(settlement_a.id, settlement_b.id, weight=1)
+            self.add_edge(settlement_a.id, settlement_b.id, weight=1, path=path)
 
     def remove_settlement_connection(self, settlement_a, settlement_b):
         if settlement_a != settlement_b:

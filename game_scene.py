@@ -142,71 +142,7 @@ class GameScene(SceneBase):
 
         self.game_engine.check_win_condition(self.settlements)
 
-    # def process_input(self, events, pressed_keys, game_camera):
-    #     for event in events:
-            
-    #         if event.type == pygame.KEYDOWN:
-    #             if event.key == pygame.K_RETURN:
-    #                 # self.check_for_trade_event(event)
-    #                 self.game_trade.perform_trade()    
-
-    #         self.selection_manager.update_selected_settlements()
-            
-    #         self.connection_manager.settlement_connections.print_data()
-
-    #         if self.selection_manager.check_connection_condition():
-    #             self.try_connect_settlements()
-    
-    #         if event.type == pygame.MOUSEBUTTONDOWN:
-    #             if event.button == 1:
-    #                 mouse_position = event.pos
-    #                 self.settlements.update(
-    #                     self.connection_manager, mouse_position, game_camera, self.game_engine
-    #                 )
-
-    #         # if event.type == pygame.KEYDOWN:
-    #         #     if event.key == pygame.K_DELETE:
-    #         #         self.check_for_settlement_removals()
-
-    #         if event.type == pygame.MOUSEBUTTONDOWN:
-    #             if event.button == 1:
-
-    #                 mouse_position = pygame.mouse.get_pos()
-
-    #                 if self.check_mouse_click_in_bounds(mouse_position, game_camera):
-    #                     self.selection_manager.check_any_settlement_clicked(
-    #                         event.pos)
-
-    #                     if self.selection_manager.selection_and_void_click():
-    #                         break
-
-    #                     if self.selection_manager.any_settlement_clicked:
-    #                         self.selection_manager.process_settlement_click()
-
-    #                     if (
-    #                         self.selection_manager.any_settlement_clicked == False
-    #                         and self.game_engine.settlements_available > 0
-    #                     ):
-    #                         self.try_new_settlement_placement(
-    #                             game_camera, mouse_position
-    #                         )
-    #                 else:
-    #                     pass
-
-    #     self.game_engine.check_win_condition(self.settlements)
-
     def update(self):
-        # if self.game_engine.state == GameState.ENDED:
-        #     self.switch_to_scene(
-        #         scene_manager.get_end_scene(
-        #             self.game_engine,
-        #             self.game_map,
-        #             self.connection_manager.path,
-        #             self.game_sound,
-        #             self.sprite_groups,
-        #         )
-        #     )
-
         pass
 
     def render(self, game_camera, game_font):
@@ -216,8 +152,8 @@ class GameScene(SceneBase):
         )
         tmp = game_camera.get_map_cutout(self.game_map.mapped_grid)
         surfarray.blit_array(screen, tmp)
-        self.connection_manager.path.map_paths_to_grid(self.game_map)
-        tmp = game_camera.get_map_cutout(self.connection_manager.path.mapped_grid)
+        path_map = self.connection_manager.map_paths_to_grid(self.game_map)
+        tmp = game_camera.get_map_cutout(path_map)
         surfarray.blit_array(screen, tmp)
 
         self.settlements.draw(screen)

@@ -70,8 +70,7 @@ class TestMethods(unittest.TestCase):
         for i,s in enumerate(settlements):
             G.add_node(s.id, pos=(i,i), name=s.name)
             
-            
-        G.add_edge(s.id, 3)
+        G.add_edge(s.id, 3, path=[(1,2),(0,0)])
     
         has_edge = G.has_edge(s.id, 3)
         
