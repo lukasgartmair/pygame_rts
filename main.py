@@ -93,6 +93,7 @@ class Game:
                 
                 if is_empty(trading_paths) == False:
                     self.trade_animation.animate(trading_paths)
+                    
                 for settlement in active_scene.settlements:
                     if settlement.play_placement_animation:
                         self.place_settlement_animation.animate(settlement)
