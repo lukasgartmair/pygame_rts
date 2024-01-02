@@ -10,6 +10,16 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+from colors import path_colors
+
+
+def get_adjacent_cells(x, y, k=0):
+    adjacent_cells = []
+    for xi in range(-k, k + 1):
+        for yi in range(-k, k + 1):
+            adjacent_cells.append((x + xi, y + yi))
+    adjacent_cells.remove((x, y))
+    return adjacent_cells
 
 
 class SettlementGraph(nx.Graph):
@@ -32,7 +42,8 @@ class SettlementGraph(nx.Graph):
         print(self.nodes.data())
 
     def add_settlement(self, settlement):
-        self.add_node(settlement.id, pos=settlement.center, name=settlement.name)
+        self.add_node(settlement.id, pos=settlement.center,
+                      name=settlement.name)
 
     def remove_settlement(self, settlement):
         self.remove_node(settlement.id)
@@ -65,3 +76,17 @@ class SettlementGraph(nx.Graph):
             with_labels=True,
             labels=nx.get_node_attributes(self, "name"),
         )
+
+    def map_paths_to_grid(self, game_map):
+        mapped_grid = game_map.mapped_grid.copy()
+        for node_a, node_b, data in self.get_connections(
+            include_data=True
+        ):
+            for p in data["path"]:
+                mapped_grid[p[0], p[1]] = path_colors[0]
+
+                adjacent_cells = get_adjacent_cells(p[0], p[1], k=3)
+
+                for a in adjacent_cells:
+                    mapped_grid[a[0], a[1]] = path_colors[0]
+        return mapped_grid

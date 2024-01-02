@@ -149,6 +149,9 @@ class GameScene(SceneBase):
 
         self.game_engine.check_win_condition(self.settlements)
 
+    def get_scene_data(self):
+        return self.connection_manager.settlement_connections
+
     def update(self):
         pass
 
@@ -159,7 +162,7 @@ class GameScene(SceneBase):
         )
         tmp = game_camera.get_map_cutout(self.game_map.mapped_grid)
         surfarray.blit_array(screen, tmp)
-        path_map = self.connection_manager.map_paths_to_grid(self.game_map)
+        path_map = self.connection_manager.settlement_connections.map_paths_to_grid(self.game_map)
         tmp = game_camera.get_map_cutout(path_map)
         surfarray.blit_array(screen, tmp)
 

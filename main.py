@@ -8,6 +8,7 @@ Created on Sun Dec 17 12:34:47 2023
 
 import pygame
 import sys
+from networkx import is_empty
 import level_map
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, NAME
 import engine
@@ -32,6 +33,8 @@ class Game:
             game_font.font_style, game_font.font_size)
         self.sprite_groups = SpriteGroup().get_sprite_groups()
         self.place_settlement_animation = animation.PlaceSettlementAnimation()
+        self.trade_animation = animation.TradeAnimation()
+
 
     def run(self, starting_scene):
         pygame.init()
@@ -86,6 +89,12 @@ class Game:
                         filtered_events.append(f)
                         
             if type(active_scene).__name__ in ["GameScene"]:
+                
+                # trading_paths = active_scene.get_scene_data()
+                # print(is_empty(trading_paths))
+                
+                # if is_empty(trading_paths) == False:
+                #     self.trade_animation.animate(self.camera_1.camera_screen, trading_paths)
                 
                 for settlement in active_scene.settlements:
                     if settlement.play_placement_animation:

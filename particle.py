@@ -14,6 +14,7 @@ from dataclasses import dataclass
 
 @dataclass
 class ParticleSystemForm:
+    position: tuple = (0, 0)
     max_velocity: int = 180
     amount: int = 3
     radius: int = 5
@@ -33,6 +34,7 @@ class Particle:
     def __init__(self, partivle_system_form):
 
         self.particle_system = particlepy.particle.ParticleSystem()
+        self.position = partivle_system_form.position
         self.last_tick = time.time()
         self.delta_time = 0
 
@@ -67,15 +69,15 @@ class Particle:
             particle.shape.alpha = particlepy.math.fade_alpha(
                 particle=particle, alpha=self.alpha, progress=particle.inverted_progress)
 
-    def update(self):
-
+    def update(self, position):
         self.animate = self.update_time_delta()
         if self.animate:
+            self.position = position
             self.particle_system.update(delta_time=self.delta_time)
         else:
             self.particle_system.clear()
 
-    def emit_particles(self, position):
+    def emit_particles(self):
 
         for _ in range(self.amount):
             self.particle_system.emit(
@@ -86,7 +88,7 @@ class Particle:
                                        self.max_rnd_radius),
                         color=self.color,
                     ),
-                    position=position,
+                    position=self.position,
                     velocity=(random.gauss(mu=0, sigma=self.max_velocity),
                               random.gauss(mu=0, sigma=self.max_velocity)),
                     delta_radius=self.delta_radius,

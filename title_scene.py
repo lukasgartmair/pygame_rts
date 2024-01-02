@@ -41,6 +41,9 @@ class TitleScene(SceneBase):
                         self.sprite_groups,
                     )
                 )
+                
+    def get_scene_data(self):
+        return False
 
     def update(self):
         pass
