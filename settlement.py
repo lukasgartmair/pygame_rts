@@ -15,9 +15,9 @@ from settlement_goods import SettlementGoods
 from beautifultable import BeautifulTable, BTRowCollection
 import re
 import itertools
+import particle
 
 faker = Faker()
-
 
 class Settlement(pygame.sprite.Sprite):
     id_iterator = itertools.count()
@@ -58,8 +58,10 @@ class Settlement(pygame.sprite.Sprite):
         self.last_animation_time = 0
         self.animation_delay = 160  # shoot delay in milliseconds
         self.play_placement_animation = True
-
-    def animate_placement(self):
+        
+        self.particle = particle.Particle()
+        
+    def animate_image_sequence(self):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_animation_time >= self.animation_delay:
             self.last_animation_time = current_time
@@ -69,7 +71,21 @@ class Settlement(pygame.sprite.Sprite):
                 self.play_placement_animation = False
                 self.image = self.images["main_image"]
             self.animation_index += 1
+            
+    def animate_particle_effect(self):
+    
+        self.particle.update()
+        self.particle.emit_particles()
 
+    def animate_placement(self):
+        self.animate_image_sequence()
+        self.animate_particle_effect()
+        
+    def draw(self, screen):
+        super().draw() 
+        
+        
+        
     def apply_population_to_scale(self):
         self.scale_factor = self.scale_factor * self.population ** (1.0 / 3) / 40
 

@@ -163,13 +163,9 @@ class GameScene(SceneBase):
         tmp = game_camera.get_map_cutout(path_map)
         surfarray.blit_array(screen, tmp)
 
-        # TODO check overlap collision rectangles, does not feel right
-        # for s in self.settlements:
-        #     pygame.draw.rect(
-        #         screen,
-        #         (255,0,0),
-        #         pygame.Rect(s.surf.x, s.surf.x, screen_dimensions[0], screen_dimensions[1]),0
-        #     )
+        for s in self.settlements:
+            if s.play_placement_animation:
+                s.particle.render(screen)
 
         self.settlements.draw(screen)
 
