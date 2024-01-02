@@ -19,7 +19,7 @@ class GameEngine:
     def __init__(self):
         self.state = None
         self.currentPlayer = None
-        self.settlements_available = 5
+        self.settlements_available = 10
         self.win_condition = 20
         self.state = GameState.PLAYING
 

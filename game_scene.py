@@ -163,10 +163,6 @@ class GameScene(SceneBase):
         tmp = game_camera.get_map_cutout(path_map)
         surfarray.blit_array(screen, tmp)
 
-        for s in self.settlements:
-            if s.play_placement_animation:
-                s.particle.render(screen)
-
         self.settlements.draw(screen)
 
         self.game_engine.render_settlement_count(screen, game_font)

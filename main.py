@@ -31,7 +31,6 @@ font_game = game_font.GameFont(game_font.font_style, game_font.font_size)
 
 sprite_groups = SpriteGroup().get_sprite_groups()
 
-
 def run_game(starting_scene):
     pygame.init()
 
@@ -44,11 +43,12 @@ def run_game(starting_scene):
 
     pygame.key.set_repeat(1, 100)
 
-    while active_scene != None:
+    while active_scene is not None:
         pressed_keys = pygame.key.get_pressed()
 
         filtered_events = []
         try:
+            
             event_list = pygame.event.get()
         except:
             pass
@@ -82,30 +82,38 @@ def run_game(starting_scene):
             for f in filtered_events_copy:
                 if f.type not in [fi.type for fi in filtered_events]:
                     filtered_events.append(f)
-
+                    
         if type(active_scene).__name__ in ["GameScene"]:
+            
+            for s in active_scene.settlements:
+                if s.play_placement_animation:
+                    s.animate_placement(camera_1.camera_screen)
+            active_scene.settlements.draw(camera_1.camera_screen)
+            
             camera_1.handle_user_input_camera_movement(filtered_events)
-
+    
             screen.blit(camera_1.camera_screen, camera_1.camera.topleft)
-
+    
             screen.blit(camera_2.camera_screen, camera_2.camera.topleft)
             camera_2.camera_screen.fill(colors.settlement_stats_colors[0])
-
+    
             active_scene.process_input(filtered_events, pressed_keys, camera_1)
             active_scene.update()
-
+    
             active_scene.render(camera_1, font_game)
             active_scene.render_second_screen(camera_2, font_game)
-
+            
             game_engine.check_win_condition(active_scene.settlements)
-
+            
+            pygame.display.update(camera_1.camera_screen.get_rect())
+    
         else:
             screen.blit(camera_0.camera_screen, camera_0.camera.topleft)
             active_scene.process_input(filtered_events, pressed_keys, camera_0)
             active_scene.update()
             active_scene.render(camera_0, font_game)
-
-        active_scene = active_scene.next
+            
+            active_scene = active_scene.next
 
         pygame.display.flip()
         clock.tick(FPS)
