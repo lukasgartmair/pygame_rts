@@ -38,7 +38,7 @@ class GameScene(SceneBase):
     def remove_selected_settlements(self):
         if self.selection_manager.selected_settlements:
             for s in self.selection_manager.selected_settlements:
-                self.connection_manager.remove_settlement(s, self.game_engine)
+                self.connection_manager.remove_settlement(s, self.game_trade, self.game_engine)
 
     def check_for_trade_event(self, event):
         if len(self.connection_manager.path.subpaths) >= 1:
@@ -67,7 +67,7 @@ class GameScene(SceneBase):
             )
 
             tmp_settlement = settlement.Settlement(
-                absolute_map_position, self.game_trade
+                absolute_map_position
             )
 
             overlap = None

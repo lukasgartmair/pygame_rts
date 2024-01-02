@@ -26,10 +26,11 @@ class ConnectionManager:
     def check_if_connection_exists(self, settlement):
         return bool(self.settlement_connections.are_connected())
 
-    def remove_settlement(self, settlement, game_engine):
+    def remove_settlement(self, settlement, game_trade, game_engine):
         self.settlement_connections.remove_settlement(settlement)
 
         settlement.remove()
+        game_trade.remove_goods_from_global_assets(settlement)
         game_engine.remove_settlement()
 
     def already_connected(self, selected_settlements):

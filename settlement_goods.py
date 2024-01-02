@@ -8,7 +8,6 @@ Created on Wed Dec 27 09:42:21 2023
 
 import random
 
-
 class SettlementGoods:
     def __init__(self, settlement, game_trade):
         self.settlement = settlement
@@ -25,9 +24,6 @@ class SettlementGoods:
 
         self.settlement.preferred_good = ""
         self.settlement.preferred_good_index = -1
-
-        def remove_settlement_goods_from_market(self):
-            self.game_trade
 
     def has_at_least_one_in_stock(self, trading_form):
         print(trading_form)

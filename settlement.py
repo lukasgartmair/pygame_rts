@@ -22,7 +22,7 @@ faker = Faker()
 class Settlement(pygame.sprite.Sprite):
     id_iterator = itertools.count()
 
-    def __init__(self, center, game_trade):
+    def __init__(self, center):
         super().__init__()
         self.id = next(self.id_iterator)
         self.center = center
@@ -123,7 +123,6 @@ class Settlement(pygame.sprite.Sprite):
         return False
 
     def remove(self):
-        self.game_trade.remove_goods_from_global_assets(self)
         self.kill()
 
     def update_render_center(self, game_camera):
