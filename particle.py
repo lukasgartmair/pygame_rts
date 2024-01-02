@@ -13,7 +13,7 @@ from colors import settlement_stats_colors
 
 
 class Particle:
-    def __init__(self, max_animation_duration):
+    def __init__(self):
 
         self.particle_system = particlepy.particle.ParticleSystem()
         self.max_vel = 180
@@ -28,6 +28,9 @@ class Particle:
         self.alpha = 0.2
         self.animate = True
         self.animation_duration = 0
+        self.max_animation_duration = 0
+        
+    def set_max_animation_duration(self, max_animation_duration):
         self.max_animation_duration = max_animation_duration
 
     def update_time_delta(self):

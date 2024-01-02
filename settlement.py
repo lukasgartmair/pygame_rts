@@ -15,7 +15,7 @@ from settlement_goods import SettlementGoods
 from beautifultable import BeautifulTable, BTRowCollection
 import re
 import itertools
-import particle
+
 
 faker = Faker()
 
@@ -53,40 +53,8 @@ class Settlement(pygame.sprite.Sprite):
         self.name = faker.city()
         self.hover = False
         self.connected = False
-
-        self.animation_index = 0
-        self.last_animation_time = 0
-        self.animation_delay = 80  # shoot delay in milliseconds
         self.play_placement_animation = True
-        self.alpha_transparency = 75
-        self.alpha_non_transparent = 200
-        
-        self.particle = particle.Particle(self.animation_delay*len(self.images))
-        
-    def animate_image_sequence(self):
-        current_time = pygame.time.get_ticks()
-        if current_time - self.last_animation_time >= self.animation_delay:
-            self.last_animation_time = current_time
-            next_key = list(self.images.keys())[self.animation_index]
-            self.image = self.images[next_key]
-            self.image.set_alpha(self.alpha_transparency)
-            if self.animation_index >= len(self.images) - 1:
-                self.play_placement_animation = False
-                self.image = self.images["main_image"]
-                self.image.set_alpha(self.alpha_non_transparent)
-                
-            self.animation_index += 1
-            
-    def animate_particle_effect(self):
-    
-        self.particle.update()
-        self.particle.emit_particles(self.render_center)
-        
-    def animate_placement(self, screen):
-        self.animate_image_sequence()
-        self.animate_particle_effect()
-        self.particle.render(screen)
-        
+
     def apply_population_to_scale(self):
         self.scale_factor = self.scale_factor * self.population ** (1.0 / 3) / 40
 
@@ -166,8 +134,6 @@ class Settlement(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect(center=self.center)
 
     def update(self, connection_manager, event, game_camera, game_engine):
-        # if self.play_placement_animation:
-        #     self.animate_placement()
 
         self.settlement_goods.update_trading_stats()
 
