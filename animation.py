@@ -8,7 +8,7 @@ Created on Tue Jan  2 10:42:52 2024
 
 import pygame
 import particle
-from colors import settlement_stats_colors
+import colors
 import itertools
 import camera
 
@@ -71,10 +71,14 @@ class TradeAnimation(Animation):
         self.particle.color = (0, 255, 0)
         self.particle.max_animation_duration = -1
         self.particle.max_velocity = 20
-        self.path_iterator = 0
-        self.trading_direction = 0
-        self.trading_velocity = 10
+        self.particle.delta_radius = 0.4
+        self.particle.radius = 2
         
+        self.colors = colors.get_gradients()
+        
+        self.trades = {}
+        self.count = 0
+
     def animate(self, animation_object):
         
         super().initialize_animation_object(animation_object)
@@ -82,33 +86,34 @@ class TradeAnimation(Animation):
         if self.particle_animation:
 
             current_path_positions = []
+            current_colors = []
+            current_iterators = [0]*len(self.animation_object.get_connections())
             for node_a, node_b, data in self.animation_object.get_connections(
                 include_data=True
             ):  
-                if self.trading_direction == 0:
-                    self.path_iterator += 1 * self.trading_velocity
-                else:
-                    self.path_iterator -= 1 * self.trading_velocity
-                    
-                if self.path_iterator >= len(data["path"])-1:
-                    self.trading_direction = 1
-                    self.path_iterator = len(data["path"])-1
-                elif self.path_iterator < 0:
-                    self.trading_direction = 0
-                    self.path_iterator = 0
-
-                p = data["path"][self.path_iterator]
-                    
-                print(self.path_iterator)
-                    
-                p = self.camera.get_relative_screen_position(p)
                 
-                current_path_positions.append(p)
+                if self.trading_direction == 0:
+                    current_iterators[count] += 1 * self.trading_velocity
+                else:
+                    current_iterators[count] -= 1 * self.trading_velocity
+                    
+                if current_iterators[count] >= len(data["path"])-1:
+                    self.trading_direction = 1
+                    current_iterators[count] = len(data["path"])-1
+                elif current_iterators[count] < 0:
+                    self.trading_direction = 0
+                    current_iterators[count] = 0
+                
+                p = data["path"][current_iterators[count]]
+                p_relative = self.camera.get_relative_screen_position(p)
+                
+                current_path_positions.append(p_relative)
+                current_colors.append(self.colors[current_iterators[count] // len(self.colors)])
+                
             
-            for current_position in current_path_positions:
-                color = (0,255,255)
-                self.particle.color = color
-                self.particle.position = p
+            for i,current_position in enumerate(current_path_positions):
+                self.particle.position = current_position
+                self.particle.color = current_colors[i]
                 self.animate_particle_effect()
 
 
@@ -117,7 +122,7 @@ class PlaceSettlementAnimation(Animation):
         super().__init__(camera)
 
         self.animation_delay = 150
-        self.particle.color = settlement_stats_colors[0]
+        self.particle.color = colors.settlement_stats_colors[0]
 
     def animate_image_sequence(self):
 

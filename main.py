@@ -53,7 +53,6 @@ class Game:
     
             filtered_events = []
             try:
-                
                 event_list = pygame.event.get()
             except:
                 pass
