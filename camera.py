@@ -59,10 +59,9 @@ class Camera:
     def is_within_current_view(self, x_temp, y_temp):
         x, y = self.topleft
         inside = [
-            x  <= x_temp <= x + self.width and
-            y<= y_temp <= y + self.height
+            x <= x_temp <= x + self.width and
+            y <= y_temp <= y + self.height
         ]
-        print(all(inside))
         return all(inside)
 
     def set_topleft_center_view(self):

@@ -12,7 +12,10 @@ from beautifultable import BeautifulTable, BTRowCollection
 import re
 from collections import defaultdict
 import itertools
+import logging
+import time
 
+logger = logging.getLogger('root')
 
 def nested_dict(n, type):
     if n == 1:
@@ -22,6 +25,7 @@ def nested_dict(n, type):
 
 
 class Trade:
+
     def __init__(self, settlements, connection_manager):
         self.id_iterator = itertools.count()
         self.settlements = settlements
@@ -33,9 +37,14 @@ class Trade:
 
         self.global_assets = nested_dict(2, int)
         self.initialize_global_assets()
-
+        
         self.transaction_history = {}
-
+        
+        self.transaction_id = -1
+        
+    def increase_transaction_id(self):
+        self.transaction_id = next(self.id_iterator)      
+        
     def render_global_assets(self, screen, game_font):
         vertical_offset = 25
         offset = 0
@@ -84,7 +93,8 @@ class Trade:
     def perform_buy(self, trading_form):
         bought = False
         bought = trading_form.bidder.settlement_goods.buy_trading_good(trading_form)
-        print(
+
+        logger.debug(
             "{} bought {} x {} for {}, {} each, from {}".format(
                 trading_form.bidder.name,
                 trading_form.magnitude,
@@ -100,7 +110,8 @@ class Trade:
         sold = False
         if trading_form.asker.settlement_goods.has_magnitude_in_stock(trading_form):
             sold = trading_form.asker.settlement_goods.sell_trading_good(trading_form)
-            print(
+
+            logger.debug(
                 "{} sold {} x {} for {}, {} each, to {}".format(
                     trading_form.asker.name,
                     trading_form.magnitude,
@@ -112,21 +123,16 @@ class Trade:
             )
         return sold
 
-    def create_transaction_history_entry(self, trading_form):
-        if bool(self.transaction_history) == False:
-            transaction_id = 0
-        else:
-            transaction_id = max(self.transaction_history) + 1
+    def create_transaction_history_entry(self, transaction_successful, trading_form):
 
-        self.transaction_history[transaction_id] = trading_form
+        self.transaction_history[self.transaction_id] = time.time(), transaction_successful, trading_form
 
     def transaction(self, resolution):
+        self.increase_transaction_id()
         magnitude = 0
         magnitude = self.get_transaction_magnitudes(resolution.bid, resolution.ask)
 
-        print(magnitude)
-
-        transaction_successfull = False
+        transaction_successful = False
 
         trading_form = ladder.TradingForm(
             bidder=resolution.bid.bidder,
@@ -139,17 +145,18 @@ class Trade:
         bought = self.perform_buy(trading_form)
         sold = self.perform_sell(trading_form)
 
-        transaction_successfull = bool(bought and sold)
+        transaction_successful = bool(bought and sold)
 
-        if transaction_successfull:
-            self.create_transaction_history_entry(trading_form)
-
+        self.create_transaction_history_entry(transaction_successful, trading_form)
+        logger.warning("TRANSACTION ID")
+        logger.warning(self.transaction_id)
+                    
         if bought == False:
-            print("Failure in buying process")
+            logger.debug("Failure in buying process")
         elif sold == False:
-            print("Failure in selling process")
+            logger.debug("Failure in selling process")
 
-        return transaction_successfull
+        return transaction_successful
 
     def get_trading_settlements(self):
         trading_settlements = []
@@ -163,9 +170,11 @@ class Trade:
                         trading_settlements.append(s)
         return trading_settlements
 
-    def perform_trade(self, verbose=True):
-        if verbose:
-            print("perform trade")
+    def perform_trade(self):
+        
+        self.transaction_history = {}
+        
+        logger.debug("perform trade")
 
         trading_settlements = self.get_trading_settlements()
 
@@ -191,16 +200,14 @@ class Trade:
                     self.global_assets,
                 )
 
-        print("bids")
+        logger.debug("bids")
         for b in self.trade_ladder.bids:
-            print(b.__dict__)
+            logger.debug(b.__dict__)
 
-        print("asks")
+        logger.debug("asks")
         for b in self.trade_ladder.asks:
-            print(b.__dict__)
+            logger.debug(b.__dict__)
 
         self.trade_ladder.resolve()
         transactions = []
         transactions = [self.transaction(r) for r in self.trade_ladder.resolutions]
-
-        return self.global_assets, self.transaction_history

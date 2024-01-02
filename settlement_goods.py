@@ -7,6 +7,9 @@ Created on Wed Dec 27 09:42:21 2023
 """
 
 import random
+import logger
+
+logger = logger.setup_custom_logger('root')
 
 class SettlementGoods:
     def __init__(self, settlement, game_trade):
@@ -26,7 +29,7 @@ class SettlementGoods:
         self.settlement.preferred_good_index = -1
 
     def has_at_least_one_in_stock(self, trading_form):
-        print(trading_form)
+        logger.debug(trading_form)
         if self.settlement.trading_goods[trading_form.good] > 0:
             return True
         else:
@@ -50,7 +53,8 @@ class SettlementGoods:
 
     def buy_trading_good(self, trading_form):
         if self.settlement.settlement_goods.is_affordable(trading_form):
-            print(
+            
+            logger.debug(
                 "{} balance BEFORE: {}".format(
                     self.settlement.name, self.settlement.gold
                 )
@@ -58,8 +62,8 @@ class SettlementGoods:
             self.settlement.gold -= trading_form.price * trading_form.magnitude
             self.settlement.trading_goods[trading_form.good] += trading_form.magnitude
             self.reset_preferred_good()
-
-            print(
+            
+            logger.debug(
                 "{} balance AFTER: {}".format(
                     self.settlement.name, self.settlement.gold
                 )
@@ -69,14 +73,16 @@ class SettlementGoods:
 
     def sell_trading_good(self, trading_form):
         if self.has_magnitude_in_stock(trading_form):
-            print(
+            
+            logger.debug(
                 "{} balance BEFORE: {}".format(
                     self.settlement.name, self.settlement.gold
                 )
             )
             self.settlement.gold += trading_form.price * trading_form.magnitude
             self.settlement.trading_goods[trading_form.good] -= trading_form.magnitude
-            print(
+            
+            logger.debug(
                 "{} balance AFTER: {}".format(
                     self.settlement.name, self.settlement.gold
                 )

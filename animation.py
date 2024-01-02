@@ -132,6 +132,13 @@ class TradeAnimation(Animation):
                 
         for trade_route in self.trades.values():
             trade_route.animate(None)
+            
+    def update_trade_routes(self):
+        # only relevant if you are able to delete connected settlements
+        current_connections = self.animation_object.get_connections()
+        for trade_route in self.trades:
+            if (trade_route.node_a, trade_route.node_b) not in current_connections:
+                del self.trades[trade_route.node_a, trade_route.node_b]
                 
 class TradeRouteAnimation(TradeAnimation):
     def __init__(self, camera, node_a, node_b, data):
