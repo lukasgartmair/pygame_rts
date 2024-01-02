@@ -24,7 +24,7 @@ class ParticleSystemForm:
 
     animate: bool = True
     animation_duration: int = 0
-    max_animation_duration: int = 100
+    max_animation_duration: int = 1000
 
     alpha: float = 0.2
     color: tuple = (0, 0, 255)
@@ -53,13 +53,15 @@ class Particle:
         self.color = partivle_system_form.color
 
     def update_time_delta(self):
-
+        
         self.current_time = time.time()
         self.delta_time = self.current_time - self.last_tick
         self.animation_duration += self.delta_time
         self.last_tick = self.current_time
-
-        return self.animation_duration <= self.max_animation_duration
+        if self.max_animation_duration >= 0:         
+            return self.animation_duration <= self.max_animation_duration
+        else:
+            return True
 
     def update_colors(self):
 
@@ -69,10 +71,11 @@ class Particle:
             particle.shape.alpha = particlepy.math.fade_alpha(
                 particle=particle, alpha=self.alpha, progress=particle.inverted_progress)
 
-    def update(self, position):
+    def update(self):
+
         self.animate = self.update_time_delta()
+            
         if self.animate:
-            self.position = position
             self.particle_system.update(delta_time=self.delta_time)
         else:
             self.particle_system.clear()

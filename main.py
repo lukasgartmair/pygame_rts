@@ -32,8 +32,8 @@ class Game:
         self.font = game_font.GameFont(
             game_font.font_style, game_font.font_size)
         self.sprite_groups = SpriteGroup().get_sprite_groups()
-        self.place_settlement_animation = animation.PlaceSettlementAnimation()
-        self.trade_animation = animation.TradeAnimation()
+        self.place_settlement_animation = animation.PlaceSettlementAnimation(self.camera_1)
+        self.trade_animation = animation.TradeAnimation(self.camera_1)
 
 
     def run(self, starting_scene):
@@ -90,15 +90,13 @@ class Game:
                         
             if type(active_scene).__name__ in ["GameScene"]:
                 
-                # trading_paths = active_scene.get_scene_data()
-                # print(is_empty(trading_paths))
+                trading_paths = active_scene.get_scene_data()
                 
-                # if is_empty(trading_paths) == False:
-                #     self.trade_animation.animate(self.camera_1.camera_screen, trading_paths)
-                
+                if is_empty(trading_paths) == False:
+                    self.trade_animation.animate(trading_paths)
                 for settlement in active_scene.settlements:
                     if settlement.play_placement_animation:
-                        self.place_settlement_animation.animate(self.camera_1.camera_screen, settlement)
+                        self.place_settlement_animation.animate(settlement)
                         
                 active_scene.settlements.draw(self.camera_1.camera_screen)
                 

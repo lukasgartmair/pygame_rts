@@ -21,7 +21,6 @@ def get_adjacent_cells(x, y, k=0):
     adjacent_cells.remove((x, y))
     return adjacent_cells
 
-
 class SettlementGraph(nx.Graph):
     def __init__(self):
         super(SettlementGraph, self).__init__()
