@@ -43,8 +43,6 @@ class Animation:
             self.triggered = True
         else:
             self.triggered = False
-            
-        print(self.triggered)
 
     def animate_particle_effect(self):
 
@@ -67,30 +65,45 @@ class Animation:
         self.animation_index = 0
 
 class TradeAnimation(Animation):
-    path_iterator = itertools.count()
     def __init__(self, camera):
         super().__init__(camera)
 
         self.particle.color = (0, 255, 0)
         self.particle.max_animation_duration = -1
         self.particle.max_velocity = 20
+        self.path_iterator = 0
+        self.trading_direction = 0
+        self.trading_velocity = 10
         
     def animate(self, animation_object):
         
         super().initialize_animation_object(animation_object)
         
         if self.particle_animation:
-            self.check_animation_trigger()
 
             current_path_positions = []
             for node_a, node_b, data in self.animation_object.get_connections(
                 include_data=True
             ):  
-                p = data["path"][0]
-                print(p)
+                if self.trading_direction == 0:
+                    self.path_iterator += 1 * self.trading_velocity
+                else:
+                    self.path_iterator -= 1 * self.trading_velocity
+                    
+                if self.path_iterator >= len(data["path"])-1:
+                    self.trading_direction = 1
+                    self.path_iterator = len(data["path"])-1
+                elif self.path_iterator < 0:
+                    self.trading_direction = 0
+                    self.path_iterator = 0
+
+                p = data["path"][self.path_iterator]
+                    
+                print(self.path_iterator)
+                    
                 p = self.camera.get_relative_screen_position(p)
-                print(p)
-                current_path_positions.append((p[0], p[1]))
+                
+                current_path_positions.append(p)
             
             for current_position in current_path_positions:
                 color = (0,255,255)
