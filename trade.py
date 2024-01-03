@@ -17,12 +17,14 @@ import time
 
 logger = logging.getLogger('root')
 
-def nested_dict(n, type):
-    if n == 1:
-        return defaultdict(type)
-    else:
-        return defaultdict(lambda: nested_dict(n - 1, type))
-
+class GlobalAsset:
+    
+    def __init__(self, trading_good):
+    
+        self.good = trading_good
+        self.timestamp = time.time()
+        self.magnitude = 0
+        self.price = random.randint(1, 5)
 
 class Trade:
 
@@ -35,13 +37,18 @@ class Trade:
 
         self.trade_ladder = ladder.Ladder()
 
-        self.global_assets = nested_dict(2, int)
-        self.initialize_global_assets()
-        
+        self.global_assets = {}
+
         self.transaction_history = {}
         
         self.transaction_id = -1
         
+        self.initialize_global_assets()
+        
+    def initialize_global_assets(self):
+        for p in self.possible_trading_goods:
+            self.global_assets[p] = GlobalAsset(p)
+            
     def increase_transaction_id(self):
         self.transaction_id = next(self.id_iterator)      
         
@@ -58,8 +65,8 @@ class Trade:
         for k, v in self.global_assets.items():
             row = [
                 k,
-                self.global_assets[k]["magnitude"],
-                self.global_assets[k]["price"],
+                self.global_assets[k].magnitude,
+                self.global_assets[k].price,
             ]
             rows.append(row)
 
@@ -69,18 +76,15 @@ class Trade:
             screen.blit(text, (0, offset))
             offset += vertical_offset
 
-    def initialize_global_assets(self):
-        for p in self.possible_trading_goods:
-            self.global_assets[p]["magnitude"] = 0
-            self.global_assets[p]["price"] = random.randint(1, 5)
-
     def add_goods_to_global_assets(self, settlement):
         for k, v in settlement.trading_goods.items():
-            self.global_assets[k]["magnitude"] += v
+            self.global_assets[k].timestamp = time.time()
+            self.global_assets[k].magnitude += v
 
     def remove_goods_from_global_assets(self, settlement):
         for k, v in settlement.trading_goods.items():
-            self.global_assets[k]["magnitude"] -= v
+            self.global_assets[k].timestamp = time.time()
+            self.global_assets[k].magnitude -= v
 
     def get_transaction_magnitudes(self, bid, ask):
         magnitude = 0
@@ -139,7 +143,7 @@ class Trade:
             asker=resolution.ask.asker,
             good=resolution.bid.good,
             magnitude=magnitude,
-            price=self.global_assets[resolution.bid.good]["price"],
+            price=self.global_assets[resolution.bid.good].price,
         )
 
         bought = self.perform_buy(trading_form)

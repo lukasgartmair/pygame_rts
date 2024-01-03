@@ -117,7 +117,7 @@ class Ladder:
         ):
             trading_form = TradingForm(good=good)
             if settlement.settlement_goods.has_at_least_one_in_stock(trading_form):
-                trading_good_price = global_assets[good]["price"]
+                trading_good_price = global_assets[settlement.preferred_good].price
                 self.create_ladder_entry(
                     settlement,
                     good,
@@ -130,7 +130,7 @@ class Ladder:
         for s in settlements:
             if s.preferred_good != "":
                 trading_form = TradingForm(
-                    price=global_assets[s.preferred_good]["price"]
+                    price=global_assets[s.preferred_good].price
                 )
 
                 affordable_magnitude = (
