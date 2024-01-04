@@ -115,7 +115,7 @@ class TradeAnimation(Animation):
 
         self.colors = colors.get_gradients()
         self.trades = {}
-        self.trading_velocity = 10
+        self.trading_velocity = 5
         self.path_counter = 0
         self.color = (0,0,0)
         self.trading_direction = 0

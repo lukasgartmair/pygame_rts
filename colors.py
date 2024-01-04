@@ -16,7 +16,7 @@ terrain_colors = {0: (0, 21, 36), 1: (120, 41, 15)}
 
 settlement_stats_colors = {0: (255, 236, 209)}
 
-def get_gradients(color_a="blue", color_b="gold"):
+def get_gradients(color_a="red", color_b="gold"):
     color_a, color_b = Color(color_a), Color(color_b)
     colours = list(color_a.range_to(color_b,20))
     colours = [c.get_rgb() for c in colours]
