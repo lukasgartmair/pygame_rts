@@ -5,8 +5,8 @@ Created on Mon Jan  1 11:05:46 2024
 
 @author: lukasgartmair
 """
-import pyximport; pyximport.install()
-from pathing_c import PathFinder
+
+from pathing import PathFinder
 from settlement_graph import SettlementGraph
 
 class ConnectionManager:

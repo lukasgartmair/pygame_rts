@@ -11,7 +11,7 @@ import particle
 import colors
 import itertools
 import camera
-
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 
 class Animation:
     def __init__(self, camera):
@@ -115,7 +115,7 @@ class TradeAnimation(Animation):
 
         self.colors = colors.get_gradients()
         self.trades = {}
-        self.trading_velocity = 5
+        self.trading_velocity = SCREEN_WIDTH // FPS // 2
         self.path_counter = 0
         self.color = (0,0,0)
         self.trading_direction = 0

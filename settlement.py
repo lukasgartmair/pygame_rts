@@ -54,7 +54,9 @@ class Settlement(pygame.sprite.Sprite):
         self.hover = False
         self.connected = False
         self.play_placement_animation = True
-
+        
+        self.mask =  pygame.mask.from_surface(self.image)
+        
     def apply_population_to_scale(self):
         self.scale_factor = self.scale_factor * self.population ** (1.0 / 3) / 40
 

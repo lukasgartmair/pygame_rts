@@ -85,7 +85,7 @@ class Trade:
         for k, v in settlement.trading_goods.items():
             self.global_assets[k].timestamp = time.time()
             self.global_assets[k].magnitude += v
-
+            
     def remove_goods_from_global_assets(self, settlement):
         for k, v in settlement.trading_goods.items():
             self.global_assets[k].timestamp = time.time()

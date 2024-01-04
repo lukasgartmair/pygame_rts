@@ -60,7 +60,8 @@ class GameScene(SceneBase):
         return overlap
 
     def try_new_settlement_placement(self, game_camera, mouse_position):
-        valid_placement = self.game_map.check_valid_village_placement(mouse_position)
+        mouse_position_translated_to_absolute_map = game_camera.get_absolute_map_position(mouse_position)
+        valid_placement = self.game_map.check_valid_village_placement(mouse_position_translated_to_absolute_map)
         if valid_placement:
             absolute_map_position = game_camera.get_absolute_map_position(
                 mouse_position

@@ -27,8 +27,8 @@ screen = pygame.display.set_mode((1, 1))
 class TradeSimulator:
     def __init__(self):
         self.width, self.height = 100, 100
-        self.number_of_settlements =10
-        self.number_of_rounds = 10
+        self.number_of_settlements = 2
+        self.number_of_rounds = 3
         self.game_map = level_map.GameMap(test=True)
         self.connection_manager = connection_manager.ConnectionManager(self.game_map)
 
@@ -99,11 +99,12 @@ class TradeSimulator:
         
         for k,v in trade_simulator.global_assets.items():
             for ki, vi in v.items():
+
                 global_assets_formatted.append((k, ki, vi.timestamp, vi.magnitude, vi.price))
-                
+                    
         return global_assets_formatted
     
-    def analyze(self):
+    def analyze_global_assets(self):
 
         successfull_transactions = {}
         failed_transactions = {}
@@ -119,25 +120,19 @@ class TradeSimulator:
         self.df = pd.DataFrame(global_assets_formatted)
         col_names = ["round","good","timestamp","magnitude","price"]
         self.df.columns = col_names
-
+        self.df["round"].astype('int32')    
     def plot(self):
-        grouped_by_good_and_round = df.groupby(['round','good'], as_index=False)["magnitude"].sum()
+        grouped_by_good_and_round = df.groupby(['good', 'round'], as_index=False)["magnitude"].sum()
         
-        brass = grouped_by_good_and_round.loc[grouped_by_good_and_round['good'] == "brass"]
-        rubins = grouped_by_good_and_round.loc[grouped_by_good_and_round['good'] == "rubins"]
-        silver = grouped_by_good_and_round.loc[grouped_by_good_and_round['good'] == "silver"]
-        wood = grouped_by_good_and_round.loc[grouped_by_good_and_round['good'] == "wood"]
-
         ax = plt.subplot()
         
-        x = [brass, rubins, silver, wood]
-        for xi in x:
-            xi.plot("round", "magnitude",ax=ax)
+        pivot = grouped_by_good_and_round.pivot_table( index="round",columns="good", values='magnitude', aggfunc='sum')
+        pivot.plot()
 
 if __name__ == "__main__":
     trade_simulator = TradeSimulator()
     trade_simulator.run()
-    trade_simulator.analyze()
+    trade_simulator.analyze_global_assets()
     df = trade_simulator.df
     trade_simulator.plot()
     trade_simulator.terminate()
