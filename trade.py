@@ -199,7 +199,7 @@ class Trade:
             
         self.trade_ladder.resolutions.remove(resolution)
 
-        return transaction_successful
+        return trading_form
 
     def perform_trade(self):
 
@@ -241,7 +241,10 @@ class Trade:
         # self.trade_ladder.bids = []
         # self.trade_ladder.asks = []
 
-        
         transactions = []
         transactions = [self.transaction(r)
                         for r in self.trade_ladder.resolutions]
+        
+        print(transactions)
+        
+        return transactions

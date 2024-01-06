@@ -24,7 +24,6 @@ import logging
 
 logger = logging.getLogger('root')
 
-
 class Game:
     def __init__(self):
         
@@ -92,10 +91,10 @@ class Game:
                         
             if type(active_scene).__name__ in ["GameScene"]:
                 
-                trading_paths = active_scene.get_scene_data()
+                # trading_paths = active_scene.get_scene_data()
                 
-                if is_empty(trading_paths) == False:
-                    self.trade_animation.animate(trading_paths)
+                # if is_empty(trading_paths) == False:
+                #     self.trade_animation.animate(trading_paths)
                     
                 for settlement in active_scene.settlements:
                     if settlement.play_placement_animation:

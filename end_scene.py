@@ -11,13 +11,14 @@ from scene_base import SceneBase
 import image
 import scene_manager
 import pygame.surfarray as surfarray
+from settings import FPS
 
 
 class EndScene(SceneBase):
     def __init__(self, *kargs):
         super().__init__(*kargs)
 
-        self.game_map.mapped_grid = image.invert_grid(self.game_map.mapped_grid)
+        self.game_map.mapped_grid = self.game_map.mapped_grid
         print("End Scene")
         trading_good_sums = []
         for s in self.settlements:
@@ -45,12 +46,11 @@ class EndScene(SceneBase):
 
     def render(self, game_camera, game_font):
         screen = game_camera.camera_screen
-        surfarray.blit_array(
-            screen, game_camera.get_map_cutout(self.game_map.mapped_grid)
-        )
-        tmp = game_camera.get_map_cutout(self.game_map.mapped_grid)
-        surfarray.blit_array(screen, tmp)
+        # surfarray.blit_array(
+        #     screen, game_camera.get_map_cutout(self.game_map.mapped_grid)
+        # )
+        tmp =  game_camera.get_map_cutout(self.game_map.mapped_grid)
         surfarray.blit_array(screen, tmp)
 
         self.settlements.draw(screen)
-        self.game_engine.render_settlement_count(screen, game_font)
+        # self.game_engine.render_settlement_count(screen, game_font)

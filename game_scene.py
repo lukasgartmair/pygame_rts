@@ -17,7 +17,8 @@ from selection_manager import SelectionManager
 from connection_manager import ConnectionManager
 import scene_manager
 from colors import settlement_stats_colors
-
+import animation
+import copy
 
 class GameScene(SceneBase):
     def __init__(self, *kargs):
@@ -28,17 +29,21 @@ class GameScene(SceneBase):
 
         self.connection_manager = ConnectionManager(self.game_map)
 
-        self.game_trade = trade.Trade(self.settlements, self.connection_manager)
+        self.game_trade = trade.Trade(
+            self.settlements, self.connection_manager)
 
         self.any_settlement_clicked = False
         self.selection_manager = SelectionManager(
             self.settlements, self.any_settlement_clicked
         )
+        
+        self.trades = []
 
     def remove_selected_settlements(self):
         if self.selection_manager.selected_settlements:
             for s in self.selection_manager.selected_settlements:
-                self.connection_manager.remove_settlement(s, self.game_trade, self.game_engine)
+                self.connection_manager.remove_settlement(
+                    s, self.game_trade, self.game_engine)
 
     def check_mouse_click_in_bounds(self, mouse_position, game_camera):
         return game_camera.is_in_bounds(mouse_position)
@@ -47,7 +52,8 @@ class GameScene(SceneBase):
         new_settlement.update_rect_center_for_sprite_collision()
         for s in self.settlements:
             s.update_rect_center_for_sprite_collision()
-        overlap = pygame.sprite.spritecollideany(new_settlement, self.settlements)
+        overlap = pygame.sprite.spritecollideany(
+            new_settlement, self.settlements)
         new_settlement.update_render_center(game_camera)
         for s in self.settlements:
             s.update_render_center(game_camera)
@@ -55,8 +61,10 @@ class GameScene(SceneBase):
         return overlap
 
     def try_new_settlement_placement(self, game_camera, mouse_position):
-        mouse_position_translated_to_absolute_map = game_camera.get_absolute_map_position(mouse_position)
-        valid_placement = self.game_map.check_valid_village_placement(mouse_position_translated_to_absolute_map)
+        mouse_position_translated_to_absolute_map = game_camera.get_absolute_map_position(
+            mouse_position)
+        valid_placement = self.game_map.check_valid_village_placement(
+            mouse_position_translated_to_absolute_map)
         if valid_placement:
             absolute_map_position = game_camera.get_absolute_map_position(
                 mouse_position
@@ -67,7 +75,8 @@ class GameScene(SceneBase):
             )
 
             overlap = None
-            overlap = self.check_for_settlement_overlap(tmp_settlement, game_camera)
+            overlap = self.check_for_settlement_overlap(
+                tmp_settlement, game_camera)
 
             if overlap is None:
                 settlement_placed = self.game_engine.place_settlement()
@@ -103,8 +112,9 @@ class GameScene(SceneBase):
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
                     # self.check_for_trade_event(event)
-                    self.game_trade.perform_trade()
-
+                    self.trades = self.game_trade.perform_trade()
+                    
+                    
             self.selection_manager.update_selected_settlements()
 
             if self.selection_manager.check_connection_condition():
@@ -152,19 +162,44 @@ class GameScene(SceneBase):
         pass
 
     def render(self, game_camera, game_font):
+        
+        # class TradeRouteAnimation(TradeAnimation):
+        #     def __init__(self, camera, node_a, node_b, data):
+        
+        if self.connection_manager.settlement_connections:
+            self.trades = copy.deepcopy(self.connection_manager.settlement_connections)
+            # for transaction in self.trades:
+            #     bidder= transaction.bidder.id
+            #     asker = transaction.asker.id
+            #     data= self.connection_manager.settlement_connections.get_edge_data(transaction.bidder.id, transaction.asker.id)
+            #     trade_route_animation = animation.TradeRouteAnimation(game_camera,bidder, asker, data)
+            td = animation.TradeAnimation(game_camera)
+            td.animate(self.trades)
+        # self.trades = []
+                    
         screen = game_camera.camera_screen
         surfarray.blit_array(
             screen, game_camera.get_map_cutout(self.game_map.mapped_grid)
         )
         tmp = game_camera.get_map_cutout(self.game_map.mapped_grid)
         surfarray.blit_array(screen, tmp)
-        path_map = self.connection_manager.settlement_connections.map_paths_to_grid(self.game_map)
+        path_map = self.connection_manager.settlement_connections.map_paths_to_grid(
+            self.game_map)
         tmp = game_camera.get_map_cutout(path_map)
         surfarray.blit_array(screen, tmp)
 
         self.settlements.draw(screen)
 
         self.game_engine.render_settlement_count(screen, game_font)
+            
+        if self.game_engine.state == GameState.ENDED:
+            self.switch_to_scene(
+                scene_manager.get_end_scene(
+                    self.game_engine,
+                    self.game_map,
+                    self.game_sound,
+                    self.sprite_groups,
+                ))
 
     def render_second_screen(self, game_camera, game_font):
         screen = game_camera.camera_screen

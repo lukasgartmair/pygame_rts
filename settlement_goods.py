@@ -8,8 +8,10 @@ Created on Wed Dec 27 09:42:21 2023
 
 import random
 import logging
+import animation
 
 logger = logging.getLogger('root')
+
 
 class PreferredGood:
     def __init__(self, settlement, possible_trading_goods, name=""):
@@ -18,20 +20,19 @@ class PreferredGood:
         self.name = ""
         self.once_manually_set = False
         self.index = 0
-        
+
     def set_last_index(self):
         self.index -= 1
-        
+
     def set_back_to_default(self):
         self.index = 0
         if self.settlement.images:
             self.settlement.image = self.settlement.images[
                 "main_image"
             ]
-        
+
     def update(self):
 
-        print(self.index)
         self.once_manually_set = True
         self.index += 1
 
@@ -40,14 +41,12 @@ class PreferredGood:
         )+1:
             self.set_back_to_default()
 
-        if self.index > 0:      
-                self.name = self.possible_trading_goods[self.index-1]
-                self.settlement.image = self.settlement.images[
+        if self.index > 0:
+            self.name = self.possible_trading_goods[self.index-1]
+            self.settlement.image = self.settlement.images[
                 self.name + "_image"
             ]
-            
-        print(self.index)
-        print("-----")
+
 
 class SettlementGoods:
     def __init__(self, settlement, game_trade):
@@ -62,8 +61,9 @@ class SettlementGoods:
         self.initialize_trading_goods()
         self.settlement.trading_stats = {"total": 0}
 
-        self.preferred_good = PreferredGood(self.settlement, self.game_trade.possible_trading_goods)
-        
+        self.preferred_good = PreferredGood(
+            self.settlement, self.game_trade.possible_trading_goods)
+
         self.gold_history = {}
 
     def has_at_least_one_in_stock(self, trading_form):
@@ -137,7 +137,6 @@ class SettlementGoods:
     def restore_last_preferred_good(self):
         self.preferred_good.set_last_index()
         self.preferred_good.update()
-
 
     def update_trading_stats(self):
         self.settlement.trading_stats["total"] = sum(
