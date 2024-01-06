@@ -27,6 +27,8 @@ class SettlementGoods:
 
         self.settlement.preferred_good = ""
         self.settlement.preferred_good_index = -1
+        
+        self.gold_history = {} 
 
     def has_at_least_one_in_stock(self, trading_form):
         logger.debug(trading_form)

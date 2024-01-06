@@ -56,7 +56,15 @@ class SettlementGraph(nx.Graph):
                 path=path,
                 distance=math.dist(settlement_a.center, settlement_b.center),
             )
-
+            
+    def get_first_neighbor(self, settlement_id):
+        neighbors = self.neighbors(settlement_id)
+        if neighbors:
+            return neighbors
+        else:
+            return None
+        
+            
     def remove_settlement_connection(self, settlement_a, settlement_b):
         if settlement_a != settlement_b:
             self.remove_edge(settlement_a.id, settlement_b.id)

@@ -28,8 +28,8 @@ screen = pygame.display.set_mode((1, 1))
 class TradeSimulator:
     def __init__(self):
         self.width, self.height = 100, 100
-        self.number_of_settlements = 2
-        self.number_of_rounds = 3
+        self.number_of_settlements = 10
+        self.number_of_rounds = 5
         self.game_map = level_map.GameMap(test=True)
         self.connection_manager = connection_manager.ConnectionManager(
             self.game_map)
@@ -48,10 +48,11 @@ class TradeSimulator:
 
     def set_random_preferred_goods(self):
         # for s in random.sample(self.settlements,random.randint(0,len(self.settlements))):
-        for s in self.settlements:
-            s.preferred_good = random.choice(
-                self.game_trade.possible_trading_goods
-            )
+        
+        rnd_goods = random.sample(self.game_trade.possible_trading_goods*100,len(self.settlements))    
+        
+        for i,s in enumerate(self.settlements):
+            s.preferred_good = rnd_goods[i]
 
     def create_random_connections(self):
         for settlement_a in self.settlements:
@@ -73,18 +74,18 @@ class TradeSimulator:
         print("settlement created")
 
     def run(self):
+        
+        for i in range(self.number_of_settlements):
+            self.create_new_settlement()
+
+        self.create_random_connections()
 
         for i in range(self.number_of_rounds):
-
+            print("---------")
             print("round")
             print(i)
-
-            if len(self.settlements) < self.number_of_settlements:
-                self.create_new_settlement()
-
+            
             self.set_random_preferred_goods()
-
-            self.create_random_connections()
 
             self.game_trade.perform_trade()
 

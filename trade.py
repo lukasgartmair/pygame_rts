@@ -141,10 +141,10 @@ class Trade:
             )
         return sold
 
-    def create_transaction_history_entry(self, transaction_successful, trading_form):
-
+    def create_transaction_history_entry(self, transaction_successful, trading_form, bidder_gold, asker_gold):
+        
         self.transaction_history[self.transaction_id] = time.time(
-        ), transaction_successful, trading_form
+        ), transaction_successful, trading_form, bidder_gold, asker_gold
 
     def get_transaction_history_df(self):
 
@@ -152,7 +152,7 @@ class Trade:
     
         for k, v in self.transaction_history.items():
             transaction_data.append([k, convert_time_to_datetime(
-                v[0]), v[1], v[2].good, v[2].magnitude, v[2].price,  v[2].magnitude * v[2].price, v[2].bidder.id, copy.deepcopy(v[2].bidder.gold),v[2].asker.id,copy.deepcopy(v[2].asker.gold)])
+                v[0]), v[1], v[2].good, v[2].magnitude, v[2].price,  v[2].magnitude * v[2].price, v[2].bidder.id,v[3], v[2].asker.id, v[4]])
 
         self.transaction_df = pd.DataFrame(transaction_data, columns=["id", "timestamp", "successful",
                     "good", "magnitude", "price_good",  "price_total", "bidder_id", "bidder_gold", "asker_id", "asker_gold"])
@@ -181,13 +181,13 @@ class Trade:
 
         transaction_successful = bool(bought and sold)
         
-        print(transaction_successful)
+        # print(transaction_successful)
 
-        print("here")
+        # print("here")
         self.create_transaction_history_entry(
-            transaction_successful, trading_form)
+            transaction_successful, trading_form, resolution.bid.bidder.gold, resolution.ask.asker.gold)
         
-        print(self.transaction_history)
+        # print(self.transaction_history)
         
         logger.debug("TRANSACTION ID")
         logger.debug(self.transaction_id)
@@ -196,61 +196,52 @@ class Trade:
             logger.debug("Failure in buying process")
         elif sold == False:
             logger.debug("Failure in selling process")
+            
+        self.trade_ladder.resolutions.remove(resolution)
 
         return transaction_successful
-
-    def get_trading_settlements(self):
-        trading_settlements = []
-        settlement_ids = (
-            self.connection_manager.settlement_connections.get_all_connected_settlement_ids()
-        )
-        for s_id in settlement_ids:
-            for s in self.settlements:
-                if s.id == s_id:
-                    if s not in trading_settlements:
-                        trading_settlements.append(s)
-        return trading_settlements
 
     def perform_trade(self):
 
         logger.debug("perform trade")
-
-        trading_settlements = self.get_trading_settlements()
+            
+        settlements_connected_with_preferred_goods = [s for s in self.settlements if s.preferred_good != "" and s.connected == True]
 
         self.trade_ladder.create_possible_bids(
-            trading_settlements, self.global_assets)
-
-        unique_bid_goods = sorted(
-            set([b.good for b in self.trade_ladder.bids]))
-
-        connected_settlements = [s for s in self.settlements if s.connected]
-
-        for requested_good in unique_bid_goods:
-            minimum_requested_magnitude = min(
-                [
-                    b.magnitude
-                    for b in self.trade_ladder.bids
-                    if b.good == requested_good
-                ]
+            settlements_connected_with_preferred_goods, self.global_assets)
+        
+        if self.trade_ladder.bids:
+            self.trade_ladder.create_possible_asks(
+                self.settlements,
+                self.possible_trading_goods,
+                self.global_assets,
             )
-            for connected_settlement in connected_settlements:
-                self.trade_ladder.create_possible_ask(
-                    connected_settlement,
-                    requested_good,
-                    minimum_requested_magnitude,
-                    self.global_assets,
-                )
+            
+        print(len(self.trade_ladder.bids))
+        print(len(self.trade_ladder.asks))
+        
+        # print("bids")
+        # for b in self.trade_ladder.bids:
+        #     print(b.__dict__)
 
-        logger.debug("bids")
-        for b in self.trade_ladder.bids:
-            logger.debug(b.__dict__)
-
-        logger.debug("asks")
-        for b in self.trade_ladder.asks:
-            logger.debug(b.__dict__)
+        # print("asks")
+        # for b in self.trade_ladder.asks:
+        #     print(b.__dict__)
+            
+        print("resolvin")
 
         self.trade_ladder.resolve(
             self.connection_manager.settlement_connections)
+        
+        for r in self.trade_ladder.resolutions:
+            print(r.bid)
+            print(r.ask)
+            print("------")
+        
+        # self.trade_ladder.bids = []
+        # self.trade_ladder.asks = []
+
+        
         transactions = []
         transactions = [self.transaction(r)
                         for r in self.trade_ladder.resolutions]
