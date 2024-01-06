@@ -56,15 +56,12 @@ class SettlementGoods:
 
     def initialze_settlement_goods(self):
         self.settlement.game_trade = self.game_trade
-        self.settlement.gold = 15
         self.settlement.trading_goods = {}
         self.initialize_trading_goods()
         self.settlement.trading_stats = {"total": 0}
 
         self.preferred_good = PreferredGood(
             self.settlement, self.game_trade.possible_trading_goods)
-
-        self.gold_history = {}
 
     def has_at_least_one_in_stock(self, trading_form):
         logger.debug(trading_form)
@@ -78,55 +75,6 @@ class SettlementGoods:
             return True
         else:
             return False
-
-    def calculate_affordable_magnitude(self, trading_form):
-        affordable_magnitude = self.settlement.gold // trading_form.price
-        return affordable_magnitude
-
-    def is_affordable(self, trading_form):
-        if self.settlement.gold >= trading_form.price * trading_form.magnitude:
-            return True
-        else:
-            return False
-
-    def buy_trading_good(self, trading_form):
-        if self.settlement.settlement_goods.is_affordable(trading_form):
-
-            logger.debug(
-                "{} balance BEFORE: {}".format(
-                    self.settlement.name, self.settlement.gold
-                )
-            )
-            self.settlement.gold -= trading_form.price * trading_form.magnitude
-            self.settlement.trading_goods[trading_form.good] += trading_form.magnitude
-
-            logger.debug(
-                "{} balance AFTER: {}".format(
-                    self.settlement.name, self.settlement.gold
-                )
-            )
-
-            self.preferred_good.set_back_to_default()
-
-            return True
-
-    def sell_trading_good(self, trading_form):
-        if self.has_magnitude_in_stock(trading_form):
-
-            logger.debug(
-                "{} balance BEFORE: {}".format(
-                    self.settlement.name, self.settlement.gold
-                )
-            )
-            self.settlement.gold += trading_form.price * trading_form.magnitude
-            self.settlement.trading_goods[trading_form.good] -= trading_form.magnitude
-
-            logger.debug(
-                "{} balance AFTER: {}".format(
-                    self.settlement.name, self.settlement.gold
-                )
-            )
-        return True
 
     def reset_preferred_good_index(self):
         print("here")

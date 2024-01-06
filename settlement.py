@@ -12,6 +12,7 @@ import pygame.gfxdraw
 import image
 import random
 from settlement_goods import SettlementGoods
+from settlement_balance import SettlementBalance
 from beautifultable import BeautifulTable, BTRowCollection
 import re
 import itertools
@@ -74,7 +75,7 @@ class Settlement(pygame.sprite.Sprite):
         screen.blit(text, (horizontal_offset, offset))
         offset += vertical_offset
 
-        text = game_font.render("gold: {}".format(self.gold), True, (10, 0, 0))
+        text = game_font.render("gold: {}".format(self.settlement_balance.gold), True, (10, 0, 0))
         screen.blit(text, (horizontal_offset, offset))
         offset += vertical_offset
 
@@ -109,6 +110,7 @@ class Settlement(pygame.sprite.Sprite):
 
     def placed(self, game_trade, game_sound):
         self.settlement_goods = SettlementGoods(self, game_trade)
+        self.settlement_balance = SettlementBalance(self, game_trade)
         game_sound.play_place_settlement()
 
     def got_connected(self):

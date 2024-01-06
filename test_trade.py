@@ -193,95 +193,95 @@ class TestMethods(unittest.TestCase):
         self.assertEqual(test_trading_form.price != None, True)
 
     def test_buy_goods(self):
-        self.test_settlement.gold = 50
+        self.test_settlement.settlement_balance.gold = 50
         self.test_good = "rubins"
         self.test_settlement.trading_goods["rubins"] = 2
 
-        self.assertEqual(self.test_settlement.gold, 50)
+        self.assertEqual(self.test_settlement.settlement_balance.gold, 50)
         self.assertEqual(self.test_settlement.trading_goods["rubins"], 2)
         test_trading_form = TradingForm(
             good=self.test_good, magnitude=self.test_magnitude, price=self.test_price
         )
 
-        self.test_settlement.settlement_goods.buy_trading_good(test_trading_form)
+        self.test_settlement.settlement_balance.buy_trading_good(test_trading_form)
 
-        self.assertEqual(self.test_settlement.gold, 30)
+        self.assertEqual(self.test_settlement.settlement_balance.gold, 30)
         self.assertEqual(self.test_settlement.trading_goods["rubins"], 4)
 
     def test_buy_goods2(self):
-        self.test_settlement.gold = 19
+        self.test_settlement.settlement_balance.gold = 19
         self.test_settlement.trading_goods["rubins"] = 2
 
-        self.assertEqual(self.test_settlement.gold, 19)
+        self.assertEqual(self.test_settlement.settlement_balance.gold, 19)
         self.assertEqual(self.test_settlement.trading_goods["rubins"], 2)
 
         test_trading_form = TradingForm(
             magnitude=self.test_magnitude, price=self.test_price
         )
-        is_affordable = self.test_settlement.settlement_goods.is_affordable(
+        is_affordable = self.test_settlement.settlement_balance.is_affordable(
             test_trading_form
         )
         self.assertEqual(is_affordable, False)
 
-        self.test_settlement.gold = 19
-        self.assertEqual(self.test_settlement.gold, 19)
-        is_affordable = self.test_settlement.settlement_goods.is_affordable(
+        self.test_settlement.settlement_balance.gold = 19
+        self.assertEqual(self.test_settlement.settlement_balance.gold, 19)
+        is_affordable = self.test_settlement.settlement_balance.is_affordable(
             test_trading_form
         )
         self.assertEqual(is_affordable, False)
 
-        self.test_settlement.gold = 20
-        self.assertEqual(self.test_settlement.gold, 20)
-        is_affordable = self.test_settlement.settlement_goods.is_affordable(
+        self.test_settlement.settlement_balance.gold = 20
+        self.assertEqual(self.test_settlement.settlement_balance.gold, 20)
+        is_affordable = self.test_settlement.settlement_balance.is_affordable(
             test_trading_form
         )
         self.assertEqual(is_affordable, True)
 
     def test_buy_goods3(self):
-        self.test_settlement.gold = 1
+        self.test_settlement.settlement_balance.gold = 1
         self.test_good = "rubins"
         self.test_settlement.trading_goods["rubins"] = 0
 
-        self.assertEqual(self.test_settlement.gold, 1)
+        self.assertEqual(self.test_settlement.settlement_balance.gold, 1)
         self.assertEqual(self.test_settlement.trading_goods["rubins"], 0)
         test_trading_form = TradingForm(
             good=self.test_good, magnitude=self.test_magnitude, price=self.test_price
         )
 
-        self.test_settlement.settlement_goods.buy_trading_good(test_trading_form)
+        self.test_settlement.settlement_balance.buy_trading_good(test_trading_form)
 
-        self.assertEqual(self.test_settlement.gold, 1)
+        self.assertEqual(self.test_settlement.settlement_balance.gold, 1)
         self.assertEqual(self.test_settlement.trading_goods["rubins"], 0)
 
     def test_sell_goods(self):
-        self.test_settlement.gold = 0
+        self.test_settlement.settlement_balance.gold = 0
         self.test_good = "rubins"
         self.test_settlement.trading_goods["rubins"] = 2
 
-        self.assertEqual(self.test_settlement.gold, 0)
+        self.assertEqual(self.test_settlement.settlement_balance.gold, 0)
         self.assertEqual(self.test_settlement.trading_goods["rubins"], 2)
         test_trading_form = TradingForm(
             good=self.test_good, magnitude=self.test_magnitude, price=self.test_price
         )
-        self.test_settlement.settlement_goods.sell_trading_good(test_trading_form)
+        self.test_settlement.settlement_balance.sell_trading_good(test_trading_form)
         self.assertEqual(self.test_settlement.trading_goods["rubins"], 0)
-        self.assertEqual(self.test_settlement.gold, 20)
+        self.assertEqual(self.test_settlement.settlement_balance.gold, 20)
 
         def test_sell_goods2(self):
-            self.test_settlement.gold = 0
+            self.test_settlement.settlement_balance.gold = 0
             self.test_good = "rubins"
             self.test_settlement.trading_goods["rubins"] = 0
 
-            self.assertEqual(self.test_settlement.gold, 0)
+            self.assertEqual(self.test_settlement.settlement_balance.gold, 0)
             self.assertEqual(self.test_settlement.trading_goods["rubins"], 2)
             test_trading_form = TradingForm(
                 good=self.test_good,
                 magnitude=self.test_magnitude,
                 price=self.test_price,
             )
-            self.test_settlement.settlement_goods.sell_trading_good(test_trading_form)
+            self.test_settlement.settlement_balance.sell_trading_good(test_trading_form)
             self.assertEqual(self.test_settlement.trading_goods["rubins"], 0)
-            self.assertEqual(self.test_settlement.gold, 0)
+            self.assertEqual(self.test_settlement.settlement_balance.gold, 0)
 
     def test_transaction(self):
         self.test_good = "rubins"

@@ -95,7 +95,7 @@ class Ladder:
 
     def create_bid(self, settlement, good, magnitude, price):
         trading_form = TradingForm(good=good, magnitude=magnitude, price=price)
-        if settlement.settlement_goods.is_affordable(trading_form):
+        if settlement.settlement_balance.is_affordable(trading_form):
             if (
                 self.check_if_bidder_already_bidding_for_this_good(settlement, good)
                 == False
@@ -136,7 +136,7 @@ class Ladder:
                 )
 
                 affordable_magnitude = (
-                    s.settlement_goods.calculate_affordable_magnitude(trading_form)
+                    s.settlement_balance.calculate_affordable_magnitude(trading_form)
                 )
                 if affordable_magnitude > 0:
                     self.create_bid(

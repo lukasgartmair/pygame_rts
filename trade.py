@@ -108,7 +108,7 @@ class Trade:
 
     def perform_buy(self, trading_form):
         bought = False
-        bought = trading_form.bidder.settlement_goods.buy_trading_good(
+        bought = trading_form.bidder.settlement_balance.buy_trading_good(
             trading_form)
 
         logger.debug(
@@ -126,7 +126,7 @@ class Trade:
     def perform_sell(self, trading_form):
         sold = False
         if trading_form.asker.settlement_goods.has_magnitude_in_stock(trading_form):
-            sold = trading_form.asker.settlement_goods.sell_trading_good(
+            sold = trading_form.asker.settlement_balance.sell_trading_good(
                 trading_form)
 
             logger.debug(
@@ -185,7 +185,7 @@ class Trade:
 
         # print("here")
         self.create_transaction_history_entry(
-            transaction_successful, trading_form, resolution.bid.bidder.gold, resolution.ask.asker.gold)
+            transaction_successful, trading_form, resolution.bid.bidder.settlement_balance.gold, resolution.ask.asker.settlement_balance.gold)
         
         # print(self.transaction_history)
         

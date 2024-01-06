@@ -20,6 +20,7 @@ import settlement_goods
 import connection_manager
 import pandas as pd
 import copy
+from settlement_balance import SettlementBalance
 
 pygame.init()
 
@@ -69,6 +70,7 @@ class TradeSimulator:
         )
         s.settlement_goods = settlement_goods.SettlementGoods(
             s, self.game_trade)
+        self.settlement_balance = SettlementBalance(self, game_trade)
         self.game_trade.add_goods_to_global_assets(s)
         self.settlements.append(s)
 
