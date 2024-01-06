@@ -166,7 +166,7 @@ class Settlement(pygame.sprite.Sprite):
         self.selected = False
         self.image = self.images["main_image"]
 
-        if self.connected and self.settlement_goods.preferred_good_set:
+        if self.connected and self.settlement_goods.preferred_good.once_manually_set:
             self.settlement_goods.restore_last_preferred_good()
 
     def on_click(self):

@@ -40,11 +40,6 @@ class GameScene(SceneBase):
             for s in self.selection_manager.selected_settlements:
                 self.connection_manager.remove_settlement(s, self.game_trade, self.game_engine)
 
-    def check_for_trade_event(self, event):
-        if len(self.connection_manager.path.subpaths) >= 1:
-            if event.type == pygame.TRADE:
-                self.game_trade.perform_trade()
-
     def check_mouse_click_in_bounds(self, mouse_position, game_camera):
         return game_camera.is_in_bounds(mouse_position)
 

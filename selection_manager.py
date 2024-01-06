@@ -76,7 +76,7 @@ class SelectionManager:
 
         if s.selected == False and s.connected and len(self.selected_settlements) == 0:
             if len(self.selected_settlements) == 0:
-                s.settlement_goods.update_preferred_good()
+                s.settlement_goods.preferred_good.update()
 
         if (
             len(self.selected_settlements) == 1

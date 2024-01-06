@@ -39,7 +39,6 @@ class Game:
         self.place_settlement_animation = animation.PlaceSettlementAnimation(self.camera_1)
         self.trade_animation = animation.TradeAnimation(self.camera_1)
 
-
     def run(self, starting_scene):
         pygame.init()
     

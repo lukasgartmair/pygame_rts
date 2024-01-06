@@ -9,6 +9,7 @@ Created on Mon Jan  1 08:09:39 2024
 import pygame
 import trade
 import settlement
+import settlement_goods
 import matplotlib.pyplot as plt
 import numpy as np
 import simpy
@@ -52,7 +53,7 @@ class TradeSimulator:
         rnd_goods = random.sample(self.game_trade.possible_trading_goods*100,len(self.settlements))    
         
         for i,s in enumerate(self.settlements):
-            s.preferred_good = rnd_goods[i]
+            s.settlement_goods.preferred_good = settlement_goods.PreferredGood(s, self.game_trade.possible_trading_goods, rnd_goods[i])
 
     def create_random_connections(self):
         for settlement_a in self.settlements:

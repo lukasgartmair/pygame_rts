@@ -130,9 +130,9 @@ class Ladder:
 
     def create_possible_bids(self, settlements, global_assets):
         for s in settlements:
-            if s.preferred_good != "":
+            if s.settlement_goods.preferred_good.name != "":
                 trading_form = TradingForm(
-                    price=global_assets[s.preferred_good].price
+                    price=global_assets[s.settlement_goods.preferred_good.name].price
                 )
 
                 affordable_magnitude = (
@@ -141,7 +141,7 @@ class Ladder:
                 if affordable_magnitude > 0:
                     self.create_bid(
                         s,
-                        s.preferred_good,
+                        s.settlement_goods.preferred_good.name,
                         affordable_magnitude,
                         trading_form.price
                     )
