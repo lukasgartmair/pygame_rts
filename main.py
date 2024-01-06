@@ -20,10 +20,10 @@ import camera
 import colors
 import unittest
 import animation
-import logger
+import logging
 
-logger = logger.setup_custom_logger('root')
-logger.debug('main message')
+logger = logging.getLogger('root')
+
 
 class Game:
     def __init__(self):

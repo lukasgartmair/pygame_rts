@@ -7,9 +7,9 @@ Created on Wed Dec 27 09:42:21 2023
 """
 
 import random
-import logger
+import logging
 
-logger = logger.setup_custom_logger('root')
+logger = logging.getLogger('root')
 
 class SettlementGoods:
     def __init__(self, settlement, game_trade):

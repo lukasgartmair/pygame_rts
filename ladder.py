@@ -7,6 +7,7 @@ Created on Mon Jan  1 19:35:23 2024
 """
 
 from enum import Enum
+import time
 
 
 class EntryType(Enum):
@@ -50,20 +51,23 @@ class Ladder:
         bids = [b for b in self.bids if b.bidder == bidder]
         for bid in bids:
             self.bids.remove(bid)
-
+            
     def ask_is_valid(self, ask, bid):
         return ask.good == bid.good
 
-    def get_accepted_ask(self, valid_asks):
-        # TODO acceptance logic, nearest first etc.
+    def get_accepted_ask(self, bid, valid_asks, settlement_connections):
+        
+        # neighbors_of_the_bidder = [n for n in settlement_connections.neighbors(bid.bidder.id)]
+        # print(neighbors_of_the_bidder)
+
         return valid_asks[0]
 
-    def resolve(self):
+    def resolve(self, settlement_connections):
         for bid in self.bids:
             valid_asks = [ask for ask in self.asks if self.ask_is_valid(ask, bid)]
 
             if valid_asks:
-                accepted_ask = self.get_accepted_ask(valid_asks)
+                accepted_ask = self.get_accepted_ask(bid, valid_asks, settlement_connections)
                 self.resolutions.append(Resolution(bid, accepted_ask))
 
                 self.bids.remove(bid)
@@ -86,6 +90,7 @@ class Ladder:
 
     def create_ladder_entry(self, settlement, good, magnitude, price, entry_type):
         if entry_type == EntryType.BID:
+            # time.sleep(0.5)
             if (
                 self.check_if_bidder_already_bidding_for_this_good(settlement, good)
                 == False
@@ -117,7 +122,7 @@ class Ladder:
         ):
             trading_form = TradingForm(good=good)
             if settlement.settlement_goods.has_at_least_one_in_stock(trading_form):
-                trading_good_price = global_assets[settlement.preferred_good].price
+                trading_good_price = global_assets[good].price
                 self.create_ladder_entry(
                     settlement,
                     good,

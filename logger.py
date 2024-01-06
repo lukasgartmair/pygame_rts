@@ -18,3 +18,5 @@ def setup_custom_logger(name):
     logger.setLevel(logging.CRITICAL)
     logger.addHandler(handler)
     return logger
+
+logger = setup_custom_logger('root')

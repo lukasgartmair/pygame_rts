@@ -15,8 +15,15 @@ import itertools
 import logging
 import time
 from dataclasses import dataclass
+from datetime import datetime
+from time import mktime
+import pandas as pd
+import copy
 
 logger = logging.getLogger('root')
+
+def convert_time_to_datetime(time_object):
+    return datetime.fromtimestamp(mktime(time.gmtime(time_object)))
 
 
 @dataclass
@@ -85,7 +92,7 @@ class Trade:
         for k, v in settlement.trading_goods.items():
             self.global_assets[k].timestamp = time.time()
             self.global_assets[k].magnitude += v
-            
+
     def remove_goods_from_global_assets(self, settlement):
         for k, v in settlement.trading_goods.items():
             self.global_assets[k].timestamp = time.time()
@@ -139,8 +146,22 @@ class Trade:
         self.transaction_history[self.transaction_id] = time.time(
         ), transaction_successful, trading_form
 
+    def get_transaction_history_df(self):
+
+        transaction_data = []
+    
+        for k, v in self.transaction_history.items():
+            transaction_data.append([k, convert_time_to_datetime(
+                v[0]), v[1], v[2].good, v[2].magnitude, v[2].price,  v[2].magnitude * v[2].price, v[2].bidder.id, copy.deepcopy(v[2].bidder.gold),v[2].asker.id,copy.deepcopy(v[2].asker.gold)])
+
+        self.transaction_df = pd.DataFrame(transaction_data, columns=["id", "timestamp", "successful",
+                    "good", "magnitude", "price_good",  "price_total", "bidder_id", "bidder_gold", "asker_id", "asker_gold"])
+
+        return self.transaction_df
+
     def transaction(self, resolution):
         self.increase_transaction_id()
+        print("transaction_id:  {}".format(self.transaction_id))
         magnitude = 0
         magnitude = self.get_transaction_magnitudes(
             resolution.bid, resolution.ask)
@@ -159,11 +180,17 @@ class Trade:
         sold = self.perform_sell(trading_form)
 
         transaction_successful = bool(bought and sold)
+        
+        print(transaction_successful)
 
+        print("here")
         self.create_transaction_history_entry(
             transaction_successful, trading_form)
-        logger.warning("TRANSACTION ID")
-        logger.warning(self.transaction_id)
+        
+        print(self.transaction_history)
+        
+        logger.debug("TRANSACTION ID")
+        logger.debug(self.transaction_id)
 
         if bought == False:
             logger.debug("Failure in buying process")
@@ -185,8 +212,6 @@ class Trade:
         return trading_settlements
 
     def perform_trade(self):
-
-        self.transaction_history = {}
 
         logger.debug("perform trade")
 
@@ -224,7 +249,8 @@ class Trade:
         for b in self.trade_ladder.asks:
             logger.debug(b.__dict__)
 
-        self.trade_ladder.resolve()
+        self.trade_ladder.resolve(
+            self.connection_manager.settlement_connections)
         transactions = []
         transactions = [self.transaction(r)
                         for r in self.trade_ladder.resolutions]
