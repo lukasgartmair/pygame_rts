@@ -29,8 +29,11 @@ verbose = False
 plot = False
 
 
-def get_number_of_edges(n):
-    return n * (n - 1) / 2
+def get_number_of_edges(n, directed=False):
+    if directed:
+        return n * (n - 1)
+    else:
+        return n * (n - 1) / 2
 
 
 class TestSettlement:
@@ -55,7 +58,7 @@ class TestMethods(unittest.TestCase):
         if verbose:
             print(G.nodes.data())
 
-        e = (2, 3)
+        e = (settlements[2].id, settlements[3].id)
 
         G.add_edge(*e)
 
@@ -164,9 +167,14 @@ class TestMethods(unittest.TestCase):
                     settlement_graph.add_settlement_connection(s_a, s_b, path={})
 
         self.assertEqual(len(settlement_graph.nodes.data()), len(settlements))
-        self.assertEqual(
-            len(list(settlement_graph.edges)), get_number_of_edges(n_settlements)
-        )
+        if nx.is_directed(settlement_graph):
+            self.assertEqual(
+                len(list(settlement_graph.edges)), get_number_of_edges(n_settlements,directed=True)
+            )
+        else:
+            self.assertEqual(
+                len(list(settlement_graph.edges)), get_number_of_edges(n_settlements)
+            )           
         if verbose:
             print(settlement_graph.nodes.data())
             print(list(settlement_graph.edges))
@@ -175,9 +183,14 @@ class TestMethods(unittest.TestCase):
         if verbose:
             print(len(list(settlement_graph.edges)))
         self.assertEqual(len(settlement_graph.nodes.data()), len(settlements) - 1)
-        self.assertEqual(
-            len(list(settlement_graph.edges)), get_number_of_edges(n_settlements - 1)
-        )
+        if nx.is_directed(settlement_graph):
+            self.assertEqual(
+                len(list(settlement_graph.edges)), get_number_of_edges(n_settlements,directed=True) - 8
+            )
+        else:
+            self.assertEqual(
+                len(list(settlement_graph.edges)), get_number_of_edges(n_settlements)
+            )    
 
         if plot:
             settlement_graph.plot()

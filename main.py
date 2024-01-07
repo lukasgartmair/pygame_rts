@@ -42,7 +42,7 @@ class Game:
         self.font = game_font.GameFont(
             game_font.font_style, game_font.font_size)
         self.sprite_groups = SpriteGroup().get_sprite_groups()
-        
+
     def get_filtered_events(self, active_scene, pressed_keys):
 
         filtered_events = []
@@ -101,13 +101,12 @@ class Game:
 
             if type(active_scene).__name__ in ["GameScene"]:
 
-                # active_scene.render_continuous_trading_routes(self.camera_1)
                 # active_scene.render_single_trades(self.camera_1)
 
-                for settlement in active_scene.settlements:
-                    for settlement_id, animation_sequence in list(animation.animation_queue.main_loop_animations.items()):
-                        if settlement_id == settlement.id:
-                            animation_sequence.animate(settlement)
+                if active_scene.transactions:
+                    active_scene.animate_transactions()
+
+                active_scene.animate_settlement_placements()
 
                 active_scene.settlements.draw(self.camera_1.camera_screen)
 

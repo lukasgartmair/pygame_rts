@@ -41,6 +41,31 @@ class GameScene(SceneBase):
 
         self.transactions = []
         self.trade_animation = None
+        
+
+    def animate_transactions(self):
+        
+        if self.transactions:
+            for transaction in self.transactions:
+                animation_sequences = [animation_sequence for object_id, animation_sequence in list(
+                    animation.animation_queue.main_loop_animations.items()) if object_id == id(transaction)]
+                if animation_sequences:
+                    for a in animation_sequences:
+                        a.animate(transaction)
+                
+    def create_transaction_animations(self, game_camera):
+        
+        if self.transactions:
+            for transaction in self.transactions:
+                animation.animation_queue.add_to_main_loop_animations(transaction, animation.TradeAnimation(game_camera, self.connection_manager))
+        
+    def animate_settlement_placements(self):
+        for s in self.settlements:
+            animation_sequences = [animation_sequence for object_id, animation_sequence in list(
+                animation.animation_queue.main_loop_animations.items()) if object_id == id(s)]
+            if animation_sequences:
+                for a in animation_sequences:
+                    a.animate(s)
 
     def remove_selected_settlements(self):
         if self.selection_manager.selected_settlements:
@@ -118,6 +143,12 @@ class GameScene(SceneBase):
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
                     self.transactions = self.game_trade.perform_trade()
+                    
+                    print(self.transactions)
+                    
+                    self.create_transaction_animations(game_camera)
+                    
+                    print(animation.animation_queue.main_loop_animations)
 
             self.selection_manager.update_selected_settlements()
 
@@ -164,31 +195,7 @@ class GameScene(SceneBase):
 
     def update(self):
         pass
-
-    # def render_continuous_trading_routes(self, game_camera):
-
-    #     if self.trade_animation is None:
-    #         self.trade_animation = animation.TradeAnimation(game_camera)
-
-    #     trading_paths = self.get_scene_data()
-
-    #     if nx.is_empty(trading_paths) == False:
-    #         self.trade_animation.animate(trading_paths)
-
-    def render_single_trades(self, game_camera):
-
-        if self.transactions:
-            for transaction in self.transactions:
-                bidder = transaction.bidder.id
-                asker = transaction.asker.id
-                data = self.connection_manager.settlement_connections.get_edge_data(
-                    transaction.bidder.id, transaction.asker.id)
-
-                # animation.ContinuousTradeRouteAnimation(
-                #     game_camera, bidder, asker, data)
-                # single_trade_route_animation = animation.SingleTradeRouteAnimation(
-                #     game_camera, bidder, asker, data)
-                # single_trade_route_animation.animate(None)
+    
 
     def render(self, game_camera, game_font):
 

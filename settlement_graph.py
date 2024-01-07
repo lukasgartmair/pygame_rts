@@ -12,6 +12,10 @@ import numpy as np
 import math
 from colors import path_colors
 
+# comment on multidigraph,
+# the path is stored in key 0         self.path = self.connection_manager.settlement_connections.get_edge_data(
+#           animation_object.asker.id, animation_object.bidder.id)[0]["path"]        
+
 def get_adjacent_cells(x, y, k=0):
     adjacent_cells = []
     for xi in range(-k, k + 1):
@@ -20,13 +24,21 @@ def get_adjacent_cells(x, y, k=0):
     adjacent_cells.remove((x, y))
     return adjacent_cells
 
-class SettlementGraph(nx.Graph):
+class SettlementGraph(nx.MultiDiGraph):
     def __init__(self):
         super(SettlementGraph, self).__init__()
-        self = nx.Graph()
+        self = nx.MultiDiGraph()
 
     def get_connections(self, include_data=False):
         return self.edges(data=include_data)
+    
+    def get_path(self, node_a, node_b):
+        print(self.edges)
+        try:
+            return self.get_edge_data(
+                node_a, node_b)[0]["path"]        
+        except:
+            "no existing edge in this direction"
 
     def get_all_connected_settlement_ids(self):
         return np.unique(list(self.edges)).tolist()
@@ -55,6 +67,16 @@ class SettlementGraph(nx.Graph):
                 path=path,
                 distance=math.dist(settlement_a.center, settlement_b.center),
             )
+            
+            # TODO for now edges in both directions and reverse path
+            self.add_edge(
+                settlement_b.id,
+                settlement_a.id,
+                weight=1,
+                path=path[::-1],
+                distance=math.dist(settlement_a.center, settlement_b.center),
+            )
+            
             
     def get_first_neighbor(self, settlement_id):
         neighbors = self.neighbors(settlement_id)

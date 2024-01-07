@@ -54,13 +54,17 @@ class Ladder:
 
     def get_accepted_ask(self, bid, valid_asks, settlement_connections):
         accepted_ask = None
-        neighbors = [n for n in settlement_connections.get_first_neighbor(bid.bidder.id)]
+        # neighbors = [n for n in settlement_connections.neighbors(bid.bidder.id)]
+        neighbors = [n for n in list(settlement_connections.nodes)]
+        print("here")
+        print(neighbors)
         for n in neighbors:
             for a in self.asks:
                 if a.asker.id == n:
                     accepted_ask = a
+                    return accepted_ask
 
-        return accepted_ask
+
 
     def resolve(self, settlement_connections):
         for bid in self.bids:
