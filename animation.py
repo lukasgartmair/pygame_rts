@@ -6,70 +6,20 @@ Created on Tue Jan  2 10:42:52 2024
 @author: lukasgartmair
 """
 
-import pygame
-import particle
 import colors
-import itertools
-import camera
 
+from base_animation import BaseParticleAnimation
 
-class Animation:
-    def __init__(self, camera):
-
-        self.camera = camera
-        self.screen = self.camera.camera_screen
-        self.animation_object = None
-        self.particle_animation = True
-        self.particle_system_form = particle.ParticleSystemForm()
-        if self.particle_animation:
-            self.particle = particle.Particle(self.particle_system_form)
-            self.particle.max_animation_duration = 100
-        self.animation_object = None
-        self.alpha_fully_transparent = 0
-        self.alpha_transparency = 75
-        self.alpha_non_transparent = 190
-
-        self.last_animation_time = 0
-        self.current_time = 0
-        self.animation_index = 0
-        self.animation_delay = 0
-        self.triggered = False
-
-    def check_animation_trigger(self):
-
-        self.current_time = pygame.time.get_ticks()
-        if self.current_time - self.last_animation_time >= self.animation_delay:
-            self.last_animation_time = self.current_time
-            self.triggered = True
-        else:
-            self.triggered = False
-
-    def animate_particle_effect(self):
-
-        self.particle.update()
-        self.particle.emit_particles()
-        self.particle.render(self.screen)
-
-    def initialize_animation_object(self, animation_object):
-        self.animation_object = animation_object
-
-    def animate(self, animation_object):
-
-        if self.animation_object is None:
-            self.initialize_animation_object(animation_object)
-        pass
-
-    def reset(self):
-        self.last_animation_time = 0
-        self.current_time = 0
-        self.animation_index = 0
-        
-class PlaceSettlementAnimation(Animation):
+class PlaceSettlementAnimation(BaseParticleAnimation):
     def __init__(self, camera):
         super().__init__(camera)
 
         self.animation_delay = 150
         self.particle.color = colors.settlement_stats_colors[0]
+        
+        self.alpha_fully_transparent = 0
+        self.alpha_transparency = 75
+        self.alpha_non_transparent = 190
 
     def animate_image_sequence(self):
 
@@ -103,7 +53,7 @@ class PlaceSettlementAnimation(Animation):
 
         self.animate_image_sequence()
     
-class TradeAnimation(Animation):
+class TradeAnimation(BaseParticleAnimation):
     def __init__(self, camera):
         super().__init__(camera)
 
@@ -128,19 +78,40 @@ class TradeAnimation(Animation):
             include_data=True
         ):
             if (node_a, node_b) not in self.trades:
-                self.trades[node_a, node_b] = TradeRouteAnimation(self.camera, node_a, node_b, data)
+                self.trades[node_a, node_b] = ContinuousTradeRouteAnimation(self.camera, node_a, node_b, data)
                 
         for trade_route in self.trades.values():
             trade_route.animate(None)
-            
-    def update_trade_routes(self):
-        # only relevant if you are able to delete connected settlements
-        current_connections = self.animation_object.get_connections()
-        for trade_route in self.trades:
-            if (trade_route.node_a, trade_route.node_b) not in current_connections:
-                del self.trades[trade_route.node_a, trade_route.node_b]
                 
-class TradeRouteAnimation(TradeAnimation):
+class SingleTradeRouteAnimation(TradeAnimation):
+    # def __init__(self, camera, node_a, node_b, data):
+    #     super().__init__(camera)
+    #     self.node_a = node_a
+    #     self.node_b = node_b
+    #     self.path = data["path"]
+    #     self.slow_down_factor = 20
+
+    # def animate(self, animation_object):
+        # print("here")
+        # if self.path_counter <= len(self.path)-1:
+        #     print(self.path_counter)
+        #     path_position = self.path[self.path_counter]
+    #         if self.camera.is_within_current_view(path_position):
+    #             relative_position = self.camera.get_relative_screen_position(path_position)
+    #             color_index = (self.path_counter // len(self.colors))-1
+    #             if color_index >= len(self.colors) - 1:
+    #                 color_index = len(self.colors)-1
+    #             self.color = self.colors[color_index]
+    
+    #             self.particle.position = relative_position
+    #             self.particle.color = self.color
+                
+    #             for j in range(self.slow_down_factor):
+                    
+    #                 self.animate_particle_effect()
+                    
+    #     self.path_counter += 1 
+            
     def __init__(self, camera, node_a, node_b, data):
         super().__init__(camera)
         self.node_a = node_a
@@ -148,29 +119,62 @@ class TradeRouteAnimation(TradeAnimation):
         self.data = data
 
     def animate(self, animation_object):
+
+        if self.trading_direction == 0:
+            self.path_counter += 1 * self.trading_velocity
+        else:
+            self.path_counter -= 1 * self.trading_velocity
+
+        if self.path_counter >= len(self.data["path"])-1:
+            self.trading_direction = 1
+            self.path_counter = len(self.data["path"])-1
+        elif self.path_counter < 0:
+            self.trading_direction = 0
+            self.path_counter = 0
+
+        position = self.data["path"][self.path_counter]
+        if self.camera.is_within_current_view(position):
         
-        if self.particle_animation:
-            if self.trading_direction == 0:
-                self.path_counter += 1 * self.trading_velocity
-            else:
-                self.path_counter -= 1 * self.trading_velocity
+            relative_position = self.camera.get_relative_screen_position(position)
+            color_index = (self.path_counter // len(self.colors))-1
+            if color_index >= len(self.colors) - 1:
+                color_index = len(self.colors)-1
+            self.color = self.colors[color_index]
 
-            if self.path_counter >= len(self.data["path"])-1:
-                self.trading_direction = 1
-                self.path_counter = len(self.data["path"])-1
-            elif self.path_counter < 0:
-                self.trading_direction = 0
-                self.path_counter = 0
+            self.particle.position = relative_position
+            self.particle.color = self.color
+            self.animate_particle_effect()
 
-            position = self.data["path"][self.path_counter]
-            if self.camera.is_within_current_view(position[0], position[1]):
-            
-                relative_position = self.camera.get_relative_screen_position(position)
-                color_index = (self.path_counter // len(self.colors))-1
-                if color_index >= len(self.colors) - 1:
-                    color_index = len(self.colors)-1
-                self.color = self.colors[color_index]
-    
-                self.particle.position = relative_position
-                self.particle.color = self.color
-                self.animate_particle_effect()
+class ContinuousTradeRouteAnimation(TradeAnimation):
+    def __init__(self, camera, node_a, node_b, data):
+        super().__init__(camera)
+        self.node_a = node_a
+        self.node_b = node_b
+        self.data = data
+
+    def animate(self, animation_object):
+
+        if self.trading_direction == 0:
+            self.path_counter += 1 * self.trading_velocity
+        else:
+            self.path_counter -= 1 * self.trading_velocity
+
+        if self.path_counter >= len(self.data["path"])-1:
+            self.trading_direction = 1
+            self.path_counter = len(self.data["path"])-1
+        elif self.path_counter < 0:
+            self.trading_direction = 0
+            self.path_counter = 0
+
+        position = self.data["path"][self.path_counter]
+        if self.camera.is_within_current_view(position):
+        
+            relative_position = self.camera.get_relative_screen_position(position)
+            color_index = (self.path_counter // len(self.colors))-1
+            if color_index >= len(self.colors) - 1:
+                color_index = len(self.colors)-1
+            self.color = self.colors[color_index]
+
+            self.particle.position = relative_position
+            self.particle.color = self.color
+            self.animate_particle_effect()

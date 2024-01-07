@@ -31,26 +31,26 @@ class ParticleSystemForm:
 
 
 class Particle:
-    def __init__(self, partivle_system_form):
+    def __init__(self, particle_system_form):
 
         self.particle_system = particlepy.particle.ParticleSystem()
-        self.position = partivle_system_form.position
+        self.position = particle_system_form.position
         self.last_tick = time.time()
         self.delta_time = 0
 
-        self.max_velocity = partivle_system_form.max_velocity
-        self.amount = partivle_system_form.amount
-        self.radius = partivle_system_form.radius
-        self.min_rnd_radius = partivle_system_form.min_rnd_radius
-        self.max_rnd_radius = partivle_system_form.max_rnd_radius
-        self.delta_radius = partivle_system_form.delta_radius
+        self.max_velocity = particle_system_form.max_velocity
+        self.amount = particle_system_form.amount
+        self.radius = particle_system_form.radius
+        self.min_rnd_radius = particle_system_form.min_rnd_radius
+        self.max_rnd_radius = particle_system_form.max_rnd_radius
+        self.delta_radius = particle_system_form.delta_radius
 
-        self.animate = partivle_system_form.animate
-        self.animation_duration = partivle_system_form.animation_duration
-        self.max_animation_duration = partivle_system_form.max_animation_duration
+        self.animate = particle_system_form.animate
+        self.animation_duration = particle_system_form.animation_duration
+        self.max_animation_duration = particle_system_form.max_animation_duration
 
-        self.alpha = partivle_system_form.alpha
-        self.color = partivle_system_form.color
+        self.alpha = particle_system_form.alpha
+        self.color = particle_system_form.color
 
     def update_time_delta(self):
         

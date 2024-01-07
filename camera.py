@@ -56,7 +56,8 @@ class Camera:
         ]
         return all(inside)
 
-    def is_within_current_view(self, x_temp, y_temp):
+    def is_within_current_view(self, position):
+        x_temp, y_temp = position
         x, y = self.topleft
         inside = [
             x <= x_temp <= x + self.width and
