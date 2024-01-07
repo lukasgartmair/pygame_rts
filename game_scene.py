@@ -19,6 +19,7 @@ import scene_manager
 from colors import settlement_stats_colors
 import animation
 import copy
+import networkx as nx
 
 class GameScene(SceneBase):
     def __init__(self, *kargs):
@@ -37,7 +38,8 @@ class GameScene(SceneBase):
             self.settlements, self.any_settlement_clicked
         )
         
-        self.trades = []
+        self.transactions = []
+        self.transaction_graph = None
 
     def remove_selected_settlements(self):
         if self.selection_manager.selected_settlements:
@@ -111,7 +113,6 @@ class GameScene(SceneBase):
         for event in events:
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
-                    # self.check_for_trade_event(event)
                     self.trades = self.game_trade.perform_trade()
                     
                     
@@ -162,20 +163,23 @@ class GameScene(SceneBase):
         pass
 
     def render(self, game_camera, game_font):
-        
-        # class TradeRouteAnimation(TradeAnimation):
-        #     def __init__(self, camera, node_a, node_b, data):
-        
-        if self.connection_manager.settlement_connections:
-            self.trades = copy.deepcopy(self.connection_manager.settlement_connections)
+
+        # if self.connection_manager.settlement_connections:
             # for transaction in self.trades:
             #     bidder= transaction.bidder.id
             #     asker = transaction.asker.id
             #     data= self.connection_manager.settlement_connections.get_edge_data(transaction.bidder.id, transaction.asker.id)
             #     trade_route_animation = animation.TradeRouteAnimation(game_camera,bidder, asker, data)
-            td = animation.TradeAnimation(game_camera)
-            td.animate(self.trades)
-        # self.trades = []
+            # td = animation.TradeAnimation(game_camera)
+            
+            # self.transaction_graph = self.connection_manager.settlement_connections.copy()
+            # trades_happened = [(t.bidder.id, t.asker.id) for t in self.transactions]
+            # edges_to_remove = [e for e in self.connection_manager.settlement_connections.get_connections() if e not in trades_happened]
+
+            # transaction_graph.remove_edges_from(edges_to_remove)
+
+            # td.animate(transaction_graph)
+        # self.transactions = []
                     
         screen = game_camera.camera_screen
         surfarray.blit_array(

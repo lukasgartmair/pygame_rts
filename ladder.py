@@ -75,7 +75,6 @@ class Ladder:
                     self.asks.remove(accepted_ask)
                 
         # TODO important here for future 
-        # self.bids = []
         self.asks = []
         
     def check_if_bidder_already_bidding_for_this_good(self, bidder, good):

@@ -11,7 +11,7 @@ import particle
 import colors
 import itertools
 import camera
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
+
 
 class Animation:
     def __init__(self, camera):
@@ -68,7 +68,7 @@ class PlaceSettlementAnimation(Animation):
     def __init__(self, camera):
         super().__init__(camera)
 
-        self.animation_delay = 50
+        self.animation_delay = 150
         self.particle.color = colors.settlement_stats_colors[0]
 
     def animate_image_sequence(self):
@@ -115,7 +115,7 @@ class TradeAnimation(Animation):
 
         self.colors = colors.get_gradients()
         self.trades = {}
-        self.trading_velocity = SCREEN_WIDTH // FPS // 2
+        self.trading_velocity = 5
         self.path_counter = 0
         self.color = (0,0,0)
         self.trading_direction = 0
@@ -131,7 +131,7 @@ class TradeAnimation(Animation):
                 self.trades[node_a, node_b] = TradeRouteAnimation(self.camera, node_a, node_b, data)
                 
         for trade_route in self.trades.values():
-            trade_route.animate()
+            trade_route.animate(None)
             
     def update_trade_routes(self):
         # only relevant if you are able to delete connected settlements
@@ -147,7 +147,7 @@ class TradeRouteAnimation(TradeAnimation):
         self.node_b = node_b
         self.data = data
 
-    def animate(self):
+    def animate(self, animation_object):
         
         if self.particle_animation:
             if self.trading_direction == 0:
@@ -174,4 +174,3 @@ class TradeRouteAnimation(TradeAnimation):
                 self.particle.position = relative_position
                 self.particle.color = self.color
                 self.animate_particle_effect()
-

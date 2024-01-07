@@ -227,19 +227,18 @@ class Trade:
         # print("asks")
         # for b in self.trade_ladder.asks:
         #     print(b.__dict__)
-            
-        print("resolvin")
-
+        
         self.trade_ladder.resolve(
             self.connection_manager.settlement_connections)
+        
+        for s in self.settlements:
+            self.trade_ladder.bids = []
+            s.settlement_goods.preferred_good.set_back_to_default()
         
         for r in self.trade_ladder.resolutions:
             print(r.bid)
             print(r.ask)
             print("------")
-        
-        # self.trade_ladder.bids = []
-        # self.trade_ladder.asks = []
 
         transactions = []
         transactions = [self.transaction(r)

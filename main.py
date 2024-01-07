@@ -91,6 +91,11 @@ class Game:
                         
             if type(active_scene).__name__ in ["GameScene"]:
                 
+                trading_paths = active_scene.get_scene_data()
+
+                if is_empty(trading_paths) == False:
+                    self.trade_animation.animate(trading_paths)
+                
                 # trading_paths = active_scene.get_scene_data()
                 
                 # if is_empty(trading_paths) == False:
