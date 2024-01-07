@@ -45,8 +45,6 @@ class Game:
         self.place_settlement_animation = animation.PlaceSettlementAnimation(
             self.camera_1)
 
-
-
     def get_filtered_events(self, active_scene, pressed_keys):
 
         filtered_events = []
@@ -109,8 +107,8 @@ class Game:
                 # active_scene.render_single_trades(self.camera_1)
 
                 for settlement in active_scene.settlements:
-                    if settlement.play_placement_animation:
-                        self.place_settlement_animation.animate(settlement)
+                    for settlement_animation in settlement.animation_queue.main_loop_animations:
+                        settlement_animation.animate(settlement)
 
                 active_scene.settlements.draw(self.camera_1.camera_screen)
 

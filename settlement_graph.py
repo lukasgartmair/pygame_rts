@@ -12,7 +12,6 @@ import numpy as np
 import math
 from colors import path_colors
 
-
 def get_adjacent_cells(x, y, k=0):
     adjacent_cells = []
     for xi in range(-k, k + 1):

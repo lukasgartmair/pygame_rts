@@ -82,6 +82,7 @@ class GameScene(SceneBase):
 
             if overlap is None:
                 settlement_placed = self.game_engine.place_settlement()
+
                 if settlement_placed:
                     self.settlements.add(tmp_settlement)
                     self.all_sprites.add(tmp_settlement)
@@ -90,6 +91,8 @@ class GameScene(SceneBase):
                         tmp_settlement
                     )
                     tmp_settlement.placed(self.game_trade, self.game_sound)
+                    tmp_settlement.animation_queue.main_loop_animations.append(
+                        animation.PlaceSettlementAnimationTest(tmp_settlement, game_camera))
 
             else:
                 tmp_settlement.remove()
@@ -180,11 +183,11 @@ class GameScene(SceneBase):
                 data = self.connection_manager.settlement_connections.get_edge_data(
                     transaction.bidder.id, transaction.asker.id)
 
-
-                animation.ContinuousTradeRouteAnimation(game_camera, bidder, asker, data)
+                animation.ContinuousTradeRouteAnimation(
+                    game_camera, bidder, asker, data)
                 # single_trade_route_animation = animation.SingleTradeRouteAnimation(
                 #     game_camera, bidder, asker, data)
-                #single_trade_route_animation.animate(None)
+                # single_trade_route_animation.animate(None)
 
     def render(self, game_camera, game_font):
 
