@@ -19,6 +19,7 @@ import scene_manager
 from colors import settlement_stats_colors
 import animation
 import networkx as nx
+import animation
 
 
 class GameScene(SceneBase):
@@ -91,8 +92,8 @@ class GameScene(SceneBase):
                         tmp_settlement
                     )
                     tmp_settlement.placed(self.game_trade, self.game_sound)
-                    tmp_settlement.animation_queue.main_loop_animations.append(
-                        animation.PlaceSettlementAnimationTest(tmp_settlement, game_camera))
+                    animation.animation_queue.add_to_main_loop_animations(
+                        tmp_settlement, animation.PlaceSettlementAnimation(tmp_settlement, game_camera))
 
             else:
                 tmp_settlement.remove()
@@ -164,15 +165,15 @@ class GameScene(SceneBase):
     def update(self):
         pass
 
-    def render_continuous_trading_routes(self, game_camera):
+    # def render_continuous_trading_routes(self, game_camera):
 
-        if self.trade_animation is None:
-            self.trade_animation = animation.TradeAnimation(game_camera)
+    #     if self.trade_animation is None:
+    #         self.trade_animation = animation.TradeAnimation(game_camera)
 
-        trading_paths = self.get_scene_data()
+    #     trading_paths = self.get_scene_data()
 
-        if nx.is_empty(trading_paths) == False:
-            self.trade_animation.animate(trading_paths)
+    #     if nx.is_empty(trading_paths) == False:
+    #         self.trade_animation.animate(trading_paths)
 
     def render_single_trades(self, game_camera):
 
@@ -183,8 +184,8 @@ class GameScene(SceneBase):
                 data = self.connection_manager.settlement_connections.get_edge_data(
                     transaction.bidder.id, transaction.asker.id)
 
-                animation.ContinuousTradeRouteAnimation(
-                    game_camera, bidder, asker, data)
+                # animation.ContinuousTradeRouteAnimation(
+                #     game_camera, bidder, asker, data)
                 # single_trade_route_animation = animation.SingleTradeRouteAnimation(
                 #     game_camera, bidder, asker, data)
                 # single_trade_route_animation.animate(None)

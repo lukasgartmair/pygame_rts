@@ -9,23 +9,30 @@ Created on Sun Jan  7 12:59:36 2024
 import pygame
 import particle
 from enum import Enum
-
+import animation
 
 class AnimationEndMode(Enum):
     DURATION = 0
     N_TRIGGERS = 1
 
-
 class AnimationQueue:
-    def __init__(self, animation_object):
-        self.main_loop_animations = []
-        self.event_queue_animations = []
-
-    def remove_from_queues(self, animation_object):
-        if animation_object in self.main_loop_animations:
-            self.main_loop_animations.remove(animation_object)
-        elif animation_object in self.event_queue_animations:
-            self.event_queue_animations.remove(animation_object)
+    def __init__(self):
+        self.main_loop_animations = {}
+        self.event_queue_animations = {}
+        
+    def add_to_main_loop_animations(self, animation_object, animation):
+        self.main_loop_animations[animation_object.id] = animation
+        
+    def add_to_event_loop_animations(self, animation_object, animation):
+        self.event_queue_animations[animation_object.id] = animation
+        
+    def remove_from_all_queues(self, animation_object, animation_sequence):
+        if animation_object.id in list(self.main_loop_animations):
+            if self.main_loop_animations[animation_object.id] == animation_sequence:
+                del self.main_loop_animations[animation_object.id]
+        elif animation_object.id in list(self.event_queue_animations):
+            if self.event_queue_animations[animation_object.id] == animation_sequence:
+                del self.event_queue_animations[animation_object.id]
 
 class BaseAnimation:
     def __init__(self, camera, animation_end_mode=AnimationEndMode.DURATION, particle_animation=True):
@@ -74,7 +81,7 @@ class BaseAnimation:
                 print("stopped for duration")
                 self.kill()
         elif self.animation_end_mode == AnimationEndMode.N_TRIGGERS:
-            if self.animation_index > self.number_of_cycles * self.length_cycle:
+            if self.animation_index >= self.number_of_cycles * self.length_cycle:
                 print("stopped for n_triggers")
                 self.kill()
 
@@ -88,7 +95,7 @@ class BaseAnimation:
             self.initialize_animation_object(animation_object)
         else:
             self.reset()
-            animation_object.animation_queue.remove_from_queues(self)
+            animation.animation_queue.remove_from_all_queues(animation_object, self)
 
     def check_animation_trigger(self):
             

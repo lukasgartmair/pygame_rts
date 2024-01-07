@@ -54,9 +54,7 @@ class Settlement(pygame.sprite.Sprite):
         self.name = faker.city()
         self.hover = False
         self.connected = False
-        
-        self.animation_queue = base_animation.AnimationQueue(self)
-        
+                
         # self.mask =  pygame.mask.from_surface(self.image)
         
     def apply_population_to_scale(self):
