@@ -19,6 +19,7 @@ from datetime import datetime
 from time import mktime
 import pandas as pd
 import copy
+import trading_good
 
 logger = logging.getLogger('root')
 
@@ -44,8 +45,7 @@ class Trade:
         self.settlements = settlements
         self.connection_manager = connection_manager
 
-        self.possible_trading_goods = sorted(
-            ["brass", "silver", "wood", "rubins"])
+        self.possible_trading_goods = trading_good.get_trading_goods()
 
         self.trade_ladder = ladder.Ladder()
 

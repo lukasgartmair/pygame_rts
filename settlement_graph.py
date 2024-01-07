@@ -33,7 +33,6 @@ class SettlementGraph(nx.MultiDiGraph):
         return self.edges(data=include_data)
     
     def get_path(self, node_a, node_b):
-        print(self.edges)
         try:
             return self.get_edge_data(
                 node_a, node_b)[0]["path"]        

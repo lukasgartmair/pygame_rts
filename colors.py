@@ -7,6 +7,7 @@ Created on Sun Dec 17 16:47:50 2023
 """
 import numpy as np
 from colour import Color
+import trading_good
 
 selection_colors = {0: (255, 125, 0)}
 
@@ -22,3 +23,13 @@ def get_gradients(color_a="red", color_b="gold"):
     colours = [c.get_rgb() for c in colours]
     colours = [tuple(np.array(c) * 255 // 1) for c in colours]
     return colours
+
+def get_trading_good_color(good):
+    
+    print(good)
+    
+    if good in trading_good.trading_goods.keys():
+        
+        return trading_good.trading_goods[good].color
+    
+    

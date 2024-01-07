@@ -82,11 +82,11 @@ class TradeAnimation(base_animation.BaseAnimation):
         self.particle.max_animation_duration = -1
         self.particle.max_velocity = 20
         self.particle.delta_radius = 0.4
-        self.particle.radius = 2
+        self.particle.radius = 4
 
         self.colors = colors.get_gradients()
         self.trades = {}
-        self.trading_velocity = 5
+        self.trading_velocity = 15
         self.path_counter = 0
         self.color = (0, 0, 0)
         self.trading_direction = 0
@@ -111,10 +111,7 @@ class TradeAnimation(base_animation.BaseAnimation):
             if self.camera.is_within_current_view(position):
             
                 relative_position = self.camera.get_relative_screen_position(position)
-                color_index = (self.path_counter // len(self.colors))-1
-                if color_index >= len(self.colors) - 1:
-                    color_index = len(self.colors)-1
-                self.color = self.colors[color_index]
+                self.color = colors.get_trading_good_color(animation_object.good)
     
                 self.particle.position = relative_position
                 self.particle.color = self.color

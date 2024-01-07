@@ -54,8 +54,7 @@ class Ladder:
 
     def get_accepted_ask(self, bid, valid_asks, settlement_connections):
         accepted_ask = None
-        # neighbors = [n for n in settlement_connections.neighbors(bid.bidder.id)]
-        neighbors = [n for n in list(settlement_connections.nodes)]
+        neighbors = [n for n in settlement_connections.get_first_neighbor(bid.bidder.id)]
         print("here")
         print(neighbors)
         for n in neighbors:
@@ -79,6 +78,7 @@ class Ladder:
                     self.asks.remove(accepted_ask)
                 
         # TODO important here for future 
+        self.bids = []
         self.asks = []
         
     def check_if_bidder_already_bidding_for_this_good(self, bidder, good):
