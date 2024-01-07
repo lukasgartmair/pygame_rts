@@ -8,10 +8,10 @@ Created on Tue Jan  2 10:42:52 2024
 
 import pygame
 import colors
-from base_animation import BaseParticleAnimation, AnimationEndMode
+from base_animation import BaseAnimation, AnimationEndMode
 
 
-class PlaceSettlementAnimationTest(BaseParticleAnimation):
+class PlaceSettlementAnimationTest(BaseAnimation):
     def __init__(self, animation_object, camera,  animation_end_mode=AnimationEndMode.N_TRIGGERS):
         super().__init__(camera)
         print("new instance here")
@@ -31,7 +31,7 @@ class PlaceSettlementAnimationTest(BaseParticleAnimation):
         
         self.length_cycle = len(self.animation_object.images)
         self.current_cycle = 0
-        self.number_of_cycles = 2
+        self.number_of_cycles = 1
 
     def animate_image_sequence(self):
           print(self.current_cycle)
@@ -69,7 +69,7 @@ class PlaceSettlementAnimationTest(BaseParticleAnimation):
 
         self.animate_image_sequence()
 
-class PlaceSettlementAnimation(BaseParticleAnimation):
+class PlaceSettlementAnimation(BaseAnimation):
     def __init__(self, camera):
         super().__init__(camera)
         
@@ -112,7 +112,7 @@ class PlaceSettlementAnimation(BaseParticleAnimation):
         if self.is_alive():
             self.animate_image_sequence()
 
-class TradeAnimation(BaseParticleAnimation):
+class TradeAnimation(BaseAnimation):
     def __init__(self, camera):
         super().__init__(camera)
 

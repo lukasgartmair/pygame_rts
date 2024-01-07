@@ -27,9 +27,8 @@ class AnimationQueue:
         elif animation_object in self.event_queue_animations:
             self.event_queue_animations.remove(animation_object)
 
-
 class BaseAnimation:
-    def __init__(self, camera, animation_end_mode=AnimationEndMode.DURATION):
+    def __init__(self, camera, animation_end_mode=AnimationEndMode.DURATION, particle_animation=True):
         self.camera = camera
         self.animation_object = None
 
@@ -44,11 +43,26 @@ class BaseAnimation:
         self.current_time = 0
         self.last_animation_time = 0
         self.triggered = False
+        self.first_time_triggered = False
 
         self.animation_duration = 200
         self.is_alive = True
 
-        self.animation_index = -1
+        self.animation_index = 0
+        
+        self.particle_animation = particle_animation
+        if self.particle_animation:
+            self.particle_system_form = particle.ParticleSystemForm()
+            self.particle = particle.Particle(self.particle_system_form)
+            self.particle.max_animation_duration = 100
+
+            self.animate_particle_effect = self.animate_particle_effect
+
+            
+    def animate_particle_effect(self):
+        self.particle.update()
+        self.particle.emit_particles()
+        self.particle.render(self.camera.camera_screen)
         
     def kill(self):
         self.reset()
@@ -80,11 +94,10 @@ class BaseAnimation:
             
         self.current_time = pygame.time.get_ticks()
         if self.current_time - self.last_animation_time > self.animation_delay:
-            self.last_animation_time = self.current_time
-            self.triggered = True
-            # print("triggered")
 
             self.animation_index += 1
+            self.last_animation_time = self.current_time
+            self.triggered = True
 
         else:
             self.triggered = False
@@ -96,18 +109,7 @@ class BaseAnimation:
     def reset(self):
         self.last_animation_time = 0
         self.current_time = 0
-        self.animation_index = 0
+        self.animation_index = -1
 
 
-class BaseParticleAnimation(BaseAnimation):
-    def __init__(self, camera):
-        super().__init__(camera)
-        self.particle_system_form = particle.ParticleSystemForm()
-        self.particle = particle.Particle(self.particle_system_form)
-        self.particle.max_animation_duration = 100
 
-    def animate_particle_effect(self):
-
-        self.particle.update()
-        self.particle.emit_particles()
-        self.particle.render(self.camera.camera_screen)
