@@ -44,14 +44,37 @@ class GameScene(SceneBase):
         
 
     def animate_transactions(self):
-        
-        if self.transactions:
+
+        if self.transactions:                            
             for transaction in self.transactions:
-                animation_sequences = [animation_sequence for object_id, animation_sequence in list(
-                    animation.animation_queue.main_loop_animations.items()) if object_id == id(transaction)]
-                if animation_sequences:
-                    for a in animation_sequences:
-                        a.animate(transaction)
+                
+                animation_sequence = animation.animation_queue.get_main_loop_animations_of_object(transaction, animation.TradeAnimation)
+                if animation_sequence:
+                    for a in animation_sequence:
+                            a.animate(transaction)
+                            
+                animation_sequence = []
+                animation_sequence = animation.animation_queue.get_main_loop_animations_of_object(transaction, animation.ReceivedTradingGood)
+                if animation_sequence:
+                    for a in animation_sequence:
+                            a.animate(transaction)
+                            
+                animation_sequence = []
+                animation_sequence = animation.animation_queue.get_main_loop_animations_of_object(transaction, animation.SoldTradingGood)
+                if animation_sequence:
+                    for a in animation_sequence:
+                            a.animate(transaction)
+                            
+                # print(animation.animation_queue.main_loop_animations.items())
+                # animation_sequence = []
+                # animation_sequence = animation.animation_queue.get_main_loop_animations_of_object(transaction, animation.SoldTradingGood)
+                # print(animation_sequence)
+                # if animation_sequence:
+                #     for a in animation_sequence:
+                #             a.animate(transaction)
+                    
+            
+                            
                 
     def create_transaction_animations(self, game_camera):
         
@@ -61,12 +84,12 @@ class GameScene(SceneBase):
         
     def animate_settlement_placements(self):
         for s in self.settlements:
-            animation_sequences = [animation_sequence for object_id, animation_sequence in list(
-                animation.animation_queue.main_loop_animations.items()) if object_id == id(s)]
-            if animation_sequences:
-                for a in animation_sequences:
-                    a.animate(s)
-
+            
+            animation_sequence = animation.animation_queue.get_main_loop_animations_of_object(s, animation.PlaceSettlementAnimation)
+            if animation_sequence:
+                for a in animation_sequence:
+                        a.animate(s)
+                        
     def remove_selected_settlements(self):
         if self.selection_manager.selected_settlements:
             for s in self.selection_manager.selected_settlements:
@@ -143,12 +166,7 @@ class GameScene(SceneBase):
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
                     self.transactions = self.game_trade.perform_trade()
-                    
-                    print(self.transactions)
-                    
                     self.create_transaction_animations(game_camera)
-                    
-                    print(animation.animation_queue.main_loop_animations)
 
             self.selection_manager.update_selected_settlements()
 

@@ -28,6 +28,7 @@ class Structures(Enum):
 
 class MapGenerator:
     def __init__(self, game_map):
+
         self.width = game_map.width
         self.height = game_map.height
         self.grid = np.zeros((game_map.width, game_map.height))
@@ -126,7 +127,8 @@ class MapGenerator:
 
 
 class GameMap:
-    def __init__(self, test=False):
+    def __init__(self, dimensions=2, test=False):
+        self.dimensions = dimensions
         if test:
             self.width = 1
             self.height = 1
@@ -139,10 +141,13 @@ class GameMap:
 
     def generate(self):
         mg = MapGenerator(self)
-        mg.generate_rnd_map()
-        mg.process()
-        self.grid = mg.grid.copy()
-        self.map_colors()
+        if self.dimensions == 2:
+            mg.generate_rnd_map()
+            mg.process()
+            self.grid = mg.grid.copy()
+            self.map_colors()
+        elif self.dimensions == 3:
+            mg.generate_rnd_3D_map()       
 
     def map_colors(self):
         for k, v in terrain_colors.items():

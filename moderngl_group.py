@@ -15,75 +15,22 @@ vertex_shader_sprite = """
 in vec2 in_position;
 in vec2 in_uv;
 out vec2 v_uv;
-
 void main()
 {
     v_uv = in_uv;
-    gl_Position = vec4(in_position, 0, 0);
-
+    gl_Position = vec4(in_position, 0.0, 1.0);
 }
 """
 
-# fragment_shader_sprite = """
-# #version 330
-# out vec4 fragColor;
-# uniform sampler2D u_texture;
-# in vec2 v_uv;
-# void main()
-# {
-#     fragColor = texture(u_texture, v_uv);
-# }
-# """
-
-fragment_shader_sprite = '''
+fragment_shader_sprite = """
 #version 330
-     out vec4 fragColor;
-
-     void main() {
-         fragColor = vec4(1, 0, 0, 0.5);
-     }
- '''
- 
-vertex_shader_sprite="""
-
-    #version 330
-
-
-    in vec2 in_vert;
-
-    in vec3 in_color;
-
-
-    out vec3 v_color;
-
-
-    void main() {
-
-        v_color = vec4(1, 0, 0, 0.5);
-
-        gl_Position = vec4(in_vert, 0.0, 1.0);
-
-    }
-
-""",
-
-fragment_shader_sprite="""
-
-    #version 330
-
-
-    in vec3 v_color;
-
-
-    out vec3 f_color;
-
-
-    void main() {
-
-        f_color = v_color;
-
-    }
-
+out vec4 fragColor;
+uniform sampler2D u_texture;
+in vec2 v_uv;
+void main() 
+{
+    fragColor = texture(u_texture, v_uv);
+}
 """
 
 
@@ -118,7 +65,7 @@ class ModernGLGroup(pygame.sprite.Group):
     def get_vao():
         if ModernGLGroup.gl_vao == None:
             ModernGLGroup.gl_vao = ModernGLGroup.gl_context.vertex_array(
-                ModernGLGroup.get_program(), [(ModernGLGroup.get_buffer(), "2f4", "in_vert")])
+                ModernGLGroup.get_program(), [(ModernGLGroup.get_buffer(), "2f4 2f4", "in_position", "in_uv")])
         return ModernGLGroup.gl_vao
 
     def get_sampler():

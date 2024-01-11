@@ -19,6 +19,7 @@ font_size = 30
 
 class GameFont(pygame.font.Font):
     def __init__(self, font_style, font_size):
+        pygame.font.init()
         super().__init__(font_style, font_size)
         self.text_color = (0, 0, 0)
         self.set_bold(False)

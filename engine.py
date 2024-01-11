@@ -20,7 +20,7 @@ class GameEngine:
         self.state = None
         self.currentPlayer = None
         self.settlements_available = 10
-        self.win_condition = 20
+        self.win_condition = 100
         self.state = GameState.PLAYING
 
     def get_settlements_availabe(self):

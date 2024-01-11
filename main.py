@@ -86,8 +86,10 @@ class Game:
     def run(self, starting_scene):
 
         pygame.init()
-
-        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        if MODERN_GL:
+            screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.OPENGLBLIT)
+        else:
+            screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption(NAME)
 
         if MODERN_GL == True:
@@ -111,6 +113,11 @@ class Game:
 
                 if active_scene.transactions:
                     active_scene.animate_transactions()
+                    
+                    # for k,v in animation.animation_queue.items():
+                    #     if isinstance(a, animation.ArrivedTradingGood):
+                    #         a.animate()
+                    
 
                 active_scene.animate_settlement_placements()
 
@@ -157,6 +164,8 @@ class Game:
 
             pygame.display.flip()
             clock.tick(FPS)
+            
+            animation.animation_queue.update_animation_queue()
 
 if __name__ == "__main__":
     # unittest.main()

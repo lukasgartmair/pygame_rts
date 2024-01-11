@@ -10,9 +10,13 @@ import pygame
 import colors
 import base_animation
 import connection_manager
+import game_font
+
+game_font = game_font.GameFont(
+    game_font.font_style, game_font.font_size)
+
 
 animation_queue = base_animation.AnimationQueue()
-
 
 class PlaceSettlementAnimation(base_animation.BaseAnimation):
     def __init__(self, animation_object, camera,  animation_end_mode=base_animation.AnimationEndMode.N_TRIGGERS):
@@ -69,8 +73,47 @@ class PlaceSettlementAnimation(base_animation.BaseAnimation):
         self.animate_particle_effect()
 
         self.animate_image_sequence()
+    
+class SoldTradingGood(base_animation.BaseAnimation):
+    def __init__(self, camera, connection_manager, animation_end_mode=base_animation.AnimationEndMode.DURATION):                         
+        super().__init__(camera)
+        self.offset = 0
+        self.animation_duration = 1500
+        self.velocity = 2
+        
+    def animate(self, animation_object):
+        super().animate(animation_object)
+        price = animation_object.magnitude*animation_object.price
+        text = game_font.render("+ {} {} for {} $".format(
+            animation_object.magnitude,animation_object.good,price), True, (0, 255, 0))
+        screen_position = self.camera.get_relative_screen_position(animation_object.asker.center)
+        self.camera.camera_screen.blit(text, (screen_position[0]+self.offset, screen_position[1]-self.offset))
+        self.offset += self.velocity
 
 
+class ReceivedTradingGood(base_animation.BaseAnimation):
+    def __init__(self, camera, connection_manager, animation_end_mode=base_animation.AnimationEndMode.DURATION):                         
+        super().__init__(camera)
+        self.offset = 0
+        self.animation_duration = 1500
+        self.velocity = 2
+        
+    def animate(self, animation_object):
+        super().animate(animation_object)
+        price = animation_object.magnitude*animation_object.price
+        text = game_font.render("+ {} {} for {} $".format(
+            animation_object.magnitude,animation_object.good,price), True, (0, 255, 0))
+        screen_position = self.camera.get_relative_screen_position(animation_object.bidder.center)
+        self.camera.camera_screen.blit(text, (screen_position[0]+self.offset, screen_position[1]-self.offset))
+        self.offset += self.velocity
+        
+        # text = game_font.render("- {} {} for {} $".format(
+        #     animation_object.magnitude,animation_object.good,price), True, (255, 0, 0))
+        # screen_position = self.camera.get_relative_screen_position(animation_object.asker.center)
+        # print(screen_position)
+        # self.camera.camera_screen.blit(text, (screen_position[0]+self.offset, screen_position[1]-self.offset))
+        # self.offset += self.velocity
+        
 class TradeAnimation(base_animation.BaseAnimation):
     def __init__(self, camera, connection_manager, animation_end_mode=base_animation.AnimationEndMode.CUSTOM):
         super().__init__(camera)
@@ -86,15 +129,20 @@ class TradeAnimation(base_animation.BaseAnimation):
 
         self.colors = colors.get_gradients()
         self.trades = {}
-        self.trading_velocity = 15
+        self.trading_velocity = 10
         self.path_counter = 0
         self.color = (0, 0, 0)
         self.trading_direction = 0
         
         self.path = None
         
+        animation_queue.add_to_main_loop_animations(self.animation_object, SoldTradingGood(self.camera, self.connection_manager))
+
     def custom_kill_function(self):
         if self.path_counter >= len(self.path):
+            
+            animation_queue.add_to_main_loop_animations(self.animation_object, ReceivedTradingGood(self.camera, self.connection_manager))
+
             self.kill()
         
             return True

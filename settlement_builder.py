@@ -12,10 +12,11 @@ from matplotlib import pyplot as plt
 import random
 from enum import Enum
 import itertools
+import scipy
 
 class Buildings(Enum):
     EARTH = 0
-    STREET = -100
+    STREET = 0
     HOUSE = 2
 
 def get_adjacent_cells(x, y, k=0):
@@ -25,6 +26,10 @@ def get_adjacent_cells(x, y, k=0):
             adjacent_cells.append((x + xi, y + yi))
     adjacent_cells.remove((x,y))
     return adjacent_cells
+
+def moving_average(array, size=3):
+    return scipy.ndimage.uniform_filter(array,size=size)
+    
 
 class SettlementBuilder:
     def __init__(self, dim_x, dim_y, dim_z):
@@ -49,6 +54,8 @@ class SettlementBuilder:
         
         self.create_house_and_street_foundations()
         self.grow_houses()
+        
+        self.matrix = moving_average(self.matrix)
         
         return self.matrix
 

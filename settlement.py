@@ -59,7 +59,7 @@ class Settlement(pygame.sprite.Sprite):
         self.connected = False
 
         self.builder = SettlementBuilder(self.image.get_width(), self.image.get_width(
-        ), self.image.get_height()//2)
+        ), self.image.get_height()//5)
         self.structure = self.builder.build_settlement()
         
         self.image_stack = self.get_image_stack()

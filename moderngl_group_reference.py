@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun Jan  7 20:08:25 2024
+Created on Thu Jan 11 15:44:43 2024
 
 @author: lukasgartmair
 """
@@ -102,7 +102,7 @@ class SpriteObject(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__() 
         try:
-            self.image = pygame.image.load('sprite.png').convert_alpha()
+            self.image = pygame.image.load('AirPlaneFront1-256.png').convert_alpha()
         except:
             self.image = pygame.Surface((100, 100), pygame.SRCALPHA)
             pygame.draw.circle(self.image, (255, 255, 0), (50, 50), 50)
@@ -124,7 +124,7 @@ pygame.init()
 window = pygame.display.set_mode((500, 500), pygame.DOUBLEBUF | pygame.OPENGL)
 clock = pygame.time.Clock()
 
-gl_context = moderngl.create_context(require=330)
+gl_context = moderngl.create_context()
 gl_context.enable(moderngl.BLEND)
 ModernGLGroup.gl_context = gl_context
 
@@ -146,3 +146,4 @@ while run:
     pygame.display.flip()
 
 pygame.quit()
+exit()
