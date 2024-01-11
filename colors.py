@@ -26,8 +26,6 @@ def get_gradients(color_a="red", color_b="gold"):
 
 def get_trading_good_color(good):
     
-    print(good)
-    
     if good in trading_good.trading_goods.keys():
         
         return trading_good.trading_goods[good].color

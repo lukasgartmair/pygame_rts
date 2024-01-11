@@ -17,8 +17,11 @@ from beautifultable import BeautifulTable, BTRowCollection
 import re
 import itertools
 import base_animation
+from settlement_builder import SettlementBuilder
+import numpy as np
 
 faker = Faker()
+
 
 class Settlement(pygame.sprite.Sprite):
     id_iterator = itertools.count()
@@ -54,11 +57,15 @@ class Settlement(pygame.sprite.Sprite):
         self.name = faker.city()
         self.hover = False
         self.connected = False
-                
+
+        self.structure = SettlementBuilder(self.image.get_width(), self.image.get_width(
+        ), self.image.get_height()).build_settlement()
+
         # self.mask =  pygame.mask.from_surface(self.image)
-        
+
     def apply_population_to_scale(self):
-        self.scale_factor = self.scale_factor * self.population ** (1.0 / 3) / 40
+        self.scale_factor = self.scale_factor * \
+            self.population ** (1.0 / 3) / 40
 
     def render_settlement_stats(self, game_camera, game_font):
         screen = game_camera.camera_screen
@@ -74,7 +81,8 @@ class Settlement(pygame.sprite.Sprite):
         screen.blit(text, (horizontal_offset, offset))
         offset += vertical_offset
 
-        text = game_font.render("gold: {}".format(self.settlement_balance.gold), True, (10, 0, 0))
+        text = game_font.render("gold: {}".format(
+            self.settlement_balance.gold), True, (10, 0, 0))
         screen.blit(text, (horizontal_offset, offset))
         offset += vertical_offset
 
@@ -129,7 +137,8 @@ class Settlement(pygame.sprite.Sprite):
         self.kill()
 
     def update_render_center(self, game_camera):
-        self.render_center = game_camera.get_relative_screen_position(self.center)
+        self.render_center = game_camera.get_relative_screen_position(
+            self.center)
         self.rect = self.surf.get_rect(center=self.render_center)
 
     def update_rect_center_for_sprite_collision(self):

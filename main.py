@@ -10,7 +10,7 @@ import pygame
 import sys
 import traceback
 import level_map
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, NAME
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, NAME, MODERN_GL
 import engine
 import game_font
 import sound
@@ -91,9 +91,10 @@ class Game:
         screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption(NAME)
 
-        gl_context = moderngl.create_context()
-        gl_context.enable(moderngl.BLEND)
-        moderngl_group.ModernGLGroup.gl_context = gl_context
+        if MODERN_GL == True:
+            gl_context = moderngl.create_context()
+            gl_context.enable(moderngl.BLEND)
+            moderngl_group.ModernGLGroup.gl_context = gl_context
 
         clock = pygame.time.Clock()
 
@@ -108,8 +109,6 @@ class Game:
                 active_scene, pressed_keys)
 
             if type(active_scene).__name__ in ["GameScene"]:
-
-                # active_scene.render_single_trades(self.camera_1)
 
                 if active_scene.transactions:
                     active_scene.animate_transactions()
@@ -138,9 +137,10 @@ class Game:
 
                 self.game_engine.check_win_condition(active_scene.settlements)
 
-                group = moderngl_group.ModernGLGroup(active_scene.settlements)
-                # gl_context.clear(0.2, 0.2, 0.2)
-                group.draw(screen)
+                if MODERN_GL == True:
+                    group = moderngl_group.ModernGLGroup(active_scene.settlements)
+                    # gl_context.clear(0.2, 0.2, 0.2)
+                    group.draw(screen)
 
                 pygame.display.update(self.camera_1.camera_screen.get_rect())
 
