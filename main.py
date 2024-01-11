@@ -21,8 +21,11 @@ import colors
 import unittest
 import animation
 import logging
+import moderngl
+import moderngl_group
 
 logger = logging.getLogger('root')
+
 
 def quit_everything(active_scene=None):
     if active_scene:
@@ -30,6 +33,7 @@ def quit_everything(active_scene=None):
     pygame.display.quit()
     pygame.quit()
     sys.exit()
+
 
 class Game:
     def __init__(self):
@@ -87,6 +91,10 @@ class Game:
         screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption(NAME)
 
+        gl_context = moderngl.create_context()
+        gl_context.enable(moderngl.BLEND)
+        moderngl_group.ModernGLGroup.gl_context = gl_context
+
         clock = pygame.time.Clock()
 
         active_scene = starting_scene
@@ -129,6 +137,10 @@ class Game:
                 active_scene.render_second_screen(self.camera_2, self.font)
 
                 self.game_engine.check_win_condition(active_scene.settlements)
+
+                group = moderngl_group.ModernGLGroup(active_scene.settlements)
+                # gl_context.clear(0.2, 0.2, 0.2)
+                group.draw(screen)
 
                 pygame.display.update(self.camera_1.camera_screen.get_rect())
 

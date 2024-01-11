@@ -42,7 +42,7 @@ class Camera:
         return (self.camera_screen.get_width(), self.camera_screen.get_height())
 
     def is_in_bounds(self, pos):
-        return (
+        return bool(
             0 <= pos[0] < self.get_camera_screen_dimensions()[0]
             and 0 <= pos[1] < self.get_camera_screen_dimensions()[1]
         )
