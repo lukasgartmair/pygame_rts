@@ -18,44 +18,61 @@ class AnimationEndMode(Enum):
     CUSTOM = 2
 
 
+class AnimationQueueType(Enum):
+    MAIN = 0
+    EVENT = 1
+
+
 class AnimationQueue:
     def __init__(self):
         self.main_loop_animations = {}
         self.event_queue_animations = {}
-        
+
+    def get_queue(self, animation_queue_type):
+        if animation_queue_type == AnimationQueueType.MAIN:
+            return self.main_loop_animations
+        elif animation_queue_type == AnimationQueueType.MAIN:
+            return self.event_queue_animations
+
     def update_animation_queue(self):
-        self.main_loop_animations = {k:v for k,v in self.main_loop_animations.items() if v}
-        self.event_queue_animations = {k:v for k,v in self.event_queue_animations.items() if v}
-        
-    def get_main_loop_animations_of_object(self, animation_object, animation_class):
+        self.main_loop_animations = {
+            k: v for k, v in self.main_loop_animations.items() if v}
+        self.event_queue_animations = {
+            k: v for k, v in self.event_queue_animations.items() if v}
 
-        if id(animation_object) in self.main_loop_animations.keys():
-            return [a for a in self.main_loop_animations[id(animation_object)] if isinstance(a,animation_class)]
+    def get_animations_of_object(self, animation_object, animation_class, animation_queue_type=AnimationQueueType.MAIN):
         
-    def get_event_loop_animations_of_object(self, animation_object, animation_class):
-        if id(animation_object) in self.event_queue_animations.keys():
-            return [a for a in self.event_queue_animations[id(animation_object)] if isinstance(a,animation_class)]
-
-    def add_to_main_loop_animations(self, animation_object, animation):
-        if id(animation_object) in self.main_loop_animations.keys():
-            self.main_loop_animations[id(animation_object)].append(animation)
+        queue = self.get_queue(animation_queue_type)
+        if id(animation_object) in queue.keys():
+            if animation_class == None:
+                return [a for a in queue[id(animation_object)]]
+        
+        else: 
+            if id(animation_object) in queue.keys():
+                return [a for a in queue[id(animation_object)] if isinstance(a, animation_class)]
+        
+    def add_to_animation_loop(self, animation_object, animation, animation_queue_type=AnimationQueueType.MAIN):
+        
+        queue = self.get_queue(animation_queue_type)
+        
+        if id(animation_object) in queue.keys():
+            if animation not in queue:
+                queue[id(
+                    animation_object)].append(animation)
+            queue[id(animation_object)].append(animation)
         else:
-            print("override")
-            self.main_loop_animations[id(animation_object)] = [animation]
-            
-    def add_to_event_loop_animations(self, animation_object, animation):
-        if id(animation_object) in self.event_queue_animations.keys():
-            self.event_queue_animations[id(animation_object)].append(animation)
-        else:
-            self.event_queue_animations[id(animation_object)] = [animation]
+            queue[id(animation_object)] = [animation]
 
     def remove_from_all_queues(self, animation_object, animation_sequence):
         if id(animation_object) in list(self.main_loop_animations):
             if animation_sequence in self.main_loop_animations[id(animation_object)]:
-                self.main_loop_animations[id(animation_object)].remove(animation_sequence)
+                self.main_loop_animations[id(animation_object)].remove(
+                    animation_sequence)
         elif id(animation_object) in list(self.event_queue_animations):
             if animation_sequence in self.event_queue_animations[id(animation_object)]:
-                self.event_queue_animations[id(animation_object)].remove(animation_sequence)
+                self.event_queue_animations[id(animation_object)].remove(
+                    animation_sequence)
+
 
 class BaseAnimation:
     def __init__(self, camera, animation_end_mode=AnimationEndMode.DURATION, particle_animation=True):
@@ -98,7 +115,7 @@ class BaseAnimation:
         self.is_alive = False
         animation.animation_queue.remove_from_all_queues(
             self.animation_object, self)
-        
+
     def custom_kill_function(self):
         pass
 

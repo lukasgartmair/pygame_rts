@@ -20,6 +20,7 @@ from colors import settlement_stats_colors
 import animation
 import networkx as nx
 import animation
+import base_animation
 
 
 class GameScene(SceneBase):
@@ -41,30 +42,40 @@ class GameScene(SceneBase):
 
         self.transactions = []
         self.trade_animation = None
-        
 
     def animate_transactions(self):
 
-        if self.transactions:                            
+        if self.transactions:
             for transaction in self.transactions:
                 
-                animation_sequence = animation.animation_queue.get_main_loop_animations_of_object(transaction, animation.TradeAnimation)
+                animation_sequence = animation.animation_queue.get_animations_of_object(
+                    transaction, None, base_animation.AnimationQueueType.MAIN)
+
                 if animation_sequence:
                     for a in animation_sequence:
-                            a.animate(transaction)
-                            
-                animation_sequence = []
-                animation_sequence = animation.animation_queue.get_main_loop_animations_of_object(transaction, animation.ReceivedTradingGood)
-                if animation_sequence:
-                    for a in animation_sequence:
-                            a.animate(transaction)
-                            
-                animation_sequence = []
-                animation_sequence = animation.animation_queue.get_main_loop_animations_of_object(transaction, animation.SoldTradingGood)
-                if animation_sequence:
-                    for a in animation_sequence:
-                            a.animate(transaction)
-                            
+                        a.animate(transaction)
+
+                # animation_sequence = animation.animation_queue.get_animations_of_object(
+                #     transaction, animation.TradeAnimation, base_animation.AnimationQueueType.MAIN)
+
+                # if animation_sequence:
+                #     for a in animation_sequence:
+                #         a.animate(transaction)
+
+                # animation_sequence = []
+                # animation_sequence = animation.animation_queue.get_animations_of_object(
+                #     transaction, animation.ReceivedTradingGood, base_animation.AnimationQueueType.MAIN)
+                # if animation_sequence:
+                #     for a in animation_sequence:
+                #         a.animate(transaction)
+
+                # animation_sequence = animation.animation_queue.get_animations_of_object(
+                #     transaction, animation.SoldTradingGood, base_animation.AnimationQueueType.MAIN)
+                # if animation_sequence:
+                #     for a in animation_sequence:
+                #         a.animate(transaction)
+
+
                 # print(animation.animation_queue.main_loop_animations.items())
                 # animation_sequence = []
                 # animation_sequence = animation.animation_queue.get_main_loop_animations_of_object(transaction, animation.SoldTradingGood)
@@ -72,24 +83,23 @@ class GameScene(SceneBase):
                 # if animation_sequence:
                 #     for a in animation_sequence:
                 #             a.animate(transaction)
-                    
-            
-                            
-                
+
     def create_transaction_animations(self, game_camera):
-        
+
         if self.transactions:
             for transaction in self.transactions:
-                animation.animation_queue.add_to_main_loop_animations(transaction, animation.TradeAnimation(game_camera, self.connection_manager))
-        
+                animation.animation_queue.add_to_animation_loop(transaction, animation.TradeAnimation(
+                    game_camera, self.connection_manager), base_animation.AnimationQueueType.MAIN)
+
     def animate_settlement_placements(self):
         for s in self.settlements:
-            
-            animation_sequence = animation.animation_queue.get_main_loop_animations_of_object(s, animation.PlaceSettlementAnimation)
+
+            animation_sequence = animation.animation_queue.get_animations_of_object(
+                s, animation.PlaceSettlementAnimation, base_animation.AnimationQueueType.MAIN)
             if animation_sequence:
                 for a in animation_sequence:
-                        a.animate(s)
-                        
+                    a.animate(s)
+
     def remove_selected_settlements(self):
         if self.selection_manager.selected_settlements:
             for s in self.selection_manager.selected_settlements:
@@ -140,8 +150,8 @@ class GameScene(SceneBase):
                         tmp_settlement
                     )
                     tmp_settlement.placed(self.game_trade, self.game_sound)
-                    animation.animation_queue.add_to_main_loop_animations(
-                        tmp_settlement, animation.PlaceSettlementAnimation(tmp_settlement, game_camera))
+                    animation.animation_queue.add_to_animation_loop(
+                        tmp_settlement, animation.PlaceSettlementAnimation(tmp_settlement, game_camera), base_animation.AnimationQueueType.MAIN)
 
             else:
                 tmp_settlement.remove()
@@ -213,7 +223,6 @@ class GameScene(SceneBase):
 
     def update(self):
         pass
-    
 
     def render(self, game_camera, game_font):
 
