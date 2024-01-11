@@ -59,7 +59,7 @@ class Settlement(pygame.sprite.Sprite):
         self.connected = False
 
         self.builder = SettlementBuilder(self.image.get_width(), self.image.get_width(
-        ), self.image.get_height())
+        ), self.image.get_height()//2)
         self.structure = self.builder.build_settlement()
         
         self.image_stack = self.get_image_stack()
@@ -69,23 +69,23 @@ class Settlement(pygame.sprite.Sprite):
     def get_image_stack(self):
         image_stack = []
         dim_z, dimx, dim_y = self.structure.shape
+        rotation = random.randint(180,200)
         for z in range(dim_z):
             s = pygame.surfarray.make_surface(self.structure[z,:,:])
-            if z > 0:
-                rotation = 360/z
-                rotated_layer = pygame.transform.rotate(s,rotation)
-                image_stack.append(rotated_layer)
-            else:
-                image_stack.append(s)
+
+            rotated_layer = pygame.transform.rotate(s,rotation)
+            image_stack.append(rotated_layer)
+
             
         return image_stack
             
 
-    def render_image_stack(self, game_camera, spread=1):
+    def render_image_stack(self, game_camera, spread=5):
+        
         for i,img in enumerate(self.image_stack):
             pos = game_camera.get_relative_screen_position(self.center)
             
-            game_camera.camera_screen.blit(img, (pos[0] - img.get_width() // 2,pos[1] - img.get_height() // 2 - i * spread))
+            game_camera.camera_screen.blit(img, (pos[0] - img.get_width() // 2,pos[1] - img.get_height() // 2 - i * spread),special_flags=pygame.BLEND_ADD)
 
     def apply_population_to_scale(self):
         self.scale_factor = self.scale_factor * \

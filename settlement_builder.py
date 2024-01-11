@@ -15,7 +15,7 @@ import itertools
 
 class Buildings(Enum):
     EARTH = 0
-    STREET = 1
+    STREET = -100
     HOUSE = 2
 
 def get_adjacent_cells(x, y, k=0):
@@ -39,7 +39,7 @@ class SettlementBuilder:
         
         self.matrix[0,self.center[0],self.center[1]] = Buildings.HOUSE.value
         
-        self.radius = int(self.dim_x *0.9)
+        self.radius = int(self.dim_x * 0.5)
         
     def get_top_view(self):
         

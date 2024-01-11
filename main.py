@@ -26,7 +26,6 @@ import moderngl_group
 
 logger = logging.getLogger('root')
 
-
 def quit_everything(active_scene=None):
     if active_scene:
         active_scene.terminate()
@@ -158,7 +157,6 @@ class Game:
 
             pygame.display.flip()
             clock.tick(FPS)
-
 
 if __name__ == "__main__":
     # unittest.main()
