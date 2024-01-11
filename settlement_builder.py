@@ -11,6 +11,7 @@ from itertools import product
 from matplotlib import pyplot as plt
 import random
 from enum import Enum
+import itertools
 
 class Buildings(Enum):
     EARTH = 0
@@ -30,7 +31,7 @@ class SettlementBuilder:
         
         self.dim_x, self.dim_y, self.dim_z = int(dim_x), int(dim_y), int(dim_z)
         self.dimensions = (self.dim_z, self.dim_x, self.dim_y)
-        self.house_street_ratio = 0.6
+        self.house_street_ratio = random.random()
         
         self.center = (self.dim_x // 2, self.dim_y // 2)
         
@@ -38,7 +39,11 @@ class SettlementBuilder:
         
         self.matrix[0,self.center[0],self.center[1]] = Buildings.HOUSE.value
         
-        self.radius = self.dim_x // 4
+        self.radius = int(self.dim_x *0.9)
+        
+    def get_top_view(self):
+        
+        return self.matrix[0,:,:]
 
     def build_settlement(self):
         
@@ -88,6 +93,8 @@ class SettlementBuilder:
         
         plt.matshow(top_view)
         plt.colorbar()
+        
+        
         
         
 # def experiment():
