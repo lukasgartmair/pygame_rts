@@ -17,11 +17,9 @@ class AnimationEndMode(Enum):
     N_TRIGGERS = 1
     CUSTOM = 2
 
-
 class AnimationQueueType(Enum):
     MAIN = 0
     EVENT = 1
-
 
 class AnimationQueue:
     def __init__(self):
@@ -31,7 +29,7 @@ class AnimationQueue:
     def get_queue(self, animation_queue_type):
         if animation_queue_type == AnimationQueueType.MAIN:
             return self.main_loop_animations
-        elif animation_queue_type == AnimationQueueType.MAIN:
+        elif animation_queue_type == AnimationQueueType.EVENT:
             return self.event_queue_animations
 
     def update_animation_queue(self):
@@ -40,16 +38,18 @@ class AnimationQueue:
         self.event_queue_animations = {
             k: v for k, v in self.event_queue_animations.items() if v}
 
-    def get_animations_of_object(self, animation_object, animation_class, animation_queue_type=AnimationQueueType.MAIN):
+    def get_all_animations_of_object(self, animation_object, animation_queue_type=AnimationQueueType.MAIN):
         
         queue = self.get_queue(animation_queue_type)
         if id(animation_object) in queue.keys():
-            if animation_class == None:
-                return [a for a in queue[id(animation_object)]]
+            return [a for a in queue[id(animation_object)]]
+            
+    def get_animations_of_certain_type(self, animation_object, animation_class, animation_queue_type=AnimationQueueType.MAIN):
         
-        else: 
-            if id(animation_object) in queue.keys():
-                return [a for a in queue[id(animation_object)] if isinstance(a, animation_class)]
+        queue = self.get_queue(animation_queue_type)
+
+        if id(animation_object) in queue.keys():
+            return [a for a in queue[id(animation_object)] if isinstance(a, animation_class)]
         
     def add_to_animation_loop(self, animation_object, animation, animation_queue_type=AnimationQueueType.MAIN):
         

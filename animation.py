@@ -76,49 +76,40 @@ class PlaceSettlementAnimation(base_animation.BaseAnimation):
         self.animate_image_sequence()
 
 
-class SoldTradingGood(base_animation.BaseAnimation):
-    def __init__(self, camera, connection_manager, animation_end_mode=base_animation.AnimationEndMode.DURATION):
+class SoldAndReceivedTradingGood(base_animation.BaseAnimation):
+    def __init__(self, camera, animation_end_mode=base_animation.AnimationEndMode.DURATION, mode="received"):
         super().__init__(camera)
         self.offset = 0
         self.animation_duration = 1500
         self.velocity = 2
+        self.color = (0, 0, 0)
+        self.string = ""
+        self.mode = mode
+        self.position = (0, 0)
 
     def animate(self, animation_object):
         super().animate(animation_object)
         price = animation_object.magnitude*animation_object.price
-        text = game_font.render("+ {} {} for {} $".format(
-            animation_object.magnitude, animation_object.good, price), True, (0, 255, 0))
+
+        if self.mode == "received":
+            self.string = "+ {} {} for {} $"
+            self.color = (0, 255, 0)
+
+            self.position = self.animation_object.bidder.center
+            
+        elif self.mode == "sold":
+            self.string = "- {} {} for {} $"
+            self.color = (255, 0, 0)
+
+            self.position = self.animation_object.asker.center
+
+        text = game_font.render(self.string.format(
+            animation_object.magnitude, animation_object.good, price), True, self.color)
         screen_position = self.camera.get_relative_screen_position(
-            animation_object.asker.center)
+            self.position)
         self.camera.camera_screen.blit(
             text, (screen_position[0]+self.offset, screen_position[1]-self.offset))
         self.offset += self.velocity
-
-
-class ReceivedTradingGood(base_animation.BaseAnimation):
-    def __init__(self, camera, connection_manager, animation_end_mode=base_animation.AnimationEndMode.DURATION):
-        super().__init__(camera)
-        self.offset = 0
-        self.animation_duration = 1500
-        self.velocity = 2
-
-    def animate(self, animation_object):
-        super().animate(animation_object)
-        price = animation_object.magnitude*animation_object.price
-        text = game_font.render("+ {} {} for {} $".format(
-            animation_object.magnitude, animation_object.good, price), True, (0, 255, 0))
-        screen_position = self.camera.get_relative_screen_position(
-            animation_object.bidder.center)
-        self.camera.camera_screen.blit(
-            text, (screen_position[0]+self.offset, screen_position[1]-self.offset))
-        self.offset += self.velocity
-
-        # text = game_font.render("- {} {} for {} $".format(
-        #     animation_object.magnitude,animation_object.good,price), True, (255, 0, 0))
-        # screen_position = self.camera.get_relative_screen_position(animation_object.asker.center)
-        # print(screen_position)
-        # self.camera.camera_screen.blit(text, (screen_position[0]+self.offset, screen_position[1]-self.offset))
-        # self.offset += self.velocity
 
 
 class TradeAnimation(base_animation.BaseAnimation):
@@ -143,14 +134,11 @@ class TradeAnimation(base_animation.BaseAnimation):
 
         self.path = None
 
-        animation_queue.add_to_animation_loop(
-            self.animation_object, SoldTradingGood(self.camera, self.connection_manager),base_animation.AnimationQueueType.MAIN)
-
     def custom_kill_function(self):
         if self.path_counter >= len(self.path):
 
             animation_queue.add_to_animation_loop(
-                self.animation_object, ReceivedTradingGood(self.camera, self.connection_manager), base_animation.AnimationQueueType.MAIN)
+                self.animation_object, SoldAndReceivedTradingGood(self.camera, mode="received"), base_animation.AnimationQueueType.MAIN)
 
             self.kill()
 

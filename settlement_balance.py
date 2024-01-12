@@ -7,6 +7,7 @@ Created on Sat Jan  6 16:27:47 2024
 """
 
 import logging
+import animation
 
 logger = logging.getLogger('root')
 
@@ -68,4 +69,5 @@ class SettlementBalance:
                     self.settlement.name, self.gold
                 )
             )
+
         return True

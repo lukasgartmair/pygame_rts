@@ -103,6 +103,6 @@ class ModernGLGroup(pygame.sprite.Group):
         ModernGLGroup.get_texture(sprite.image).use(0)
         ModernGLGroup.get_vao().render()
 
-    def draw(self, surface):
+    def draw_gl(self, surface):
         for sprite in self:
             ModernGLGroup.render(sprite, surface)

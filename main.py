@@ -148,9 +148,11 @@ class Game:
                 if MODERN_GL == True:
                     group = moderngl_group.ModernGLGroup(active_scene.settlements)
                     # gl_context.clear(0.2, 0.2, 0.2)
-                    group.draw(screen)
-
+                    group.draw_gl(screen)
+                    
+                    
                 pygame.display.update(self.camera_1.camera_screen.get_rect())
+
 
             else:
                 screen.blit(self.camera_0.camera_screen,

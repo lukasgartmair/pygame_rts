@@ -48,41 +48,12 @@ class GameScene(SceneBase):
         if self.transactions:
             for transaction in self.transactions:
                 
-                animation_sequence = animation.animation_queue.get_animations_of_object(
-                    transaction, None, base_animation.AnimationQueueType.MAIN)
+                animation_sequence = animation.animation_queue.get_all_animations_of_object(
+                    transaction, base_animation.AnimationQueueType.MAIN)
 
                 if animation_sequence:
                     for a in animation_sequence:
                         a.animate(transaction)
-
-                # animation_sequence = animation.animation_queue.get_animations_of_object(
-                #     transaction, animation.TradeAnimation, base_animation.AnimationQueueType.MAIN)
-
-                # if animation_sequence:
-                #     for a in animation_sequence:
-                #         a.animate(transaction)
-
-                # animation_sequence = []
-                # animation_sequence = animation.animation_queue.get_animations_of_object(
-                #     transaction, animation.ReceivedTradingGood, base_animation.AnimationQueueType.MAIN)
-                # if animation_sequence:
-                #     for a in animation_sequence:
-                #         a.animate(transaction)
-
-                # animation_sequence = animation.animation_queue.get_animations_of_object(
-                #     transaction, animation.SoldTradingGood, base_animation.AnimationQueueType.MAIN)
-                # if animation_sequence:
-                #     for a in animation_sequence:
-                #         a.animate(transaction)
-
-
-                # print(animation.animation_queue.main_loop_animations.items())
-                # animation_sequence = []
-                # animation_sequence = animation.animation_queue.get_main_loop_animations_of_object(transaction, animation.SoldTradingGood)
-                # print(animation_sequence)
-                # if animation_sequence:
-                #     for a in animation_sequence:
-                #             a.animate(transaction)
 
     def create_transaction_animations(self, game_camera):
 
@@ -90,11 +61,15 @@ class GameScene(SceneBase):
             for transaction in self.transactions:
                 animation.animation_queue.add_to_animation_loop(transaction, animation.TradeAnimation(
                     game_camera, self.connection_manager), base_animation.AnimationQueueType.MAIN)
+                
+                
+                animation.animation_queue.add_to_animation_loop(
+                    transaction, animation.SoldAndReceivedTradingGood(game_camera, mode="sold"), base_animation.AnimationQueueType.MAIN)
 
     def animate_settlement_placements(self):
         for s in self.settlements:
 
-            animation_sequence = animation.animation_queue.get_animations_of_object(
+            animation_sequence = animation.animation_queue.get_animations_of_certain_type(
                 s, animation.PlaceSettlementAnimation, base_animation.AnimationQueueType.MAIN)
             if animation_sequence:
                 for a in animation_sequence:
