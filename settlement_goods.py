@@ -77,7 +77,6 @@ class SettlementGoods:
             return False
 
     def reset_preferred_good_index(self):
-        print("here")
         self.preferred_good.index = 0
         self.settlement.image = self.settlement.images[
             self.preferred_good.name + "_image"]

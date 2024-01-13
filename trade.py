@@ -23,6 +23,7 @@ import trading_good
 
 logger = logging.getLogger('root')
 
+
 def convert_time_to_datetime(time_object):
     return datetime.fromtimestamp(mktime(time.gmtime(time_object)))
 
@@ -142,20 +143,20 @@ class Trade:
         return sold
 
     def create_transaction_history_entry(self, transaction_successful, trading_form, bidder_gold, asker_gold):
-        
+
         self.transaction_history[self.transaction_id] = time.time(
         ), transaction_successful, trading_form, bidder_gold, asker_gold
 
     def get_transaction_history_df(self):
 
         transaction_data = []
-    
+
         for k, v in self.transaction_history.items():
             transaction_data.append([k, convert_time_to_datetime(
-                v[0]), v[1], v[2].good, v[2].magnitude, v[2].price,  v[2].magnitude * v[2].price, v[2].bidder.id,v[3], v[2].asker.id, v[4]])
+                v[0]), v[1], v[2].good, v[2].magnitude, v[2].price,  v[2].magnitude * v[2].price, v[2].bidder.id, v[3], v[2].asker.id, v[4]])
 
         self.transaction_df = pd.DataFrame(transaction_data, columns=["id", "timestamp", "successful",
-                    "good", "magnitude", "price_good",  "price_total", "bidder_id", "bidder_gold", "asker_id", "asker_gold"])
+                                                                      "good", "magnitude", "price_good",  "price_total", "bidder_id", "bidder_gold", "asker_id", "asker_gold"])
 
         return self.transaction_df
 
@@ -180,15 +181,15 @@ class Trade:
         sold = self.perform_sell(trading_form)
 
         transaction_successful = bool(bought and sold)
-        
+
         # print(transaction_successful)
 
         # print("here")
         self.create_transaction_history_entry(
             transaction_successful, trading_form, resolution.bid.bidder.settlement_balance.gold, resolution.ask.asker.settlement_balance.gold)
-        
+
         # print(self.transaction_history)
-        
+
         logger.debug("TRANSACTION ID")
         logger.debug(self.transaction_id)
 
@@ -196,7 +197,7 @@ class Trade:
             logger.debug("Failure in buying process")
         elif sold == False:
             logger.debug("Failure in selling process")
-            
+
         self.trade_ladder.resolutions.remove(resolution)
 
         return trading_form
@@ -204,22 +205,23 @@ class Trade:
     def perform_trade(self):
 
         logger.debug("perform trade")
-            
-        settlements_connected_with_preferred_goods = [s for s in self.settlements if s.settlement_goods.preferred_good.name != "" and s.connected == True]
+
+        settlements_connected_with_preferred_goods = [
+            s for s in self.settlements if s.settlement_goods.preferred_good.name != "" and s.connection_state_machine.current_state == "connected"]
 
         self.trade_ladder.create_possible_bids(
             settlements_connected_with_preferred_goods, self.global_assets)
-        
+
         if self.trade_ladder.bids:
             self.trade_ladder.create_possible_asks(
                 self.settlements,
                 self.possible_trading_goods,
                 self.global_assets,
             )
-            
+
         print(len(self.trade_ladder.bids))
         print(len(self.trade_ladder.asks))
-        
+
         # print("bids")
         # for b in self.trade_ladder.bids:
         #     print(b.__dict__)
@@ -227,14 +229,14 @@ class Trade:
         # print("asks")
         # for b in self.trade_ladder.asks:
         #     print(b.__dict__)
-        
+
         self.trade_ladder.resolve(
             self.connection_manager.settlement_connections)
-        
+
         for s in self.settlements:
             self.trade_ladder.bids = []
             s.settlement_goods.preferred_good.set_back_to_default()
-        
+
         for r in self.trade_ladder.resolutions:
             print(r.bid)
             print(r.ask)
@@ -243,7 +245,7 @@ class Trade:
         transactions = []
         transactions = [self.transaction(r)
                         for r in self.trade_ladder.resolutions]
-        
+
         print(transactions)
-        
+
         return transactions

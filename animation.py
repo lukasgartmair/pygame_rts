@@ -11,6 +11,7 @@ import colors
 import base_animation
 import connection_manager
 import game_font
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
 game_font = game_font.GameFont(
     game_font.font_style, game_font.font_size)
@@ -127,7 +128,7 @@ class TradeAnimation(base_animation.BaseAnimation):
 
         self.colors = colors.get_gradients()
         self.trades = {}
-        self.trading_velocity = 10
+        self.trading_velocity = SCREEN_WIDTH // 75
         self.path_counter = 0
         self.color = (0, 0, 0)
         self.trading_direction = 0

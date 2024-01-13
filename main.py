@@ -118,12 +118,11 @@ class Game:
                     #     if isinstance(a, animation.ArrivedTradingGood):
                     #         a.animate()
                     
-
                 active_scene.animate_settlement_placements()
 
-                # active_scene.settlements.draw(self.camera_1.camera_screen)
-                for s in active_scene.settlements:
-                    s.render_image_stack(self.camera_1)
+                active_scene.settlements.draw(self.camera_1.camera_screen)
+                # for s in active_scene.settlements:
+                #     s.render_image_stack(self.camera_1)
 
                 self.camera_1.handle_user_input_camera_movement(
                     filtered_events)

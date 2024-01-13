@@ -19,9 +19,9 @@ import itertools
 import base_animation
 from settlement_builder import SettlementBuilder
 import numpy as np
+import settlement_states
 
 faker = Faker()
-
 
 class Settlement(pygame.sprite.Sprite):
     id_iterator = itertools.count()
@@ -51,12 +51,10 @@ class Settlement(pygame.sprite.Sprite):
         self.image = self.images["main_image"]
         self.surf = self.image
         self.rect = self.surf.get_rect(center=self.render_center)
-        self.selected = False
         self.callback = self.on_click
         self.clicks = 0
         self.name = faker.city()
         self.hover = False
-        self.connected = False
 
         self.builder = SettlementBuilder(self.image.get_width(), self.image.get_width(
         ), self.image.get_height()//5)
@@ -65,6 +63,9 @@ class Settlement(pygame.sprite.Sprite):
         self.image_stack = self.get_image_stack()
 
         # self.mask =  pygame.mask.from_surface(self.image)
+        
+        self.sm_selection = settlement_states.SettlementSelectionMachine()
+        self.sm_connection = settlement_states.SettlementConnectionMachine()
 
     def get_image_stack(self):
         image_stack = []
@@ -145,11 +146,11 @@ class Settlement(pygame.sprite.Sprite):
         game_sound.play_place_settlement()
 
     def got_connected(self):
-        self.connected = True
+        self.sm_connection.send("connect")
         self.deselect()
 
     def got_deconnected(self):
-        self.connected = False
+        self.sm_connection.send("disconnect")
         self.deselect()
 
     def is_clicked(self, mouse_position):
@@ -180,7 +181,7 @@ class Settlement(pygame.sprite.Sprite):
                     self.callback()
                     self.clicks += 1
 
-        if self.connected:
+        if self.sm_connection.current_state == self.sm_connection.connected:
             connection_manager.settlement_connections.is_connected(self)
 
         self.update_render_center(game_camera)
@@ -193,14 +194,14 @@ class Settlement(pygame.sprite.Sprite):
             self.hover = False
 
     def select(self):
-        self.selected = True
+        self.sm_selection.send("select")
         self.image = self.images["select_image"]
 
     def deselect(self):
-        self.selected = False
+        self.sm_selection.send("deselect")
         self.image = self.images["main_image"]
 
-        if self.connected and self.settlement_goods.preferred_good.once_manually_set:
+        if self.sm_connection.current_state == self.sm_connection.connected and self.settlement_goods.preferred_good.once_manually_set:
             self.settlement_goods.restore_last_preferred_good()
 
     def on_click(self):

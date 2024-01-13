@@ -33,6 +33,9 @@ class SelectionManager:
         ]
         self.any_settlement_clicked = any(clicked_settlements)
         if self.any_settlement_clicked:
+            for s in self.settlements:
+                print(s.sm_selection.current_state)
+            print(clicked_settlements)
             self.clicked_settlement = clicked_settlements[0]
         else:
             self.clicked_settlement = None
@@ -43,13 +46,13 @@ class SelectionManager:
 
     def handle_successful_connection(self):
         for s in self.selected_settlements:
-            if s.selected:
+            if s.sm_selection.current_state == s.sm_selection.not_selected:
                 self.deselect_settlement(s)
 
     def update_selected_settlements(self):
         self.selected_settlements = []
         for s in self.settlements:
-            if s.selected:
+            if s.sm_selection.current_state == s.sm_selection.selected:
                 self.selected_settlements.append(s)
 
     def selection_and_void_click(self):
@@ -63,23 +66,31 @@ class SelectionManager:
             return False
 
     def process_settlement_click(self):
+
         s = self.clicked_settlement
+
+        print(s.sm_selection.current_state)
+        print(s.sm_connection.current_state)
+
         if (
-            s.selected == False
-            and s.connected == False
+            s.sm_selection.current_state == s.sm_selection.not_selected
+            and s.sm_connection.current_state == s.sm_connection.not_connected
             and len(self.selected_settlements) == 0
         ):
             s.select()
-
-        if s.selected and s.connected == False and len(self.selected_settlements) == 1:
+        if s.sm_selection.current_state == s.sm_selection.not_selected and s.sm_connections.current_state == s.sm_connections.not_connected and len(self.selected_settlements) == 1:
+            print("here")
             self.deselect_settlement(s)
 
-        if s.selected == False and s.connected and len(self.selected_settlements) == 0:
+        if s.sm_selection.current_state == s.sm_selection.not_selected and s.sm_connections.current_state == s.sm_connections.not_connected and len(self.selected_settlements) == 0:
             if len(self.selected_settlements) == 0:
+                print("here2")
                 s.settlement_goods.preferred_good.update()
 
         if (
             len(self.selected_settlements) == 1
-            and (self.selected_settlements[0].connected) == False
+            and self.selected_settlements[0].sm_selection.current_state == self.selected_settlements[0].sm_selection.selected
+            and (self.selected_settlements[0].sm_connection.current_state == self.selected_settlements[0].sm_connection.not_connected)
         ):
-            s.select()
+            print("here3")
+            s.deselect()
