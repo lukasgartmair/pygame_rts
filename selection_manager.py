@@ -77,9 +77,9 @@ class SelectionManager:
         ):
             s.deselect()
 
-        # elif s.sm_selection.not_selected.is_active and s.sm_connection.connected.is_active and len(self.selected_settlements) == 0:
-        #     print("here2")
-        #     s.settlement_goods.preferred_good.update()
+        elif s.sm_selection.not_selected.is_active and s.sm_connection.connected.is_active and len(self.selected_settlements) == 0:
+            print("here2")
+            s.settlement_goods.preferred_good.update()
 
         if (
             len(self.selected_settlements) == 1

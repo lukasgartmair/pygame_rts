@@ -207,7 +207,7 @@ class Trade:
         logger.debug("perform trade")
 
         settlements_connected_with_preferred_goods = [
-            s for s in self.settlements if s.settlement_goods.preferred_good.name != "" and s.connection_state_machine.current_state == "connected"]
+            s for s in self.settlements if s.settlement_goods.preferred_good.name != "" and s.sm_connection.connected.is_active]
 
         self.trade_ladder.create_possible_bids(
             settlements_connected_with_preferred_goods, self.global_assets)

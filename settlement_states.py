@@ -16,6 +16,7 @@ class SettlementSelectionStatus(Enum):
     not_selected = 0
     selected = 1
 
+
 class SettlementSelectionMachine(StateMachine):
 
     states = States.from_enum(
@@ -24,17 +25,19 @@ class SettlementSelectionMachine(StateMachine):
 
     select = states.not_selected.to(states.selected)
     deselect = states.selected.to(states.not_selected)
-    
+
+
 class SettlementConnectionStatus(Enum):
     not_connected = 0
     connected = 1
 
-    
+
 class SettlementConnectionMachine(StateMachine):
-    
+
     states = States.from_enum(
         SettlementConnectionStatus, initial=SettlementConnectionStatus.not_connected
     )
-    
-    connect = states.not_connected.to(states.connected) | states.connected.to(states.connected)
+
+    connect = states.not_connected.to(
+        states.connected) | states.connected.to(states.connected)
     disconnect = states.connected.to(states.not_connected)
