@@ -222,13 +222,13 @@ class Trade:
         print(len(self.trade_ladder.bids))
         print(len(self.trade_ladder.asks))
 
-        # print("bids")
-        # for b in self.trade_ladder.bids:
-        #     print(b.__dict__)
+        print("bids")
+        for b in self.trade_ladder.bids:
+            print(b.__dict__)
 
-        # print("asks")
-        # for b in self.trade_ladder.asks:
-        #     print(b.__dict__)
+        print("asks")
+        for b in self.trade_ladder.asks:
+            print(b.__dict__)
 
         self.trade_ladder.resolve(
             self.connection_manager.settlement_connections)
@@ -239,7 +239,9 @@ class Trade:
 
         for r in self.trade_ladder.resolutions:
             print(r.bid)
+            print(r.bid.bidder.name)
             print(r.ask)
+            print(r.ask.asker.name)
             print("------")
 
         transactions = []

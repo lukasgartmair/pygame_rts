@@ -131,6 +131,8 @@ class Ladder:
 
     def create_possible_bids(self, settlements, global_assets):
         for s in settlements:
+            print("here")
+            print(s.settlement_goods.preferred_good.name)
             if s.settlement_goods.preferred_good.name != "":
                 trading_form = TradingForm(
                     price=global_assets[s.settlement_goods.preferred_good.name].price

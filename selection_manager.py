@@ -31,9 +31,6 @@ class SelectionManager:
         ]
         self.any_settlement_clicked = any(clicked_settlements)
         if self.any_settlement_clicked:
-            for s in self.settlements:
-                print(s.sm_selection.current_state)
-            print(clicked_settlements)
             self.clicked_settlement = clicked_settlements[0]
         else:
             self.clicked_settlement = None
@@ -78,7 +75,6 @@ class SelectionManager:
             s.deselect()
 
         elif s.sm_selection.not_selected.is_active and s.sm_connection.connected.is_active and len(self.selected_settlements) == 0:
-            print("here2")
             s.settlement_goods.preferred_good.update()
 
         if (

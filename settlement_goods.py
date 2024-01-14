@@ -26,6 +26,7 @@ class PreferredGood:
 
     def set_back_to_default(self):
         self.index = 0
+        self.name = ""
         if self.settlement.images:
             self.settlement.image = self.settlement.images[
                 "main_image"

@@ -123,11 +123,11 @@ class BaseAnimation:
 
         if self.animation_end_mode == AnimationEndMode.DURATION:
             if pygame.time.get_ticks() - self.created_at > self.animation_duration:
-                print("stopped for duration")
+                # print("stopped for duration")
                 self.kill()
         elif self.animation_end_mode == AnimationEndMode.N_TRIGGERS:
             if self.animation_index >= self.number_of_cycles * self.length_cycle:
-                print("stopped for n_triggers")
+                # print("stopped for n_triggers")
                 self.kill()
         else:
             self.custom_kill_function()
