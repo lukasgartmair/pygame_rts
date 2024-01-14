@@ -181,6 +181,8 @@ class Trade:
         sold = self.perform_sell(trading_form)
 
         transaction_successful = bool(bought and sold)
+        
+        self.update_prices_on_transaction(trading_form)
 
         # print(transaction_successful)
 
@@ -201,6 +203,17 @@ class Trade:
         self.trade_ladder.resolutions.remove(resolution)
 
         return trading_form
+    
+    def update_prices_new_settlement(self):
+        
+        for k,v in self.global_assets.items():
+            
+            if v.price > 1:
+                v.price = v.magnitude // len(self.settlements) * 2
+
+    def update_prices_on_transaction(self, trading_form):
+        
+        self.global_assets[trading_form.good].price += 2
 
     def perform_trade(self):
 

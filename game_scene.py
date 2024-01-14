@@ -127,7 +127,9 @@ class GameScene(SceneBase):
                     tmp_settlement.placed(self.game_trade, self.game_sound)
                     animation.animation_queue.add_to_animation_loop(
                         tmp_settlement, animation.PlaceSettlementAnimation(tmp_settlement, game_camera), base_animation.AnimationQueueType.MAIN)
-
+                    
+                    self.game_trade.update_prices_new_settlement()
+                    
             else:
                 tmp_settlement.remove()
 
