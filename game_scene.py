@@ -143,8 +143,8 @@ class GameScene(SceneBase):
                 self.game_map,
             )
 
-            if successfully_connected:
-                self.selection_manager.handle_successful_connection()
+            # if successfully_connected:
+            #     self.selection_manager.handle_successful_connection()
 
     def process_input(self, events, pressed_keys, game_camera):
         for event in events:

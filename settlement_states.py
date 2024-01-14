@@ -35,6 +35,6 @@ class SettlementConnectionMachine(StateMachine):
     states = States.from_enum(
         SettlementConnectionStatus, initial=SettlementConnectionStatus.not_connected
     )
-
-    connect = states.not_connected.to(states.connected)
+    
+    connect = states.not_connected.to(states.connected) | states.connected.to(states.connected)
     disconnect = states.connected.to(states.not_connected)

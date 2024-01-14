@@ -13,6 +13,8 @@ import random
 from enum import Enum
 import itertools
 import scipy
+    
+from perlin_noise import PerlinNoise
 
 class Buildings(Enum):
     EARTH = 0
@@ -103,7 +105,40 @@ class SettlementBuilder:
         
         
         
-        
+def experiment2():
+
+    
+    noise = PerlinNoise(octaves=10, seed=1)
+    xpix, ypix = 100, 100
+    pic = [[noise([i/xpix, j/ypix]) for j in range(xpix)] for i in range(ypix)]
+    
+    plt.imshow(pic, cmap='gray')
+    plt.show()
+    x = np.array(pic)
+    x = np.array(pic)
+    minimum = np.min(x)
+    y = x + abs(minimum)
+    z = np.round(y*100).astype(int)
+    z = np.round(z)
+
+    structure_2d = z.copy()
+    
+    structure_3d = np.zeros((np.max(z),z.shape[0],z.shape[1]))
+
+    for i in range(structure_2d.shape[0]):
+        for j in range(structure_2d.shape[0]):
+
+            structure_3d[:structure_2d[i,j],i,j] = 1
+            
+    points = np.where(structure_3d==1)
+    
+    points3d = []
+    
+    for i in range(len(points[0])):
+        points3d.append((points[0][i],points[1][i],points[2][i]))
+                
+    
+            
 # def experiment():
 #     dim_x, dim_y, dim_z = 99,99,33
     
