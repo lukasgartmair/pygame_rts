@@ -16,18 +16,15 @@ from colors import path_colors
 # the path is stored in key 0         self.path = self.connection_manager.settlement_connections.get_edge_data(
 #           animation_object.asker.id, animation_object.bidder.id)[0]["path"]        
 
-def get_adjacent_cells(x, y, k=0):
-    adjacent_cells = []
-    for xi in range(-k, k + 1):
-        for yi in range(-k, k + 1):
-            adjacent_cells.append((x + xi, y + yi))
-    adjacent_cells.remove((x, y))
-    return adjacent_cells
-
 class SettlementGraph(nx.MultiDiGraph):
-    def __init__(self):
-        super(SettlementGraph, self).__init__()
-        self = nx.MultiDiGraph()
+        
+    def get_adjacent_cells(self, x, y, k=0):
+        adjacent_cells = []
+        for xi in range(-k, k + 1):
+            for yi in range(-k, k + 1):
+                adjacent_cells.append((x + xi, y + yi))
+        adjacent_cells.remove((x, y))
+        return adjacent_cells
 
     def get_connections(self, include_data=False):
         return self.edges(data=include_data)
@@ -112,7 +109,7 @@ class SettlementGraph(nx.MultiDiGraph):
             for p in data["path"]:
                 mapped_grid[p[0], p[1]] = path_colors[0]
 
-                adjacent_cells = get_adjacent_cells(p[0], p[1], k=3)
+                adjacent_cells = self.get_adjacent_cells(p[0], p[1], k=3)
 
                 for a in adjacent_cells:
                     mapped_grid[a[0], a[1]] = path_colors[0]

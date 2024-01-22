@@ -24,10 +24,6 @@ import trading_good
 logger = logging.getLogger('root')
 
 
-def convert_time_to_datetime(time_object):
-    return datetime.fromtimestamp(mktime(time.gmtime(time_object)))
-
-
 @dataclass
 class GlobalAsset:
 
@@ -57,6 +53,9 @@ class Trade:
         self.transaction_id = -1
 
         self.initialize_global_assets()
+
+    def convert_time_to_datetime(self, time_object):
+        return datetime.fromtimestamp(mktime(time.gmtime(time_object)))
 
     def initialize_global_assets(self):
         for p in self.possible_trading_goods:
@@ -152,7 +151,7 @@ class Trade:
         transaction_data = []
 
         for k, v in self.transaction_history.items():
-            transaction_data.append([k, convert_time_to_datetime(
+            transaction_data.append([k, self.convert_time_to_datetime(
                 v[0]), v[1], v[2].good, v[2].magnitude, v[2].price,  v[2].magnitude * v[2].price, v[2].bidder.id, v[3], v[2].asker.id, v[4]])
 
         self.transaction_df = pd.DataFrame(transaction_data, columns=["id", "timestamp", "successful",

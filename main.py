@@ -26,14 +26,6 @@ import moderngl_group
 
 logger = logging.getLogger('root')
 
-def quit_everything(active_scene=None):
-    if active_scene:
-        active_scene.terminate()
-    pygame.display.quit()
-    pygame.quit()
-    sys.exit()
-
-
 class Game:
     def __init__(self):
 
@@ -45,6 +37,15 @@ class Game:
         self.font = game_font.GameFont(
             game_font.font_style, game_font.font_size)
         self.sprite_groups = SpriteGroup().get_sprite_groups()
+        
+    @staticmethod
+    def quit_everything(active_scene=None):
+        if active_scene:
+            active_scene.terminate()
+        pygame.display.quit()
+        pygame.quit()
+        sys.exit()
+
 
     def get_filtered_events(self, active_scene, pressed_keys):
 
@@ -65,7 +66,7 @@ class Game:
                     quit_attempt = True
 
             if quit_attempt:
-                quit_everything(active_scene)
+                self.quit_everything(active_scene)
 
             if (
                 event.type == event.type == pygame.MOUSEBUTTONDOWN
@@ -124,7 +125,7 @@ class Game:
                 # for s in active_scene.settlements:
                 #     s.render_image_stack(self.camera_1)
 
-                self.camera_1.handle_user_input_camera_movement(
+                self.camera_1.handle_user_input_cuntitled1amera_movement(
                     filtered_events)
 
                 screen.blit(self.camera_1.camera_screen,
@@ -182,4 +183,4 @@ if __name__ == "__main__":
     except:
         tb = traceback.format_exc()
         print(tb)
-        quit_everything()
+        Game.quit_everything()

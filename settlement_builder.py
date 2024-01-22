@@ -13,25 +13,14 @@ import random
 from enum import Enum
 import itertools
 import scipy
+import delauny
     
 from perlin_noise import PerlinNoise
 
 class Buildings(Enum):
     EARTH = 0
     STREET = 0
-    HOUSE = 2
-
-def get_adjacent_cells(x, y, k=0):
-    adjacent_cells = []
-    for xi in range(-k, k + 1):
-        for yi in range(-k, k + 1):
-            adjacent_cells.append((x + xi, y + yi))
-    adjacent_cells.remove((x,y))
-    return adjacent_cells
-
-def moving_average(array, size=3):
-    return scipy.ndimage.uniform_filter(array,size=size)
-    
+    HOUSE = 2    
 
 class SettlementBuilder:
     def __init__(self, dim_x, dim_y, dim_z):
@@ -47,7 +36,18 @@ class SettlementBuilder:
         self.matrix[0,self.center[0],self.center[1]] = Buildings.HOUSE.value
         
         self.radius = int(self.dim_x * 0.5)
-        
+
+    def get_adjacent_cells(self, x, y, k=0):
+        adjacent_cells = []
+        for xi in range(-k, k + 1):
+            for yi in range(-k, k + 1):
+                adjacent_cells.append((x + xi, y + yi))
+        adjacent_cells.remove((x,y))
+        return adjacent_cells
+    
+    def moving_average(self, array, size=3):
+        return scipy.ndimage.uniform_filter(array,size=size)
+            
     def get_top_view(self):
         
         return self.matrix[0,:,:]
@@ -57,7 +57,7 @@ class SettlementBuilder:
         self.create_house_and_street_foundations()
         self.grow_houses()
         
-        self.matrix = moving_average(self.matrix)
+        self.matrix = self.moving_average(self.matrix)
         
         return self.matrix
 
@@ -76,7 +76,7 @@ class SettlementBuilder:
     def create_house_and_street_foundations(self):
         visited_cells = []
         for i in range(self.radius):
-            adjacent_cells = get_adjacent_cells(self.center[0],self.center[1],k=i)
+            adjacent_cells = self.get_adjacent_cells(self.center[0],self.center[1],k=i)
             for k,cell in enumerate(adjacent_cells):
                 if self.is_in_bounds(cell):
                     if cell not in visited_cells:
@@ -107,13 +107,15 @@ class SettlementBuilder:
         
 def experiment2():
 
-    
+        
+    from perlin_noise import PerlinNoise
     noise = PerlinNoise(octaves=10, seed=1)
-    xpix, ypix = 100, 100
+    dim = 128 * 3
+    xpix, ypix = dim, dim
     pic = [[noise([i/xpix, j/ypix]) for j in range(xpix)] for i in range(ypix)]
     
-    plt.imshow(pic, cmap='gray')
-    plt.show()
+    # plt.imshow(pic, cmap='gray')
+    # plt.show()
     x = np.array(pic)
     x = np.array(pic)
     minimum = np.min(x)
@@ -136,8 +138,15 @@ def experiment2():
     
     for i in range(len(points[0])):
         points3d.append((points[0][i],points[1][i],points[2][i]))
-                
-    
+        
+    vertices = []
+    for i in range(structure_2d.shape[0]):
+        for j in range(structure_2d.shape[1]):
+            vertices.append((i,j,0))
+            vertices.append((i,j,structure_2d[i,j]))
+            
+    mesh = delauny.Delauny(vertices).run()
+
             
 # def experiment():
 #     dim_x, dim_y, dim_z = 99,99,33
